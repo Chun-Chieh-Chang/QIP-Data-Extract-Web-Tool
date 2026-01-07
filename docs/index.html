@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QIP 檢驗報告數據提取工具</title>
+    <meta name="description" content="純前端 Excel 檢驗報告數據分析工具，所有處理在本地完成，確保資料隱私">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <!-- 隱私保障橫幅 -->
+    <div class="privacy-banner">
+        <span class="privacy-icon">🔒</span>
+        <span>資料隱私保障：所有檔案處理均在您的瀏覽器本地完成，不會上傳至任何伺服器</span>
+    </div>
+
+    <div class="container">
+        <!-- 標題區 -->
+        <header class="header">
+            <h1>QIP 檢驗報告數據提取工具</h1>
+            <p class="subtitle">Excel 檢驗報告數據分析 · 純前端處理 · 隱私安全</p>
+        </header>
+
+        <!-- 主要內容區 -->
+        <main class="main-content">
+            <!-- 步驟 1: 檔案上傳 -->
+            <section class="card" id="upload-section">
+                <div class="section-header">
+                    <span class="step-badge">1</span>
+                    <h2>上傳檔案</h2>
+                </div>
+                <div class="upload-area" id="upload-area">
+                    <div class="upload-icon">📁</div>
+                    <p>拖放 Excel 檔案至此處，或</p>
+                    <button type="button" class="btn btn-primary" id="browse-btn">選擇檔案</button>
+                    <input type="file" id="file-input" accept=".xls,.xlsx,.xlsm" hidden>
+                    <p class="file-hint">支援 .xls, .xlsx, .xlsm 格式</p>
+                </div>
+                <div class="file-info" id="file-info" style="display: none;">
+                    <div class="file-name">
+                        <span class="file-icon">📄</span>
+                        <span id="selected-file-name"></span>
+                        <button type="button" class="btn-icon" id="remove-file" title="移除檔案">✕</button>
+                    </div>
+                    <div class="workbook-info" id="workbook-info"></div>
+                    <button type="button" class="btn btn-secondary btn-sm" id="full-reset"
+                        style="margin-top: 10px; width: 100%;">
+                        🔄 完全重置 (清空資料)
+                    </button>
+                </div>
+            </section>
+
+            <!-- 步驟 2: 參數配置 -->
+            <section class="card" id="config-section">
+                <div class="section-header">
+                    <span class="step-badge">2</span>
+                    <h2>參數配置</h2>
+                </div>
+
+                <!-- 基本設定 -->
+                <div class="config-group">
+                    <div class="config-group-header basic">基本設定</div>
+                    <div class="config-row">
+                        <label class="config-label required">產品品號</label>
+                        <input type="text" id="product-code" class="config-input" placeholder="用於識別此檔案的品號">
+                        <span class="config-hint">從檔案名自動提取（可編輯）</span>
+                    </div>
+                    <div class="config-row">
+                        <label class="config-label required">模穴數</label>
+                        <select id="cavity-count" class="config-select">
+                            <option value="">-- 請選擇 --</option>
+                            <option value="8">8 穴</option>
+                            <option value="16">16 穴</option>
+                            <option value="24">24 穴</option>
+                            <option value="32">32 穴</option>
+                            <option value="40">40 穴</option>
+                            <option value="48">48 穴</option>
+                        </select>
+                        <span class="config-hint">選擇後會顯示對應的穴組設定</span>
+                    </div>
+                </div>
+
+                <!-- 工作表選擇 -->
+                <div class="config-group" id="worksheet-group" style="display: none;">
+                    <div class="config-group-header sample">樣本工作表</div>
+                    <div class="config-row">
+                        <label class="config-label">選擇工作表</label>
+                        <select id="worksheet-select" class="config-select">
+                            <option value="">-- 請先上傳檔案 --</option>
+                        </select>
+                        <button type="button" class="btn btn-secondary" id="preview-worksheet">預覽</button>
+                    </div>
+                </div>
+
+                <!-- 讀取範圍設定 -->
+                <div class="config-group" id="range-group" style="display: none;">
+                    <div class="config-group-header range">讀取範圍設定</div>
+                    <div class="range-notice">
+                        <span class="notice-icon">⚠️</span>
+                        請在下方預覽表格中選擇數據範圍
+                    </div>
+
+                    <!-- 第1-8穴 (必填) -->
+                    <div class="cavity-group" id="cavity-group-1">
+                        <div class="cavity-group-title">第 1-8 穴</div>
+                        <div class="config-row">
+                            <label class="config-label required">穴號範圍</label>
+                            <input type="text" id="cavity-id-1" class="config-input range-input" placeholder="如: K3:R3">
+                            <button type="button" class="btn btn-secondary select-range-btn" data-target="cavity-id-1"
+                                data-type="cavity">選擇</button>
+                        </div>
+                        <div class="config-row">
+                            <label class="config-label required">數據範圍</label>
+                            <input type="text" id="data-range-1" class="config-input range-input"
+                                placeholder="如: K4:R4">
+                            <button type="button" class="btn btn-secondary select-range-btn" data-target="data-range-1"
+                                data-type="data">選擇</button>
+                        </div>
+                    </div>
+
+                    <!-- 第9-16穴 -->
+                    <div class="cavity-group hidden" id="cavity-group-2">
+                        <div class="cavity-group-title">第 9-16 穴</div>
+                        <div class="config-row">
+                            <label class="config-label">穴號範圍</label>
+                            <input type="text" id="cavity-id-2" class="config-input range-input" placeholder="如: K3:R3">
+                            <button type="button" class="btn btn-secondary select-range-btn" data-target="cavity-id-2"
+                                data-type="cavity">選擇</button>
+                        </div>
+                        <div class="config-row">
+                            <label class="config-label">數據範圍</label>
+                            <input type="text" id="data-range-2" class="config-input range-input"
+                                placeholder="如: K4:R4">
+                            <button type="button" class="btn btn-secondary select-range-btn" data-target="data-range-2"
+                                data-type="data">選擇</button>
+                        </div>
+                        <div class="config-row">
+                            <label class="config-label">頁面偏移</label>
+                            <input type="number" id="offset-2" class="config-input" value="1" min="1" max="10">
+                            <span class="config-hint">1=同一頁, 2=下一頁...</span>
+                        </div>
+                    </div>
+
+                    <!-- 第17-24穴 -->
+                    <div class="cavity-group hidden" id="cavity-group-3">
+                        <div class="cavity-group-title">第 17-24 穴</div>
+                        <div class="config-row">
+                            <label class="config-label">穴號範圍</label>
+                            <input type="text" id="cavity-id-3" class="config-input range-input" placeholder="如: K3:R3">
+                            <button type="button" class="btn btn-secondary select-range-btn" data-target="cavity-id-3"
+                                data-type="cavity">選擇</button>
+                        </div>
+                        <div class="config-row">
+                            <label class="config-label">數據範圍</label>
+                            <input type="text" id="data-range-3" class="config-input range-input"
+                                placeholder="如: K4:R4">
+                            <button type="button" class="btn btn-secondary select-range-btn" data-target="data-range-3"
+                                data-type="data">選擇</button>
+                        </div>
+                        <div class="config-row">
+                            <label class="config-label">頁面偏移</label>
+                            <input type="number" id="offset-3" class="config-input" value="1" min="1" max="10">
+                            <span class="config-hint">1=同一頁, 2=下一頁...</span>
+                        </div>
+                    </div>
+
+                    <!-- 第25-32穴 -->
+                    <div class="cavity-group hidden" id="cavity-group-4">
+                        <div class="cavity-group-title">第 25-32 穴</div>
+                        <div class="config-row">
+                            <label class="config-label">穴號範圍</label>
+                            <input type="text" id="cavity-id-4" class="config-input range-input" placeholder="如: K3:R3">
+                            <button type="button" class="btn btn-secondary select-range-btn" data-target="cavity-id-4"
+                                data-type="cavity">選擇</button>
+                        </div>
+                        <div class="config-row">
+                            <label class="config-label">數據範圍</label>
+                            <input type="text" id="data-range-4" class="config-input range-input"
+                                placeholder="如: K4:R4">
+                            <button type="button" class="btn btn-secondary select-range-btn" data-target="data-range-4"
+                                data-type="data">選擇</button>
+                        </div>
+                        <div class="config-row">
+                            <label class="config-label">頁面偏移</label>
+                            <input type="number" id="offset-4" class="config-input" value="1" min="1" max="10">
+                            <span class="config-hint">1=同一頁, 2=下一頁...</span>
+                        </div>
+                    </div>
+
+                    <!-- 第33-40穴 -->
+                    <div class="cavity-group hidden" id="cavity-group-5">
+                        <div class="cavity-group-title">第 33-40 穴</div>
+                        <div class="config-row">
+                            <label class="config-label">穴號範圍</label>
+                            <input type="text" id="cavity-id-5" class="config-input range-input" placeholder="如: K3:R3">
+                            <button type="button" class="btn btn-secondary select-range-btn" data-target="cavity-id-5"
+                                data-type="cavity">選擇</button>
+                        </div>
+                        <div class="config-row">
+                            <label class="config-label">數據範圍</label>
+                            <input type="text" id="data-range-5" class="config-input range-input"
+                                placeholder="如: K4:R4">
+                            <button type="button" class="btn btn-secondary select-range-btn" data-target="data-range-5"
+                                data-type="data">選擇</button>
+                        </div>
+                        <div class="config-row">
+                            <label class="config-label">頁面偏移</label>
+                            <input type="number" id="offset-5" class="config-input" value="1" min="1" max="10">
+                            <span class="config-hint">1=同一頁, 2=下一頁...</span>
+                        </div>
+                    </div>
+
+                    <!-- 第41-48穴 -->
+                    <div class="cavity-group hidden" id="cavity-group-6">
+                        <div class="cavity-group-title">第 41-48 穴</div>
+                        <div class="config-row">
+                            <label class="config-label">穴號範圍</label>
+                            <input type="text" id="cavity-id-6" class="config-input range-input" placeholder="如: K3:R3">
+                            <button type="button" class="btn btn-secondary select-range-btn" data-target="cavity-id-6"
+                                data-type="cavity">選擇</button>
+                        </div>
+                        <div class="config-row">
+                            <label class="config-label">數據範圍</label>
+                            <input type="text" id="data-range-6" class="config-input range-input"
+                                placeholder="如: K4:R4">
+                            <button type="button" class="btn btn-secondary select-range-btn" data-target="data-range-6"
+                                data-type="data">選擇</button>
+                        </div>
+                        <div class="config-row">
+                            <label class="config-label">頁面偏移</label>
+                            <input type="number" id="offset-6" class="config-input" value="1" min="1" max="10">
+                            <span class="config-hint">1=同一頁, 2=下一頁...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 配置管理 -->
+                <div class="config-group">
+                    <div class="config-group-header config-mgmt">配置管理</div>
+                    <div class="config-actions">
+                        <input type="text" id="config-name" class="config-input" placeholder="配置名稱">
+                        <button type="button" class="btn btn-secondary" id="save-config">💾 保存配置</button>
+                        <button type="button" class="btn btn-secondary" id="load-config">📂 載入配置</button>
+                        <button type="button" class="btn btn-secondary" id="reset-config">🔄 重置</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 工作表預覽 -->
+            <section class="card" id="preview-section" style="display: none;">
+                <div class="section-header">
+                    <span class="step-badge">📋</span>
+                    <h2>工作表預覽</h2>
+                    <div class="preview-controls">
+                        <button type="button" class="btn btn-secondary btn-sm" id="prev-sheet" title="上一頁工作表">◀</button>
+                        <span id="current-sheet-name"></span>
+                        <button type="button" class="btn btn-secondary btn-sm" id="next-sheet" title="下一頁工作表">▶</button>
+                        <div class="divider-vertical"></div>
+                        <span id="selection-mode-label">選擇模式：<strong id="selection-mode-text">無</strong></span>
+                        <button type="button" class="btn btn-secondary" id="confirm-selection" disabled>確認選擇</button>
+                        <button type="button" class="btn btn-secondary" id="cancel-selection">取消</button>
+                    </div>
+                </div>
+                <div class="preview-container">
+                    <div class="preview-table-wrapper">
+                        <table id="preview-table" class="preview-table"></table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 步驟 3: 執行處理 -->
+            <section class="card" id="process-section">
+                <div class="section-header">
+                    <span class="step-badge">3</span>
+                    <h2>執行處理</h2>
+                </div>
+                <div class="process-actions">
+                    <button type="button" class="btn btn-primary btn-large" id="start-process" disabled>
+                        🚀 開始處理
+                    </button>
+                </div>
+                <div class="progress-container" id="progress-container" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="progress-text" id="progress-text">準備中...</div>
+                </div>
+            </section>
+
+            <!-- 步驟 4: 結果輸出 -->
+            <section class="card" id="result-section" style="display: none;">
+                <div class="section-header">
+                    <span class="step-badge">4</span>
+                    <h2>處理結果</h2>
+                </div>
+                <div class="result-summary" id="result-summary"></div>
+                <div class="result-actions">
+                    <button type="button" class="btn btn-primary btn-large" id="download-excel">
+                        📥 下載 Excel 檔案
+                    </button>
+                </div>
+                <div class="error-log" id="error-log" style="display: none;">
+                    <h3>處理異常記錄</h3>
+                    <div id="error-list"></div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 使用說明 -->
+        <aside class="help-panel">
+            <details>
+                <summary>📖 使用說明</summary>
+                <div class="help-content">
+                    <h4>【穴號範圍】是什麼？</h4>
+                    <p>檔案中顯示「1號穴」「2號穴」...「8號穴」的儲存格範圍</p>
+
+                    <h4>【數據範圍】是什麼？</h4>
+                    <p>檔案中顯示實際數據（如 5.86, 5.85...）的儲存格範圍</p>
+
+                    <h4>【頁面偏移】是什麼？</h4>
+                    <ul>
+                        <li>1 = 在同一個工作表</li>
+                        <li>2 = 在下一個工作表</li>
+                        <li>3 = 在下下個工作表</li>
+                    </ul>
+                </div>
+            </details>
+        </aside>
+
+        <!-- 頁尾 -->
+        <footer class="footer">
+            <p>QIP Data Extract Tool v1.0 | 純前端處理，資料不離開您的設備</p>
+            <p class="tech-stack">Powered by SheetJS | <a href="https://github.com" target="_blank">GitHub</a></p>
+        </footer>
+    </div>
+
+    <!-- 配置載入對話框 -->
+    <dialog id="config-dialog">
+        <div class="dialog-header">
+            <h3>載入配置</h3>
+            <button type="button" class="dialog-close" id="close-config-dialog">✕</button>
+        </div>
+        <div class="dialog-content">
+            <div id="config-list"></div>
+        </div>
+    </dialog>
+
+    <!-- 載入 SheetJS -->
+    <script src="js/lib/xlsx.full.min.js"></script>
+    <!-- 應用程式模組 -->
+    <script src="js/data-validator.js"></script>
+    <script src="js/data-extractor.js"></script>
+    <script src="js/spec-extractor.js"></script>
+    <script src="js/error-logger.js"></script>
+    <script src="js/processor.js?v=1.2"></script>
+    <script src="js/excel-exporter.js?v=1.2"></script>
+    <script src="js/app.js?v=1.2"></script>
+</body>
+
+</html>
