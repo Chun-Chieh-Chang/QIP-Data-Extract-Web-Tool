@@ -10,7 +10,6 @@ class QIPProcessor {
             inspectionItems: {},
             totalBatches: 0,
             totalCavities: 0,
-            totalCavities: 0,
             processedSheets: 0,
             productInfo: { productName: '', measurementUnit: '' }
         };
@@ -23,58 +22,73 @@ class QIPProcessor {
      * @returns {Object} 處理結果
      */
     async processWorkbook(workbook, progressCallback = () => { }) {
-        console.log('開始處理工作簿...');
+        return this.processMultipleWorkbooks([workbook], progressCallback);
+    }
+
+    /**
+     * 處理多個工作簿
+     * @param {Array} workbooks - Array of SheetJS workbooks
+     * @param {Function} progressCallback - 進度回調函數
+     * @returns {Object} 處理結果
+     */
+    async processMultipleWorkbooks(workbooks, progressCallback = () => { }) {
+        console.log(`開始處理 ${workbooks.length} 個工作簿...`);
         console.log('配置:', this.config);
 
-        const sheetCount = workbook.SheetNames.length;
-        let processedCount = 0;
+        let totalFiles = workbooks.length;
+        this.results.processedSheets = 0; // 重置計數 (針對單次批次處理)
 
-        // 計算最大頁面偏移量，決定步長
-        let maxOffset = 0;
-        if (this.config.cavityGroups) {
-            for (let g = 1; g <= 6; g++) {
-                if (this.config.cavityGroups[g]) {
-                    maxOffset = Math.max(maxOffset, this.config.cavityGroups[g].pageOffset || 0);
+        for (let fileIndex = 0; fileIndex < totalFiles; fileIndex++) {
+            const workbook = workbooks[fileIndex];
+            const fileName = workbook.fileName || `File ${fileIndex + 1}`;
+            const sheetCount = workbook.SheetNames.length;
+
+            // 計算最大頁面偏移量，決定步長
+            let maxOffset = 0;
+            if (this.config.cavityGroups) {
+                for (let g = 1; g <= 6; g++) {
+                    if (this.config.cavityGroups[g]) {
+                        maxOffset = Math.max(maxOffset, this.config.cavityGroups[g].pageOffset || 0);
+                    }
                 }
             }
-        }
-        const step = maxOffset + 1;
-        console.log(`處理步長: ${step} (最大偏移: ${maxOffset})`);
+            const step = maxOffset + 1;
 
-        // 遍歷所有工作表
-        for (let i = 0; i < sheetCount; i += step) {
-            const sheetName = workbook.SheetNames[i];
-            const worksheet = workbook.Sheets[sheetName];
+            // 遍歷所有工作表
+            for (let i = 0; i < sheetCount; i += step) {
+                const sheetName = workbook.SheetNames[i];
+                const worksheet = workbook.Sheets[sheetName];
 
-            try {
-                // 更新進度
-                progressCallback({
-                    current: i + 1,
-                    total: sheetCount,
-                    message: `處理批次: ${sheetName}`,
-                    percent: Math.round((i + 1) / sheetCount * 100)
-                });
+                try {
+                    // 更新進度
+                    progressCallback({
+                        current: fileIndex + 1,
+                        total: totalFiles,
+                        message: `[${fileIndex + 1}/${totalFiles}] 處理: ${sheetName}`,
+                        percent: Math.round(((fileIndex * sheetCount + i + 1) / (totalFiles * sheetCount)) * 100)
+                    });
 
-                // 提取並彙整數據
-                await this.processWorksheet(workbook, worksheet, sheetName, i);
-                processedCount++;
+                    // 提取並彙整數據 (會自動加入 this.results.inspectionItems)
+                    await this.processWorksheet(workbook, worksheet, sheetName, i);
+                    this.results.processedSheets++;
 
-            } catch (error) {
-                console.error(`處理工作表 ${sheetName} 時發生錯誤:`, error);
-                this.errorLogger.logError(sheetName, error.message);
+                } catch (error) {
+                    console.error(`處理工作表 ${sheetName} 時發生錯誤:`, error);
+                    this.errorLogger.logError(`${fileName}: ${sheetName}`, error.message);
+                }
+
+                // 讓 UI 有機會更新
+                await this.sleep(5);
             }
 
-            // 讓 UI 有機會更新
-            await this.sleep(10);
+            // 如果是第一個工作簿，提取產品資訊與規格 (假設後續檔案格式相同)
+            if (fileIndex === 0) {
+                // 提取產品資訊
+                this.results.productInfo = this.extractProductInfo(workbook);
+                // 提取規格
+                await this.extractSpecifications(workbook, progressCallback);
+            }
         }
-
-        this.results.processedSheets = processedCount;
-
-        // 嘗試提取規格數據
-        await this.extractSpecifications(workbook, progressCallback);
-
-        // 提取產品資訊 (比照 VBA)
-        this.results.productInfo = this.extractProductInfo(workbook);
 
         console.log('處理完成', this.results);
         return this.getResults();
@@ -325,8 +339,6 @@ class QIPProcessor {
     getResults() {
         return {
             inspectionItems: this.results.inspectionItems,
-            totalBatches: this.results.totalBatches,
-            totalCavities: this.results.totalCavities,
             totalBatches: this.results.totalBatches,
             totalCavities: this.results.totalCavities,
             processedSheets: this.results.processedSheets,

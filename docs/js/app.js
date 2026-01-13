@@ -6,6 +6,7 @@
 // 全域變數
 let currentWorkbook = null;
 let currentFileName = '';
+let selectedFiles = []; // 儲存所有選取的檔案
 let processingResults = null;
 let selectionMode = null;
 let selectionTarget = null;
@@ -178,9 +179,9 @@ function bindEvents() {
  * 處理檔案選擇
  */
 async function handleFileSelect(e) {
-    const file = e.target.files[0];
-    if (file) {
-        await loadFile(file);
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+        await loadFiles(files);
     }
 }
 
@@ -201,9 +202,9 @@ async function handleDrop(e) {
     e.preventDefault();
     elements.uploadArea.classList.remove('dragover');
 
-    const file = e.dataTransfer.files[0];
-    if (file && isExcelFile(file)) {
-        await loadFile(file);
+    const files = Array.from(e.dataTransfer.files).filter(file => isExcelFile(file));
+    if (files.length > 0) {
+        await loadFiles(files);
     } else {
         alert('請上傳 Excel 檔案 (.xls, .xlsx, .xlsm)');
     }
@@ -225,37 +226,60 @@ function isExcelFile(file) {
 }
 
 /**
- * 載入檔案
+ * 載入多個檔案
  */
-async function loadFile(file) {
+async function loadFiles(files) {
     try {
-        console.log('載入檔案:', file.name);
+        console.log(`載入 ${files.length} 個檔案`);
 
-        const data = await file.arrayBuffer();
-        currentWorkbook = XLSX.read(data, { type: 'array' });
-        currentFileName = file.name;
+        // 如果是第一次載入，使用第一個檔案作為預覽範本
+        const isFirstLoad = selectedFiles.length === 0;
+
+        // 加入新的檔案至列表 (避免重複)
+        for (const file of files) {
+            if (!selectedFiles.find(f => f.name === file.name && f.size === file.size)) {
+                selectedFiles.push(file);
+            }
+        }
+
+        if (isFirstLoad && selectedFiles.length > 0) {
+            const firstFile = selectedFiles[0];
+            const data = await firstFile.arrayBuffer();
+            currentWorkbook = XLSX.read(data, { type: 'array' });
+            currentFileName = firstFile.name;
+
+            // 更新工作表選擇器
+            updateWorksheetSelector();
+
+            // 自動填充產品品號
+            if (!elements.productCode.value) {
+                const baseName = firstFile.name.replace(/\.[^/.]+$/, '');
+                elements.productCode.value = baseName;
+                elements.productCode.classList.add('has-value');
+            }
+        }
 
         // 更新 UI
         elements.fileInfo.style.display = 'block';
-        elements.selectedFileName.textContent = file.name;
         elements.uploadArea.style.display = 'none';
 
-        // 顯示工作簿信息
-        const sheetCount = currentWorkbook.SheetNames.length;
-        elements.workbookInfo.innerHTML = `
-            <p>📊 工作表數量: <strong>${sheetCount}</strong></p>
-            <p>工作表: ${currentWorkbook.SheetNames.slice(0, 5).join(', ')}${sheetCount > 5 ? '...' : ''}</p>
-        `;
-
-        // 自動填充產品品號
-        if (!elements.productCode.value) {
-            const baseName = file.name.replace(/\.[^/.]+$/, '');
-            elements.productCode.value = baseName;
-            elements.productCode.classList.add('has-value');
+        const fileCount = selectedFiles.length;
+        if (fileCount === 1) {
+            elements.selectedFileName.textContent = selectedFiles[0].name;
+        } else {
+            elements.selectedFileName.textContent = `已選取 ${fileCount} 個檔案`;
         }
 
-        // 更新工作表選擇器
-        updateWorksheetSelector();
+        // 顯示工作簿信息 (顯示目前作為範本的檔案)
+        if (currentWorkbook) {
+            const sheetCount = currentWorkbook.SheetNames.length;
+            elements.workbookInfo.innerHTML = `
+                <p>📄 範本檔案: <strong>${currentFileName}</strong></p>
+                <p>📊 工作表數量: <strong>${sheetCount}</strong></p>
+                <p>工作表: ${currentWorkbook.SheetNames.slice(0, 5).join(', ')}${sheetCount > 5 ? '...' : ''}</p>
+                <p class="mt-2 text-primary font-bold">已就緒，將提取共 ${fileCount} 個檔案的數據</p>
+            `;
+        }
 
         // 顯示相關區段
         elements.worksheetGroup.style.display = 'block';
@@ -276,6 +300,7 @@ async function loadFile(file) {
 function removeFile() {
     currentWorkbook = null;
     currentFileName = '';
+    selectedFiles = [];
     elements.fileInput.value = '';
     elements.fileInfo.style.display = 'none';
     elements.uploadArea.style.display = 'block';
@@ -626,18 +651,20 @@ function showConfigDialog() {
         return;
     }
 
-    let html = '<ul class="config-list">';
+    let html = '<ul class="space-y-3">';
     for (let i = 0; i < configs.length; i++) {
         const c = configs[i];
         const savedAt = new Date(c.savedAt).toLocaleString();
         html += `
-            <li class="config-item">
-                <div class="config-item-info">
-                    <strong>${c.name}</strong>
-                    <span>${c.cavityCount || 0} 穴 | ${savedAt}</span>
+            <li class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 hover:border-primary/50 transition-colors">
+                <div class="flex flex-col">
+                    <strong class="text-sm text-slate-700 dark:text-slate-200">${c.name}</strong>
+                    <span class="text-[10px] text-slate-400 font-medium">${c.cavityCount || 0} 穴 | ${savedAt}</span>
                 </div>
-                <button class="btn btn-primary" onclick="loadConfiguration(${i})">載入</button>
-                <button class="btn btn-secondary" onclick="deleteConfiguration(${i})">刪除</button>
+                <div class="flex gap-2">
+                    <button class="px-3 py-1 bg-primary text-white text-[11px] font-bold rounded-lg" onclick="loadConfiguration(${i})">載入</button>
+                    <button class="px-3 py-1 bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[11px] font-bold rounded-lg" onclick="deleteConfiguration(${i})">刪除</button>
+                </div>
             </li>
         `;
     }
@@ -744,7 +771,7 @@ function loadSavedConfigs() {
  * 更新開始處理按鈕狀態
  */
 function updateStartButton() {
-    const hasFile = currentWorkbook !== null;
+    const hasFile = selectedFiles.length > 0;
     const hasCavityCount = parseInt(elements.cavityCount.value) > 0;
     const hasCavityId = document.getElementById('cavity-id-1')?.value?.trim() !== '';
     const hasDataRange = document.getElementById('data-range-1')?.value?.trim() !== '';
@@ -757,7 +784,7 @@ function updateStartButton() {
  * 開始處理
  */
 async function startProcessing() {
-    if (!currentWorkbook) {
+    if (selectedFiles.length === 0) {
         alert('請先上傳檔案');
         return;
     }
@@ -772,8 +799,23 @@ async function startProcessing() {
 
     try {
         const processor = new QIPProcessor(config);
+        const workbooks = [];
 
-        processingResults = await processor.processWorkbook(currentWorkbook, (progress) => {
+        // 逐一讀取檔案 (避免一次讀取太多檔案造成記憶體壓力)
+        for (let i = 0; i < selectedFiles.length; i++) {
+            const file = selectedFiles[i];
+            elements.progressText.textContent = `正在讀取檔案 (${i + 1}/${selectedFiles.length}): ${file.name}`;
+
+            const data = await file.arrayBuffer();
+            const workbook = XLSX.read(data, { type: 'array' });
+            workbook.fileName = file.name; // 用於錯誤記錄
+            workbooks.push(workbook);
+
+            // 讓 UI 有機會更新
+            await new Promise(resolve => setTimeout(resolve, 0));
+        }
+
+        processingResults = await processor.processMultipleWorkbooks(workbooks, (progress) => {
             elements.progressFill.style.width = `${progress.percent}%`;
             elements.progressText.textContent = progress.message;
         });
@@ -801,13 +843,24 @@ function showResults(results) {
     const itemCount = Object.keys(results.inspectionItems).length;
 
     elements.resultSummary.innerHTML = `
-        <h3>✅ 處理成功</h3>
-        <ul>
-            <li>📋 檢驗項目數: <strong>${itemCount}</strong></li>
-            <li>📊 處理工作表數: <strong>${results.processedSheets}</strong></li>
-            <li>🔢 總穴數: <strong>${results.totalCavities}</strong></li>
-        </ul>
-        <p>點擊下方按鈕下載 Excel 結果檔案</p>
+        <h3 class="font-bold flex items-center gap-2 mb-3">
+             <span class="material-icons-round">check_circle</span> 數據提取成功
+        </h3>
+        <div class="grid grid-cols-3 gap-4">
+            <div class="bg-white/50 dark:bg-black/10 p-3 rounded-lg text-center">
+                <p class="text-[10px] uppercase font-bold opacity-60">檢驗項目</p>
+                <p class="text-xl font-bold">${itemCount}</p>
+            </div>
+            <div class="bg-white/50 dark:bg-black/10 p-3 rounded-lg text-center">
+                <p class="text-[10px] uppercase font-bold opacity-60">處理工作表</p>
+                <p class="text-xl font-bold">${results.processedSheets}</p>
+            </div>
+            <div class="bg-white/50 dark:bg-black/10 p-3 rounded-lg text-center">
+                <p class="text-[10px] uppercase font-bold opacity-60">總穴數</p>
+                <p class="text-xl font-bold">${results.totalCavities}</p>
+            </div>
+        </div>
+        <p class="mt-4 text-xs opacity-80">資料處理已完成，您可以點擊下方按鈕下載 Excel 結果檔案。</p>
     `;
 
     // 顯示錯誤日誌（如果有）

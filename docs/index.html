@@ -1,349 +1,774 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html class="light" lang="zh-TW">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QIP 檢驗報告數據提取工具</title>
-    <meta name="description" content="純前端 Excel 檢驗報告數據分析工具，所有處理在本地完成，確保資料隱私">
-    <link rel="stylesheet" href="css/style.css">
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>QIP Data Extract Tool v2.0</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Noto+Sans+TC:wght@300;400;500;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#4472C4",
+                        "background-light": "#F3F4F6",
+                        "background-dark": "#111827",
+                        "card-light": "#FFFFFF",
+                        "card-dark": "#1F2937",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "Noto Sans TC", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #4b5563;
+        }
+
+        /* Preview Table Styles */
+        .preview-table {
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            min-width: 100%;
+        }
+
+        .preview-table th,
+        .preview-table td {
+            border: 1px solid #dee2e6;
+            padding: 6px 10px;
+            text-align: center;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .dark .preview-table th,
+        .dark .preview-table td {
+            border-color: #374151;
+            color: #e5e7eb;
+        }
+
+        .preview-table th {
+            background: #e9ecef;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .dark .preview-table th {
+            background: #374151;
+        }
+
+        .preview-table td:hover {
+            background: rgba(68, 114, 196, 0.1);
+        }
+
+        .preview-table td.selected {
+            background: rgba(68, 114, 196, 0.3);
+        }
+
+        .preview-table td.selection-start {
+            background: #4472C4;
+            color: white;
+        }
+
+        .config-input.has-value {
+            background-color: #FFF8DC;
+        }
+
+        .dark .config-input.has-value {
+            background-color: #374151;
+            border-color: #4472C4;
+        }
+
+        .cavity-group {
+            transition: all 0.25s ease;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
 </head>
 
-<body>
+<body
+    class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 min-h-screen flex flex-col transition-colors duration-200">
     <!-- 隱私保障橫幅 -->
-    <div class="privacy-banner">
-        <span class="privacy-icon">🔒</span>
-        <span>資料隱私保障：所有檔案處理均在您的瀏覽器本地完成，不會上傳至任何伺服器</span>
+    <div
+        class="bg-emerald-600 dark:bg-emerald-800 text-white py-1.5 px-4 text-center text-sm font-medium flex items-center justify-center gap-2 sticky top-0 z-[40]">
+        <span class="material-icons-round text-base">lock</span>
+        資料隱私保障：所有檔案處理均在您的瀏覽器本地完成，不會上傳至任何伺服器
     </div>
 
-    <div class="container">
-        <!-- 標題區 -->
-        <header class="header">
-            <h1>QIP 檢驗報告數據提取工具</h1>
-            <p class="subtitle">Excel 檢驗報告數據分析 · 純前端處理 · 隱私安全</p>
-        </header>
+    <header
+        class="bg-card-light dark:bg-card-dark border-b border-slate-200 dark:border-slate-700 px-6 py-4 flex items-center justify-between sticky top-[34px] z-30">
+        <div class="flex items-center gap-3">
+            <div class="bg-primary p-1.5 rounded-lg">
+                <span class="material-icons-round text-white text-2xl">analytics</span>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold text-slate-900 dark:text-white leading-tight">QIP 檢驗報告數據提取工具</h1>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Excel 數據分析 · 純前端處理 · 隱私安全</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <div
+                class="flex items-center bg-slate-100 dark:bg-slate-800 rounded-full px-3 py-1 text-xs font-medium text-slate-600 dark:text-slate-300">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
+                系統就緒
+            </div>
+            <button class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                onclick="document.documentElement.classList.toggle('dark')">
+                <span class="material-icons-round block dark:hidden">dark_mode</span>
+                <span class="material-icons-round hidden dark:block">light_mode</span>
+            </button>
+        </div>
+    </header>
 
-        <!-- 主要內容區 -->
-        <main class="main-content">
-            <!-- 步驟 1: 檔案上傳 -->
-            <section class="card" id="upload-section">
-                <div class="section-header">
-                    <span class="step-badge">1</span>
-                    <h2>上傳檔案</h2>
-                </div>
-                <div class="upload-area" id="upload-area">
-                    <div class="upload-icon">📁</div>
-                    <p>拖放 Excel 檔案至此處，或</p>
-                    <button type="button" class="btn btn-primary" id="browse-btn">選擇檔案</button>
-                    <input type="file" id="file-input" accept=".xls,.xlsx,.xlsm" hidden>
-                    <p class="file-hint">支援 .xls, .xlsx, .xlsm 格式</p>
-                </div>
-                <div class="file-info" id="file-info" style="display: none;">
-                    <div class="file-name">
-                        <span class="file-icon">📄</span>
-                        <span id="selected-file-name"></span>
-                        <button type="button" class="btn-icon" id="remove-file" title="移除檔案">✕</button>
-                    </div>
-                    <div class="workbook-info" id="workbook-info"></div>
-                    <button type="button" class="btn btn-secondary btn-sm" id="full-reset"
-                        style="margin-top: 10px; width: 100%;">
-                        🔄 完全重置 (清空資料)
-                    </button>
-                </div>
-            </section>
+    <div class="flex flex-1 overflow-hidden">
+        <!-- 側邊欄 -->
+        <aside
+            class="w-64 border-r border-slate-200 dark:border-slate-700 bg-card-light dark:bg-card-dark flex-shrink-0 hidden lg:flex flex-col">
+            <nav class="p-4 space-y-2">
+                <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4 px-2">
+                    處理步驟</p>
+                <a class="flex items-center gap-3 px-3 py-2.5 bg-primary/10 text-primary rounded-lg border border-primary/20"
+                    href="#step1">
+                    <span
+                        class="w-6 h-6 rounded-full bg-primary text-white text-[12px] flex items-center justify-center font-bold">1</span>
+                    <span class="font-medium text-sm">上傳檔案</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                    href="#step2">
+                    <span
+                        class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 text-[12px] flex items-center justify-center font-bold">2</span>
+                    <span class="font-medium text-sm">參數配置</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                    href="#step3">
+                    <span
+                        class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 text-[12px] flex items-center justify-center font-bold">3</span>
+                    <span class="font-medium text-sm">執行處理</span>
+                </a>
 
-            <!-- 步驟 2: 參數配置 -->
-            <section class="card" id="config-section">
-                <div class="section-header">
-                    <span class="step-badge">2</span>
-                    <h2>參數配置</h2>
-                </div>
-
-                <!-- 基本設定 -->
-                <div class="config-group">
-                    <div class="config-group-header basic">基本設定</div>
-                    <div class="config-row">
-                        <label class="config-label required">產品品號</label>
-                        <input type="text" id="product-code" class="config-input" placeholder="用於識別此檔案的品號">
-                        <span class="config-hint">從檔案名自動提取（可編輯）</span>
-                    </div>
-                    <div class="config-row">
-                        <label class="config-label required">模穴數</label>
-                        <select id="cavity-count" class="config-select">
-                            <option value="">-- 請選擇 --</option>
-                            <option value="8">8 穴</option>
-                            <option value="16">16 穴</option>
-                            <option value="24">24 穴</option>
-                            <option value="32">32 穴</option>
-                            <option value="40">40 穴</option>
-                            <option value="48">48 穴</option>
-                        </select>
-                        <span class="config-hint">選擇後會顯示對應的穴組設定</span>
+                <div class="pt-8 px-2">
+                    <div
+                        class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                        <h4 class="text-xs font-bold mb-2 flex items-center gap-2">
+                            <span class="material-icons-round text-sm text-amber-500">info</span>
+                            快速提示
+                        </h4>
+                        <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
+                            您可以將 Excel 檔案直接拖放至右側上傳區。支援 .xls, .xlsx, .xlsm 等多種格式。
+                        </p>
                     </div>
                 </div>
-
-                <!-- 工作表選擇 -->
-                <div class="config-group" id="worksheet-group" style="display: none;">
-                    <div class="config-group-header sample">樣本工作表</div>
-                    <div class="config-row">
-                        <label class="config-label">選擇工作表</label>
-                        <select id="worksheet-select" class="config-select">
-                            <option value="">-- 請先上傳檔案 --</option>
-                        </select>
-                        <button type="button" class="btn btn-secondary" id="preview-worksheet">預覽</button>
-                    </div>
-                </div>
-
-                <!-- 讀取範圍設定 -->
-                <div class="config-group" id="range-group" style="display: none;">
-                    <div class="config-group-header range">讀取範圍設定</div>
-                    <div class="range-notice">
-                        <span class="notice-icon">⚠️</span>
-                        請在下方預覽表格中選擇數據範圍
-                    </div>
-
-                    <!-- 第1-8穴 (必填) -->
-                    <div class="cavity-group" id="cavity-group-1">
-                        <div class="cavity-group-title">第 1-8 穴</div>
-                        <div class="config-row">
-                            <label class="config-label required">穴號範圍</label>
-                            <input type="text" id="cavity-id-1" class="config-input range-input" placeholder="如: K3:R3">
-                            <button type="button" class="btn btn-secondary select-range-btn" data-target="cavity-id-1"
-                                data-type="cavity">選擇</button>
-                        </div>
-                        <div class="config-row">
-                            <label class="config-label required">數據範圍</label>
-                            <input type="text" id="data-range-1" class="config-input range-input"
-                                placeholder="如: K4:R4">
-                            <button type="button" class="btn btn-secondary select-range-btn" data-target="data-range-1"
-                                data-type="data">選擇</button>
-                        </div>
-                    </div>
-
-                    <!-- 第9-16穴 -->
-                    <div class="cavity-group hidden" id="cavity-group-2">
-                        <div class="cavity-group-title">第 9-16 穴</div>
-                        <div class="config-row">
-                            <label class="config-label">穴號範圍</label>
-                            <input type="text" id="cavity-id-2" class="config-input range-input" placeholder="如: K3:R3">
-                            <button type="button" class="btn btn-secondary select-range-btn" data-target="cavity-id-2"
-                                data-type="cavity">選擇</button>
-                        </div>
-                        <div class="config-row">
-                            <label class="config-label">數據範圍</label>
-                            <input type="text" id="data-range-2" class="config-input range-input"
-                                placeholder="如: K4:R4">
-                            <button type="button" class="btn btn-secondary select-range-btn" data-target="data-range-2"
-                                data-type="data">選擇</button>
-                        </div>
-                        <div class="config-row">
-                            <label class="config-label">頁面偏移</label>
-                            <input type="number" id="offset-2" class="config-input" value="1" min="1" max="10">
-                            <span class="config-hint">1=同一頁, 2=下一頁...</span>
-                        </div>
-                    </div>
-
-                    <!-- 第17-24穴 -->
-                    <div class="cavity-group hidden" id="cavity-group-3">
-                        <div class="cavity-group-title">第 17-24 穴</div>
-                        <div class="config-row">
-                            <label class="config-label">穴號範圍</label>
-                            <input type="text" id="cavity-id-3" class="config-input range-input" placeholder="如: K3:R3">
-                            <button type="button" class="btn btn-secondary select-range-btn" data-target="cavity-id-3"
-                                data-type="cavity">選擇</button>
-                        </div>
-                        <div class="config-row">
-                            <label class="config-label">數據範圍</label>
-                            <input type="text" id="data-range-3" class="config-input range-input"
-                                placeholder="如: K4:R4">
-                            <button type="button" class="btn btn-secondary select-range-btn" data-target="data-range-3"
-                                data-type="data">選擇</button>
-                        </div>
-                        <div class="config-row">
-                            <label class="config-label">頁面偏移</label>
-                            <input type="number" id="offset-3" class="config-input" value="1" min="1" max="10">
-                            <span class="config-hint">1=同一頁, 2=下一頁...</span>
-                        </div>
-                    </div>
-
-                    <!-- 第25-32穴 -->
-                    <div class="cavity-group hidden" id="cavity-group-4">
-                        <div class="cavity-group-title">第 25-32 穴</div>
-                        <div class="config-row">
-                            <label class="config-label">穴號範圍</label>
-                            <input type="text" id="cavity-id-4" class="config-input range-input" placeholder="如: K3:R3">
-                            <button type="button" class="btn btn-secondary select-range-btn" data-target="cavity-id-4"
-                                data-type="cavity">選擇</button>
-                        </div>
-                        <div class="config-row">
-                            <label class="config-label">數據範圍</label>
-                            <input type="text" id="data-range-4" class="config-input range-input"
-                                placeholder="如: K4:R4">
-                            <button type="button" class="btn btn-secondary select-range-btn" data-target="data-range-4"
-                                data-type="data">選擇</button>
-                        </div>
-                        <div class="config-row">
-                            <label class="config-label">頁面偏移</label>
-                            <input type="number" id="offset-4" class="config-input" value="1" min="1" max="10">
-                            <span class="config-hint">1=同一頁, 2=下一頁...</span>
-                        </div>
-                    </div>
-
-                    <!-- 第33-40穴 -->
-                    <div class="cavity-group hidden" id="cavity-group-5">
-                        <div class="cavity-group-title">第 33-40 穴</div>
-                        <div class="config-row">
-                            <label class="config-label">穴號範圍</label>
-                            <input type="text" id="cavity-id-5" class="config-input range-input" placeholder="如: K3:R3">
-                            <button type="button" class="btn btn-secondary select-range-btn" data-target="cavity-id-5"
-                                data-type="cavity">選擇</button>
-                        </div>
-                        <div class="config-row">
-                            <label class="config-label">數據範圍</label>
-                            <input type="text" id="data-range-5" class="config-input range-input"
-                                placeholder="如: K4:R4">
-                            <button type="button" class="btn btn-secondary select-range-btn" data-target="data-range-5"
-                                data-type="data">選擇</button>
-                        </div>
-                        <div class="config-row">
-                            <label class="config-label">頁面偏移</label>
-                            <input type="number" id="offset-5" class="config-input" value="1" min="1" max="10">
-                            <span class="config-hint">1=同一頁, 2=下一頁...</span>
-                        </div>
-                    </div>
-
-                    <!-- 第41-48穴 -->
-                    <div class="cavity-group hidden" id="cavity-group-6">
-                        <div class="cavity-group-title">第 41-48 穴</div>
-                        <div class="config-row">
-                            <label class="config-label">穴號範圍</label>
-                            <input type="text" id="cavity-id-6" class="config-input range-input" placeholder="如: K3:R3">
-                            <button type="button" class="btn btn-secondary select-range-btn" data-target="cavity-id-6"
-                                data-type="cavity">選擇</button>
-                        </div>
-                        <div class="config-row">
-                            <label class="config-label">數據範圍</label>
-                            <input type="text" id="data-range-6" class="config-input range-input"
-                                placeholder="如: K4:R4">
-                            <button type="button" class="btn btn-secondary select-range-btn" data-target="data-range-6"
-                                data-type="data">選擇</button>
-                        </div>
-                        <div class="config-row">
-                            <label class="config-label">頁面偏移</label>
-                            <input type="number" id="offset-6" class="config-input" value="1" min="1" max="10">
-                            <span class="config-hint">1=同一頁, 2=下一頁...</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 配置管理 -->
-                <div class="config-group">
-                    <div class="config-group-header config-mgmt">配置管理</div>
-                    <div class="config-actions">
-                        <input type="text" id="config-name" class="config-input" placeholder="配置名稱">
-                        <button type="button" class="btn btn-secondary" id="save-config">💾 保存配置</button>
-                        <button type="button" class="btn btn-secondary" id="load-config">📂 載入配置</button>
-                        <button type="button" class="btn btn-secondary" id="reset-config">🔄 重置</button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 工作表預覽 -->
-            <section class="card" id="preview-section" style="display: none;">
-                <div class="section-header">
-                    <span class="step-badge">📋</span>
-                    <h2>工作表預覽</h2>
-                    <div class="preview-controls">
-                        <button type="button" class="btn btn-secondary btn-sm" id="prev-sheet" title="上一頁工作表">◀</button>
-                        <span id="current-sheet-name"></span>
-                        <button type="button" class="btn btn-secondary btn-sm" id="next-sheet" title="下一頁工作表">▶</button>
-                        <div class="divider-vertical"></div>
-                        <span id="selection-mode-label">選擇模式：<strong id="selection-mode-text">無</strong></span>
-                        <button type="button" class="btn btn-secondary" id="confirm-selection" disabled>確認選擇</button>
-                        <button type="button" class="btn btn-secondary" id="cancel-selection">取消</button>
-                    </div>
-                </div>
-                <div class="preview-container">
-                    <div class="preview-table-wrapper">
-                        <table id="preview-table" class="preview-table"></table>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 步驟 3: 執行處理 -->
-            <section class="card" id="process-section">
-                <div class="section-header">
-                    <span class="step-badge">3</span>
-                    <h2>執行處理</h2>
-                </div>
-                <div class="process-actions">
-                    <button type="button" class="btn btn-primary btn-large" id="start-process" disabled>
-                        🚀 開始處理
-                    </button>
-                </div>
-                <div class="progress-container" id="progress-container" style="display: none;">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progress-fill"></div>
-                    </div>
-                    <div class="progress-text" id="progress-text">準備中...</div>
-                </div>
-            </section>
-
-            <!-- 步驟 4: 結果輸出 -->
-            <section class="card" id="result-section" style="display: none;">
-                <div class="section-header">
-                    <span class="step-badge">4</span>
-                    <h2>處理結果</h2>
-                </div>
-                <div class="result-summary" id="result-summary"></div>
-                <div class="result-actions">
-                    <button type="button" class="btn btn-primary btn-large" id="download-excel">
-                        📥 下載 Excel 檔案
-                    </button>
-                </div>
-                <div class="error-log" id="error-log" style="display: none;">
-                    <h3>處理異常記錄</h3>
-                    <div id="error-list"></div>
-                </div>
-            </section>
-        </main>
-
-        <!-- 使用說明 -->
-        <aside class="help-panel">
-            <details>
-                <summary>📖 使用說明</summary>
-                <div class="help-content">
-                    <h4>【穴號範圍】是什麼？</h4>
-                    <p>檔案中顯示「1號穴」「2號穴」...「8號穴」的儲存格範圍</p>
-
-                    <h4>【數據範圍】是什麼？</h4>
-                    <p>檔案中顯示實際數據（如 5.86, 5.85...）的儲存格範圍</p>
-
-                    <h4>【頁面偏移】是什麼？</h4>
-                    <ul>
-                        <li>1 = 在同一個工作表</li>
-                        <li>2 = 在下一個工作表</li>
-                        <li>3 = 在下下個工作表</li>
-                    </ul>
-                </div>
-            </details>
+            </nav>
+            <div class="mt-auto p-4 border-t border-slate-200 dark:border-slate-700">
+                <a class="flex items-center gap-2 text-xs text-slate-400 hover:text-primary transition-colors" href="#">
+                    <span class="material-icons-round text-sm">menu_book</span>
+                    查看使用說明手冊
+                </a>
+            </div>
         </aside>
 
-        <!-- 頁尾 -->
-        <footer class="footer">
-            <p>QIP Data Extract Tool v1.0 | 純前端處理，資料不離開您的設備</p>
-            <p class="tech-stack">Powered by SheetJS | <a href="https://github.com" target="_blank">GitHub</a></p>
-        </footer>
+        <!-- 主要內容區 -->
+        <main class="flex-1 overflow-y-auto custom-scrollbar bg-slate-100 dark:bg-slate-900/50">
+            <div class="max-w-6xl mx-auto p-6 space-y-6">
+                <!-- 步驟 1: 檔案上傳 -->
+                <section
+                    class="bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
+                    id="step1">
+                    <div class="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span
+                                class="w-6 h-6 rounded bg-primary text-white text-xs flex items-center justify-center font-bold">1</span>
+                            <h2 class="font-bold text-slate-800 dark:text-white">檔案上傳與狀態</h2>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div id="upload-area"
+                            class="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-8 text-center hover:border-primary/50 transition-all group bg-slate-50/50 dark:bg-slate-800/30 cursor-pointer">
+                            <div class="flex flex-col items-center">
+                                <div
+                                    class="w-16 h-16 bg-amber-100 dark:bg-amber-900/30 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                    <span class="material-icons-round text-amber-500 text-3xl">folder</span>
+                                </div>
+                                <h3 class="text-sm font-semibold mb-1">拖放 Excel 檔案至此處</h3>
+                                <p class="text-xs text-slate-400 mb-4">支援 .xls, .xlsx, .xlsm 格式</p>
+                                <button id="browse-btn"
+                                    class="bg-primary hover:bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 mx-auto">
+                                    <span class="material-icons-round text-sm">cloud_upload</span>
+                                    選擇檔案
+                                </button>
+                                <input type="file" id="file-input" accept=".xls,.xlsx,.xlsm" multiple hidden>
+                            </div>
+                        </div>
+
+                        <!-- 檔案資訊區 -->
+                        <div id="file-info"
+                            class="mt-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700"
+                            style="display: none;">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-3">
+                                    <div
+                                        class="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
+                                        <span
+                                            class="material-icons-round text-emerald-600 dark:text-emerald-400">description</span>
+                                    </div>
+                                    <div>
+                                        <p id="selected-file-name"
+                                            class="text-sm font-bold text-slate-700 dark:text-slate-200"></p>
+                                        <div id="workbook-info" class="text-[11px] text-slate-500 dark:text-slate-400">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button id="remove-file"
+                                        class="p-2 text-slate-400 hover:text-rose-500 transition-colors">
+                                        <span class="material-icons-round">delete</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <button id="full-reset"
+                                class="w-full py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-2">
+                                <span class="material-icons-round text-sm">refresh</span>
+                                完全重置 (清空資料)
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 步驟 2: 參數配置 -->
+                <section
+                    class="bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
+                    id="step2">
+                    <div class="p-4 border-b border-slate-100 dark:border-slate-700 bg-primary/5">
+                        <div class="flex items-center gap-2">
+                            <span
+                                class="w-6 h-6 rounded bg-primary text-white text-xs flex items-center justify-center font-bold">2</span>
+                            <h2 class="font-bold text-slate-800 dark:text-white">參數配置與管理</h2>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <!-- 基本參數 -->
+                        <div class="mb-8">
+                            <div class="flex items-center gap-2 mb-4">
+                                <span class="bg-primary w-1 h-4 rounded-full"></span>
+                                <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300">基本參數設定</h3>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div class="space-y-1.5">
+                                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400">產品品號
+                                        <span class="text-rose-500">*</span></label>
+                                    <input id="product-code"
+                                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 outline-none config-input"
+                                        placeholder="用於識別此檔案的品號" type="text" />
+                                    <p class="text-[10px] text-slate-400">從檔案名自動提取（可編輯）</p>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400">模穴數
+                                        <span class="text-rose-500">*</span></label>
+                                    <select id="cavity-count"
+                                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 outline-none">
+                                        <option value="">-- 請選擇 --</option>
+                                        <option value="8">8 穴</option>
+                                        <option value="16">16 穴</option>
+                                        <option value="24">24 穴</option>
+                                        <option value="32">32 穴</option>
+                                        <option value="40">40 穴</option>
+                                        <option value="48">48 穴</option>
+                                    </select>
+                                    <p class="text-[10px] text-slate-400">選擇後會顯示對應的穴組設定</p>
+                                </div>
+                                <!-- 工作表選擇 (動態顯示) -->
+                                <div id="worksheet-group" class="space-y-1.5" style="display: none;">
+                                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400">樣本工作表
+                                        <span class="text-rose-500">*</span></label>
+                                    <div class="flex gap-2">
+                                        <select id="worksheet-select"
+                                            class="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 outline-none">
+                                            <option value="">-- 請先上傳檔案 --</option>
+                                        </select>
+                                        <button id="preview-worksheet"
+                                            class="bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 px-3 rounded-lg text-sm">
+                                            <span class="material-icons-round text-sm">visibility</span>
+                                        </button>
+                                    </div>
+                                    <p class="text-[10px] text-slate-400">選擇後將顯示預覽表格</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 讀取範圍設定 (動態顯示) -->
+                        <div id="range-group" class="pt-6 border-t border-slate-100 dark:border-slate-800 mb-8"
+                            style="display: none;">
+                            <div class="flex items-center gap-2 mb-4">
+                                <span class="bg-emerald-500 w-1 h-4 rounded-full"></span>
+                                <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300">讀取範圍設定</h3>
+                                <span
+                                    class="ml-auto text-[10px] text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-2 py-0.5 rounded flex items-center gap-1">
+                                    <span class="material-icons-round text-xs">tips_and_updates</span>
+                                    請在下方預覽表格中選擇數據範圍
+                                </span>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                                <!-- 第1-8穴 -->
+                                <div id="cavity-group-1"
+                                    class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-bold text-primary">第 1-8 穴</span>
+                                        <span class="text-[10px] text-slate-400 font-mono">REQUIRED</span>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <div>
+                                            <label
+                                                class="block text-[10px] font-bold text-slate-400 uppercase mb-1">穴號範圍
+                                                (如: K3:R3)</label>
+                                            <div class="flex gap-2">
+                                                <input id="cavity-id-1" type="text"
+                                                    class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs config-input range-input"
+                                                    placeholder="K3:R3">
+                                                <button
+                                                    class="bg-slate-200 dark:bg-slate-700 px-2 rounded-lg text-xs select-range-btn"
+                                                    data-target="cavity-id-1" data-type="cavity">選擇</button>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block text-[10px] font-bold text-slate-400 uppercase mb-1">數據範圍
+                                                (如: K4:R4)</label>
+                                            <div class="flex gap-2">
+                                                <input id="data-range-1" type="text"
+                                                    class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs config-input range-input"
+                                                    placeholder="K4:R4">
+                                                <button
+                                                    class="bg-slate-200 dark:bg-slate-700 px-2 rounded-lg text-xs select-range-btn"
+                                                    data-target="data-range-1" data-type="data">選擇</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 第9-16穴 -->
+                                <div id="cavity-group-2"
+                                    class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4 hidden">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-bold text-slate-500">第 9-16 穴</span>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <div>
+                                            <label
+                                                class="block text-[10px] font-bold text-slate-400 uppercase mb-1">穴號範圍</label>
+                                            <div class="flex gap-2">
+                                                <input id="cavity-id-2" type="text"
+                                                    class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs config-input range-input">
+                                                <button
+                                                    class="bg-slate-200 dark:bg-slate-700 px-2 rounded-lg text-xs select-range-btn"
+                                                    data-target="cavity-id-2" data-type="cavity">選擇</button>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block text-[10px] font-bold text-slate-400 uppercase mb-1">數據範圍</label>
+                                            <div class="flex gap-2">
+                                                <input id="data-range-2" type="text"
+                                                    class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs config-input range-input">
+                                                <button
+                                                    class="bg-slate-200 dark:bg-slate-700 px-2 rounded-lg text-xs select-range-btn"
+                                                    data-target="data-range-2" data-type="data">選擇</button>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <label class="text-[10px] font-bold text-slate-400 uppercase">頁面偏移</label>
+                                            <input id="offset-2" type="number" value="1" min="1" max="10"
+                                                class="w-16 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-0.5 text-xs">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 第17-24穴 -->
+                                <div id="cavity-group-3"
+                                    class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4 hidden">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-bold text-slate-500">第 17-24 穴</span>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <div>
+                                            <label
+                                                class="block text-[10px] font-bold text-slate-400 uppercase mb-1">穴號範圍</label>
+                                            <div class="flex gap-2">
+                                                <input id="cavity-id-3" type="text"
+                                                    class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs config-input range-input">
+                                                <button
+                                                    class="bg-slate-200 dark:bg-slate-700 px-2 rounded-lg text-xs select-range-btn"
+                                                    data-target="cavity-id-3" data-type="cavity">選擇</button>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block text-[10px] font-bold text-slate-400 uppercase mb-1">數據範圍</label>
+                                            <div class="flex gap-2">
+                                                <input id="data-range-3" type="text"
+                                                    class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs config-input range-input">
+                                                <button
+                                                    class="bg-slate-200 dark:bg-slate-700 px-2 rounded-lg text-xs select-range-btn"
+                                                    data-target="data-range-3" data-type="data">選擇</button>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <label class="text-[10px] font-bold text-slate-400 uppercase">頁面偏移</label>
+                                            <input id="offset-3" type="number" value="1" min="1" max="10"
+                                                class="w-16 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-0.5 text-xs">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 第25-32穴 -->
+                                <div id="cavity-group-4"
+                                    class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4 hidden">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-bold text-slate-500">第 25-32 穴</span>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <div>
+                                            <label
+                                                class="block text-[10px] font-bold text-slate-400 uppercase mb-1">穴號範圍</label>
+                                            <div class="flex gap-2">
+                                                <input id="cavity-id-4" type="text"
+                                                    class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs config-input range-input">
+                                                <button
+                                                    class="bg-slate-200 dark:bg-slate-700 px-2 rounded-lg text-xs select-range-btn"
+                                                    data-target="cavity-id-4" data-type="cavity">選擇</button>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block text-[10px] font-bold text-slate-400 uppercase mb-1">數據範圍</label>
+                                            <div class="flex gap-2">
+                                                <input id="data-range-4" type="text"
+                                                    class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs config-input range-input">
+                                                <button
+                                                    class="bg-slate-200 dark:bg-slate-700 px-2 rounded-lg text-xs select-range-btn"
+                                                    data-target="data-range-4" data-type="data">選擇</button>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <label class="text-[10px] font-bold text-slate-400 uppercase">頁面偏移</label>
+                                            <input id="offset-4" type="number" value="1" min="1" max="10"
+                                                class="w-16 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-0.5 text-xs">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 第33-40穴 -->
+                                <div id="cavity-group-5"
+                                    class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4 hidden">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-bold text-slate-500">第 33-40 穴</span>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <div>
+                                            <label
+                                                class="block text-[10px] font-bold text-slate-400 uppercase mb-1">穴號範圍</label>
+                                            <div class="flex gap-2">
+                                                <input id="cavity-id-5" type="text"
+                                                    class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs config-input range-input">
+                                                <button
+                                                    class="bg-slate-200 dark:bg-slate-700 px-2 rounded-lg text-xs select-range-btn"
+                                                    data-target="cavity-id-5" data-type="cavity">選擇</button>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block text-[10px] font-bold text-slate-400 uppercase mb-1">數據範圍</label>
+                                            <div class="flex gap-2">
+                                                <input id="data-range-5" type="text"
+                                                    class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs config-input range-input">
+                                                <button
+                                                    class="bg-slate-200 dark:bg-slate-700 px-2 rounded-lg text-xs select-range-btn"
+                                                    data-target="data-range-5" data-type="data">選擇</button>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <label class="text-[10px] font-bold text-slate-400 uppercase">頁面偏移</label>
+                                            <input id="offset-5" type="number" value="1" min="1" max="10"
+                                                class="w-16 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-0.5 text-xs">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 第41-48穴 -->
+                                <div id="cavity-group-6"
+                                    class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4 hidden">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-bold text-slate-500">第 41-48 穴</span>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <div>
+                                            <label
+                                                class="block text-[10px] font-bold text-slate-400 uppercase mb-1">穴號範圍</label>
+                                            <div class="flex gap-2">
+                                                <input id="cavity-id-6" type="text"
+                                                    class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs config-input range-input">
+                                                <button
+                                                    class="bg-slate-200 dark:bg-slate-700 px-2 rounded-lg text-xs select-range-btn"
+                                                    data-target="cavity-id-6" data-type="cavity">選擇</button>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label
+                                                class="block text-[10px] font-bold text-slate-400 uppercase mb-1">數據範圍</label>
+                                            <div class="flex gap-2">
+                                                <input id="data-range-6" type="text"
+                                                    class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs config-input range-input">
+                                                <button
+                                                    class="bg-slate-200 dark:bg-slate-700 px-2 rounded-lg text-xs select-range-btn"
+                                                    data-target="data-range-6" data-type="data">選擇</button>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <label class="text-[10px] font-bold text-slate-400 uppercase">頁面偏移</label>
+                                            <input id="offset-6" type="number" value="1" min="1" max="10"
+                                                class="w-16 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-2 py-0.5 text-xs">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 配置管理 -->
+                        <div class="pt-6 border-t border-slate-100 dark:border-slate-800">
+                            <div class="flex items-center gap-2 mb-4">
+                                <span class="bg-blue-400 w-1 h-4 rounded-full"></span>
+                                <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300">配置管理</h3>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-3">
+                                <div class="flex-1 min-w-[200px]">
+                                    <input id="config-name"
+                                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 outline-none"
+                                        placeholder="輸入配置名稱以儲存或搜尋" type="text" />
+                                </div>
+                                <button id="save-config"
+                                    class="flex items-center gap-1.5 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-sm font-medium transition-colors">
+                                    <span class="material-icons-round text-sm">save</span>
+                                    保存配置
+                                </button>
+                                <button id="load-config"
+                                    class="flex items-center gap-1.5 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-sm font-medium transition-colors">
+                                    <span class="material-icons-round text-sm text-amber-500">folder_open</span>
+                                    載入配置
+                                </button>
+                                <button id="reset-config"
+                                    class="flex items-center gap-1.5 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-sm font-medium transition-colors">
+                                    <span class="material-icons-round text-sm text-rose-500">refresh</span>
+                                    重置
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 工作表預覽區 -->
+                <section id="preview-section"
+                    class="bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
+                    style="display: none;">
+                    <div
+                        class="p-4 border-b border-slate-100 dark:border-slate-700 flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex items-center gap-2">
+                            <div class="bg-indigo-500 p-1 rounded">
+                                <span class="material-icons-round text-white text-sm">table_view</span>
+                            </div>
+                            <h2 class="font-bold text-slate-800 dark:text-white">工作表預覽</h2>
+                            <span id="current-sheet-name"
+                                class="ml-2 py-0.5 px-2 bg-slate-100 dark:bg-slate-800 rounded text-xs font-mono text-indigo-600 dark:text-indigo-400"></span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="flex border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+                                <button id="prev-sheet"
+                                    class="px-3 py-1 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors border-r border-slate-200 dark:border-slate-700">
+                                    <span class="material-icons-round text-sm">chevron_left</span>
+                                </button>
+                                <button id="next-sheet"
+                                    class="px-3 py-1 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors">
+                                    <span class="material-icons-round text-sm">chevron_right</span>
+                                </button>
+                            </div>
+                            <div class="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
+                            <div class="text-[11px] text-slate-500 flex items-center gap-1">
+                                模式: <strong id="selection-mode-text" class="text-primary uppercase">無</strong>
+                            </div>
+                            <div class="flex gap-2">
+                                <button id="confirm-selection" disabled
+                                    class="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-1">
+                                    <span class="material-icons-round text-xs">check</span> 確認
+                                </button>
+                                <button id="cancel-selection"
+                                    class="px-3 py-1.5 bg-slate-500 hover:bg-slate-600 text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-1">
+                                    <span class="material-icons-round text-xs">close</span> 取消
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <div class="overflow-auto max-h-[500px] custom-scrollbar">
+                            <table id="preview-table" class="preview-table"></table>
+                        </div>
+                        <div id="no-data-placeholder"
+                            class="py-20 flex flex-col items-center justify-center text-slate-400"
+                            style="display: none;">
+                            <span class="material-icons-round text-4xl mb-2 opacity-20">table_view</span>
+                            <p class="text-sm">尚未有可顯示的數據</p>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                    <!-- 步驟 3: 執行與匯出 -->
+                    <section
+                        class="xl:col-span-1 bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col"
+                        id="step3">
+                        <div class="p-4 border-b border-slate-100 dark:border-slate-700">
+                            <div class="flex items-center gap-2">
+                                <span
+                                    class="w-6 h-6 rounded bg-primary text-white text-xs flex items-center justify-center font-bold">3</span>
+                                <h2 class="font-bold text-slate-800 dark:text-white">執行與匯出</h2>
+                            </div>
+                        </div>
+                        <div class="p-8 flex-1 flex flex-col items-center justify-center space-y-6">
+                            <button id="start-process" disabled
+                                class="w-full bg-primary hover:bg-blue-600 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 disabled:border-slate-200 dark:disabled:border-slate-700 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-primary/20">
+                                <span class="material-icons-round">rocket_launch</span>
+                                開始處理
+                            </button>
+
+                            <!-- 進度條 -->
+                            <div id="progress-container" class="w-full space-y-2" style="display: none;">
+                                <div class="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                    <div id="progress-fill"
+                                        class="h-full bg-gradient-to-r from-primary to-emerald-500 w-0 transition-all duration-300">
+                                    </div>
+                                </div>
+                                <p id="progress-text"
+                                    class="text-center text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                                    準備中...</p>
+                            </div>
+
+                            <p class="text-xs text-slate-400 text-center px-4">請完成上傳並填寫必要參數以啟用處理按鈕</p>
+                        </div>
+                    </section>
+
+                    <!-- 處理結果 -->
+                    <section id="result-section"
+                        class="xl:col-span-2 bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col"
+                        style="display: none;">
+                        <div
+                            class="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <div class="bg-emerald-500 p-1 rounded">
+                                    <span class="material-icons-round text-white text-sm">task_alt</span>
+                                </div>
+                                <h2 class="font-bold text-slate-800 dark:text-white">處理結果</h2>
+                            </div>
+                        </div>
+                        <div class="p-6 flex-1 space-y-6">
+                            <div id="result-summary"
+                                class="p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800 rounded-xl text-emerald-800 dark:text-emerald-300">
+                                <!-- 結果摘要顯示於此 -->
+                            </div>
+                            <button id="download-excel"
+                                class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-500/20">
+                                <span class="material-icons-round">download</span>
+                                下載 Excel 檔案
+                            </button>
+                        </div>
+                        <!-- 異常記錄 -->
+                        <div id="error-log"
+                            class="p-4 bg-rose-50 dark:bg-rose-900/20 border-t border-rose-100 dark:border-rose-800"
+                            style="display: none;">
+                            <h3 class="text-xs font-bold text-rose-700 dark:text-rose-400 mb-2 flex items-center gap-2">
+                                <span class="material-icons-round text-sm">warning</span> 處理異常記錄
+                            </h3>
+                            <div id="error-list"
+                                class="text-[11px] text-rose-600 dark:text-rose-400 space-y-1 max-h-32 overflow-y-auto custom-scrollbar">
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <footer class="mt-8 text-center pb-8 border-t border-slate-100 dark:border-slate-800 pt-8">
+                    <div class="flex flex-wrap justify-center gap-8 mb-6">
+                        <div class="flex flex-col">
+                            <span class="text-2xl font-bold text-slate-700 dark:text-slate-300">v1.2.4</span>
+                            <span class="text-xs text-slate-400">版本</span>
+                        </div>
+                        <div class="w-px h-10 bg-slate-200 dark:bg-slate-700 hidden sm:block"></div>
+                        <div class="flex flex-col">
+                            <span class="text-2xl font-bold text-slate-700 dark:text-slate-300">350ms</span>
+                            <span class="text-xs text-slate-400">平均提取耗時</span>
+                        </div>
+                        <div class="w-px h-10 bg-slate-200 dark:bg-slate-700 hidden sm:block"></div>
+                        <div class="flex flex-col">
+                            <span class="text-2xl font-bold text-slate-700 dark:text-slate-300">0KB</span>
+                            <span class="text-xs text-slate-400">雲端存儲佔用</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-500">Powered by SheetJS | <a class="text-primary hover:underline"
+                            href="https://github.com/Chun-Chieh-Chang/QIP-Data-Extract-Web-Tool">GitHub Repository</a>
+                    </p>
+                </footer>
+            </div>
+        </main>
     </div>
 
     <!-- 配置載入對話框 -->
-    <dialog id="config-dialog">
-        <div class="dialog-header">
-            <h3>載入配置</h3>
-            <button type="button" class="dialog-close" id="close-config-dialog">✕</button>
+    <dialog id="config-dialog"
+        class="bg-white dark:bg-card-dark rounded-2xl shadow-2xl p-0 w-full max-w-md overflow-hidden backdrop:bg-slate-900/50">
+        <div class="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between bg-primary/5">
+            <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                <span class="material-icons-round text-primary">folder_open</span>
+                載入配置
+            </h3>
+            <button id="close-config-dialog" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                <span class="material-icons-round">close</span>
+            </button>
         </div>
-        <div class="dialog-content">
-            <div id="config-list"></div>
+        <div class="p-6 max-h-[60vh] overflow-y-auto custom-scrollbar">
+            <div id="config-list" class="space-y-3">
+                <!-- 配置列表動態顯示 -->
+            </div>
         </div>
     </dialog>
 
@@ -357,6 +782,13 @@
     <script src="js/processor.js?v=1.2"></script>
     <script src="js/excel-exporter.js?v=1.2"></script>
     <script src="js/app.js?v=1.2"></script>
+
+    <script>
+        // 初始化深色模式
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            // document.documentElement.classList.add('dark');
+        }
+    </script>
 </body>
 
 </html>
