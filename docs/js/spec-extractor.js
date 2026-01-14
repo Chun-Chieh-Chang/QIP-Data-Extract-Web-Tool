@@ -110,13 +110,15 @@ class SpecificationExtractor {
                 const cellAddr = XLSX.utils.encode_cell({ r: r, c: 0 });
                 const cell = worksheet[cellAddr];
 
-                if (cell && cell.v !== undefined) {
-                    const cellValue = String(cell.v).trim().replace(/[()]/g, '');
+                if (cell) {
+                    const cellRawValue = cell.w || String(cell.v || '').trim();
+                    const cellCleanValue = cellRawValue.replace(/[()]/g, '').trim();
 
-                    // 檢查是否匹配
-                    if (cellValue === cleanItemName ||
-                        cellValue.includes(cleanItemName) ||
-                        cleanItemName.includes(cellValue)) {
+                    // 檢查是否匹配 (支援精確匹配或去括號後的匹配)
+                    if (cellRawValue === itemName ||
+                        cellCleanValue === cleanItemName ||
+                        cellRawValue.includes(itemName) ||
+                        itemName.includes(cellRawValue)) {
 
                         const rowSpec = this.readSpecificationFromRow(worksheet, r);
                         if (rowSpec.isValid) {

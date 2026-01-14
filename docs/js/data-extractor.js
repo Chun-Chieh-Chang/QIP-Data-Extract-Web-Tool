@@ -202,12 +202,16 @@ class DataExtractor {
             for (let c = 0; c < dataRangeParsed.startCol - 1; c++) {
                 const cellAddr = XLSX.utils.encode_cell({ r: dataRow, c: c });
                 const cell = worksheet[cellAddr];
-                if (cell && cell.v !== undefined && String(cell.v).trim() !== '') {
-                    const value = String(cell.v).trim()
-                        .replace(/[()]/g, '');
-                    if (value && !this.isNumericString(value)) {
-                        inspectionItem = value;
-                        break;
+                if (cell) {
+                    // 優先使用格式化後的內容 (cell.w)，以處理 (1), (2) 等會被 Excel 視為數字的格式
+                    const cellValue = cell.w || String(cell.v || '').trim();
+                    if (cellValue && cellValue !== '0') {
+                        // 檢查是否為純數字字串，不包含括號
+                        // 如果包含括號如 (1)，isNumericString 會回傳 false，從而正確識別為檢驗項目
+                        if (!this.isNumericString(cellValue)) {
+                            inspectionItem = cellValue;
+                            break;
+                        }
                     }
                 }
             }
