@@ -190,26 +190,44 @@ class SpecificationExtractor {
             const upperSignCell = worksheet[XLSX.utils.encode_cell({ r: row, c: upperSignCol })];
             const upperTolCell = worksheet[XLSX.utils.encode_cell({ r: row, c: upperTolCol })];
             const upperSign = upperSignCell ? String(upperSignCell.v || '').trim() : '+';
-            let upperTol = (upperTolCell && !isNaN(parseFloat(upperTolCell.v))) ? Math.abs(parseFloat(upperTolCell.v)) : 0;
+            let upperTolVal = (upperTolCell && !isNaN(parseFloat(upperTolCell.v))) ? Math.abs(parseFloat(upperTolCell.v)) : 0;
 
             // 讀取下公差 (第二行 G, H 欄)
             const lowerSignCell = worksheet[XLSX.utils.encode_cell({ r: row + 1, c: lowerSignCol })];
             const lowerTolCell = worksheet[XLSX.utils.encode_cell({ r: row + 1, c: lowerTolCol })];
             const lowerSign = lowerSignCell ? String(lowerSignCell.v || '').trim() : '-';
-            let lowerTol = (lowerTolCell && !isNaN(parseFloat(lowerTolCell.v))) ? Math.abs(parseFloat(lowerTolCell.v)) : 0;
+            let lowerTolVal = (lowerTolCell && !isNaN(parseFloat(lowerTolCell.v))) ? Math.abs(parseFloat(lowerTolCell.v)) : 0;
 
-            // 驗證公差符號並設定公差值 (比照 VBA 邏輯)
+            // 根據符號計算實際的偏移量 (Offsets)
+            // 理解符號意義：+ 代表增加，- 代表減少，± 代表雙向
+            let upperOffset = 0;
+            let lowerOffset = 0;
+
             if (upperSign === '±') {
-                spec.upperTolerance = upperTol;
-                spec.lowerTolerance = upperTol;
+                upperOffset = upperTolVal;
+                lowerOffset = -upperTolVal;
             } else {
-                spec.upperTolerance = upperTol;
-                spec.lowerTolerance = lowerTol;
+                // 上公差行：如果是 + 符號則為正偏移，如果是 - 符號則為負偏移
+                upperOffset = (upperSign === '-') ? -upperTolVal : upperTolVal;
+                // 下公差行：如果是 - 符號則為負偏移，如果是 + 符號則為正偏移
+                lowerOffset = (lowerSign === '+') ? lowerTolVal : -lowerTolVal;
             }
 
+            spec.upperTolerance = Math.abs(upperOffset);
+            spec.lowerTolerance = Math.abs(lowerOffset);
+
             // 計算 USL 和 LSL
-            spec.usl = spec.nominalValue + spec.upperTolerance;
-            spec.lsl = spec.nominalValue - spec.lowerTolerance;
+            // 邏輯上：上限 = 基準 + 偏移1, 下限 = 基準 + 偏移2
+            spec.usl = spec.nominalValue + upperOffset;
+            spec.lsl = spec.nominalValue + lowerOffset;
+
+            // 確保 usl 永遠是大於等於 lsl 的那個
+            if (spec.usl < spec.lsl) {
+                const temp = spec.usl;
+                spec.usl = spec.lsl;
+                spec.lsl = temp;
+            }
+
             spec.isValid = true;
 
             return spec;
