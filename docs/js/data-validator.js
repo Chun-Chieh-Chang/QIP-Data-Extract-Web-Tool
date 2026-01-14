@@ -9,6 +9,18 @@ class DataValidator {
     static DATA_START_ROW = 3; // 數據從第3行開始（1-indexed: 第1行標題，第2行規格，第3行開始是數據）
     static CAVITY_START_COLUMN = 2; // 穴號從第2列（B列）開始
 
+    // 規格表欄位索引 (0-indexed)
+    static SPEC_COLUMNS = {
+        TOOL: 2,       // C欄：檢測工具代碼
+        SYMBOL: 3,     // D欄：規格符號
+        NOMINAL_1: 4,  // E欄：基準值1
+        NOMINAL_2: 5,  // F欄：基準值2
+        UPPER_SIGN: 6, // G欄：上公差符號
+        UPPER_TOL: 7,  // H欄：上公差數值
+        LOWER_SIGN: 6, // G欄：下公差符號 (第二行)
+        LOWER_TOL: 7   // H欄：下公差數值 (第二行)
+    };
+
     /**
      * 驗證工作表是否為有效的數據工作表
      * @param {Object} worksheet - SheetJS worksheet object
@@ -37,7 +49,7 @@ class DataValidator {
             // 檢查是否有穴號列（至少要有B列）
             const b1Value = this.getCellValue(worksheet, 'B1');
             const b2Value = this.getCellValue(worksheet, 'B2');
-            if ((!b1Value || String(b1Value).trim() === '') && 
+            if ((!b1Value || String(b1Value).trim() === '') &&
                 (!b2Value || String(b2Value).trim() === '')) {
                 return false;
             }
@@ -66,7 +78,7 @@ class DataValidator {
     static getValidDataRange(worksheet) {
         try {
             const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1');
-            
+
             // 獲取最後一行（A列）
             let lastRow = range.e.r + 1; // 1-indexed
             for (let r = range.e.r; r >= 0; r--) {
@@ -81,7 +93,7 @@ class DataValidator {
 
             // 獲取最後一列
             let lastCol = range.e.c + 1; // 1-indexed
-            
+
             return {
                 startRow: 1,
                 endRow: lastRow,
@@ -103,19 +115,19 @@ class DataValidator {
         try {
             const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1');
             let cavityCount = 0;
-            const statsKeywords = ['最大值', '最小值', '平均值', '標準差', '範圍', 
-                                   'Max', 'Min', 'Average', 'Avg', 'StdDev', 'Range'];
+            const statsKeywords = ['最大值', '最小值', '平均值', '標準差', '範圍',
+                'Max', 'Min', 'Average', 'Avg', 'StdDev', 'Range'];
 
             // 從第2列開始計數，直到遇到統計列
             for (let c = 1; c <= range.e.c; c++) {
                 const cellAddr = XLSX.utils.encode_cell({ r: 0, c: c });
                 const cellValue = worksheet[cellAddr] ? String(worksheet[cellAddr].v || '').trim() : '';
-                
+
                 // 檢查是否為統計列
                 if (this.isStatisticsColumn(cellValue, statsKeywords)) {
                     break;
                 }
-                
+
                 cavityCount++;
             }
 
@@ -183,6 +195,30 @@ class DataValidator {
             console.error('DataValidator.parseRangeString error:', error);
             return null;
         }
+    }
+
+    /**
+     * 檢查字串是否為數字
+     * @param {string} str 
+     * @returns {boolean}
+     */
+    static isNumericString(str) {
+        if (str === null || str === undefined) return false;
+        const s = String(str).trim();
+        return s !== '' && !isNaN(parseFloat(s)) && isFinite(s);
+    }
+
+    /**
+     * 清理儲存格值（僅保留數字相關字元）
+     * @param {*} value 
+     * @returns {string}
+     */
+    static cleanCellValue(value) {
+        if (value === null || value === undefined) return '';
+        let str = String(value).trim();
+        // 移除常見的非數字字符但保留小數點和負號
+        str = str.replace(/[^\d.\-]/g, '');
+        return str;
     }
 }
 

@@ -145,30 +145,23 @@ class SpecificationExtractor {
         const spec = this.createSpecificationData();
 
         try {
-            // 定義欄位索引（根據 VBA SpecificationExtractor.bas 定義，1-indexed 轉 0-indexed）
-            const toolCol = 2;      // C欄：檢測工具代碼
-            const symbolCol = 3;    // D欄：規格符號
-            const nominalCol1 = 4;  // E欄：基準值1
-            const nominalCol2 = 5;  // F欄：基準值2
-            const upperSignCol = 6; // G欄：上公差符號
-            const upperTolCol = 7;  // H欄：上公差數值
-            const lowerSignCol = 6; // G欄：下公差符號 (第二行)
-            const lowerTolCol = 7;  // H欄：下公差數值 (第二行)
+            // 使用 DataValidator 定義的欄位索引 (0-indexed)
+            const cols = DataValidator.SPEC_COLUMNS;
 
             // 檢查是否有檢測工具代碼（識別規格行）
-            const toolCell = worksheet[XLSX.utils.encode_cell({ r: row, c: toolCol })];
+            const toolCell = worksheet[XLSX.utils.encode_cell({ r: row, c: cols.TOOL })];
             const toolVal = toolCell ? String(toolCell.v || '').trim() : '';
             if (!toolVal) return spec;
 
             // 讀取符號
-            const symbolCell = worksheet[XLSX.utils.encode_cell({ r: row, c: symbolCol })];
+            const symbolCell = worksheet[XLSX.utils.encode_cell({ r: row, c: cols.SYMBOL })];
             spec.symbol = symbolCell ? String(symbolCell.v || '').trim() : '';
 
             // 讀取基準值（採用與 VBA 相同的搜尋順序：E(row) -> F(row) -> E(row+1) -> F(row+1)）
             let nominalValue = null;
             const searchTargets = [
-                { r: row, c: nominalCol1 }, { r: row, c: nominalCol2 },
-                { r: row + 1, c: nominalCol1 }, { r: row + 1, c: nominalCol2 }
+                { r: row, c: cols.NOMINAL_1 }, { r: row, c: cols.NOMINAL_2 },
+                { r: row + 1, c: cols.NOMINAL_1 }, { r: row + 1, c: cols.NOMINAL_2 }
             ];
 
             for (const target of searchTargets) {
@@ -187,14 +180,14 @@ class SpecificationExtractor {
             spec.target = nominalValue;
 
             // 讀取上公差 (第一行 G, H 欄)
-            const upperSignCell = worksheet[XLSX.utils.encode_cell({ r: row, c: upperSignCol })];
-            const upperTolCell = worksheet[XLSX.utils.encode_cell({ r: row, c: upperTolCol })];
+            const upperSignCell = worksheet[XLSX.utils.encode_cell({ r: row, c: cols.UPPER_SIGN })];
+            const upperTolCell = worksheet[XLSX.utils.encode_cell({ r: row, c: cols.UPPER_TOL })];
             const upperSign = upperSignCell ? String(upperSignCell.v || '').trim() : '+';
             let upperTolVal = (upperTolCell && !isNaN(parseFloat(upperTolCell.v))) ? Math.abs(parseFloat(upperTolCell.v)) : 0;
 
             // 讀取下公差 (第二行 G, H 欄)
-            const lowerSignCell = worksheet[XLSX.utils.encode_cell({ r: row + 1, c: lowerSignCol })];
-            const lowerTolCell = worksheet[XLSX.utils.encode_cell({ r: row + 1, c: lowerTolCol })];
+            const lowerSignCell = worksheet[XLSX.utils.encode_cell({ r: row + 1, c: cols.LOWER_SIGN })];
+            const lowerTolCell = worksheet[XLSX.utils.encode_cell({ r: row + 1, c: cols.LOWER_TOL })];
             const lowerSign = lowerSignCell ? String(lowerSignCell.v || '').trim() : '-';
             let lowerTolVal = (lowerTolCell && !isNaN(parseFloat(lowerTolCell.v))) ? Math.abs(parseFloat(lowerTolCell.v)) : 0;
 

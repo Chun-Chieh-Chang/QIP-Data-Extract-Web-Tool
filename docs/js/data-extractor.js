@@ -166,19 +166,6 @@ class DataExtractor {
     }
 
     /**
-     * 清理儲存格值
-     * @param {*} value 
-     * @returns {string}
-     */
-    static cleanCellValue(value) {
-        if (value === null || value === undefined) return '';
-        let str = String(value).trim();
-        // 移除常見的非數字字符但保留小數點和負號
-        str = str.replace(/[^\d.\-]/g, '');
-        return str;
-    }
-
-    /**
      * 從穴組提取檢驗項目數據
      * @param {Object} worksheet 
      * @param {Object} groupConfig 
@@ -210,8 +197,8 @@ class DataExtractor {
                         // 優先使用格式化後的內容 (cell.w)，以處理 (1), (2) 等會被 Excel 視為數字的格式
                         const cellValue = cell.w || String(cell.v || '').trim();
                         if (cellValue && cellValue !== '0') {
-                            // 如果包含括號如 (1)，isNumericString 會回傳 false，從而正確識別為檢驗項目
-                            if (!this.isNumericString(cellValue)) {
+                            // 檢查是否為純數字字串，不包含括號
+                            if (!DataValidator.isNumericString(cellValue)) {
                                 itemName = cellValue;
                                 break;
                             }
@@ -244,7 +231,7 @@ class DataExtractor {
                     const dataCell = worksheet[dataCellAddr];
 
                     if (dataCell && dataCell.v !== undefined) {
-                        const cleanValue = this.cleanCellValue(dataCell.v);
+                        const cleanValue = DataValidator.cleanCellValue(dataCell.v);
                         if (cleanValue !== '' && !isNaN(parseFloat(cleanValue))) {
                             data[cavityId] = parseFloat(cleanValue);
                             hasData = true;
@@ -320,15 +307,6 @@ class DataExtractor {
         }
 
         return { productName, measurementUnit };
-    }
-
-    /**
-     * 檢查字串是否為數字
-     * @param {string} str 
-     * @returns {boolean}
-     */
-    static isNumericString(str) {
-        return !isNaN(parseFloat(str)) && isFinite(str);
     }
 }
 
