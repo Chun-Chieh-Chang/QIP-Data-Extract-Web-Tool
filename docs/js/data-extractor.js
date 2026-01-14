@@ -179,82 +179,147 @@ class DataExtractor {
     }
 
     /**
-     * 從範圍提取穴號 ID 和對應數據
+     * 從穴組提取檢驗項目數據
      * @param {Object} worksheet 
-     * @param {string} cavityIdRange - 穴號範圍如 "K3:R3"
-     * @param {string} dataRange - 數據範圍如 "K4:R4"
-     * @returns {Object} { inspectionItem, data: { cavityId: value, ... } }
+     * @param {Object} groupConfig 
+     * @returns {Array}
      */
-    static extractCavityDataWithIds(worksheet, cavityIdRange, dataRange) {
+    static extractInspectionItemsFromGroup(worksheet, groupConfig) {
+        const result = [];
+
         try {
-            const idRangeParsed = DataValidator.parseRangeString(cavityIdRange);
-            const dataRangeParsed = DataValidator.parseRangeString(dataRange);
+            const idRangeParsed = DataValidator.parseRangeString(groupConfig.cavityIdRange);
+            const dataRangeParsed = DataValidator.parseRangeString(groupConfig.dataRange);
 
             if (!idRangeParsed || !dataRangeParsed) {
-                return { inspectionItem: '', data: {} };
+                return result;
             }
 
-            const data = {};
-            let inspectionItem = '';
+            // 遍歷數據範圍的每一行（每行可能是不同的檢驗項目）
+            for (let rowOffset = 0; rowOffset <= dataRangeParsed.endRow - dataRangeParsed.startRow; rowOffset++) {
+                const dataRow = dataRangeParsed.startRow - 1 + rowOffset; // 0-indexed
+                const data = {};
+                let itemName = '';
 
-            // 嘗試提取檢驗項目名稱（從數據範圍的第一行的A或B欄）
-            const dataRow = dataRangeParsed.startRow - 1; // 0-indexed
-            for (let c = 0; c < dataRangeParsed.startCol - 1; c++) {
-                const cellAddr = XLSX.utils.encode_cell({ r: dataRow, c: c });
-                const cell = worksheet[cellAddr];
-                if (cell) {
-                    // 優先使用格式化後的內容 (cell.w)，以處理 (1), (2) 等會被 Excel 視為數字的格式
-                    const cellValue = cell.w || String(cell.v || '').trim();
-                    if (cellValue && cellValue !== '0') {
-                        // 檢查是否為純數字字串，不包含括號
-                        // 如果包含括號如 (1)，isNumericString 會回傳 false，從而正確識別為檢驗項目
-                        if (!this.isNumericString(cellValue)) {
-                            inspectionItem = cellValue;
-                            break;
+                // 提取檢驗項目名稱（從 A 或 B 欄）
+                for (let c = 0; c < dataRangeParsed.startCol - 1; c++) {
+                    const cellAddr = XLSX.utils.encode_cell({ r: dataRow, c: c });
+                    const cell = worksheet[cellAddr];
+
+                    if (cell) {
+                        // 優先使用格式化後的內容 (cell.w)，以處理 (1), (2) 等會被 Excel 視為數字的格式
+                        const cellValue = cell.w || String(cell.v || '').trim();
+                        if (cellValue && cellValue !== '0') {
+                            // 如果包含括號如 (1)，isNumericString 會回傳 false，從而正確識別為檢驗項目
+                            if (!this.isNumericString(cellValue)) {
+                                itemName = cellValue;
+                                break;
+                            }
                         }
                     }
                 }
-            }
 
-            // 提取穴號和數據
-            const idRow = idRangeParsed.startRow - 1; // 0-indexed
-            for (let colOffset = 0; colOffset < idRangeParsed.endCol - idRangeParsed.startCol + 1; colOffset++) {
-                const col = idRangeParsed.startCol - 1 + colOffset; // 0-indexed
+                // 提取穴號數據
+                const idRow = idRangeParsed.startRow - 1; // 0-indexed
+                let hasData = false;
 
-                // 獲取穴號 ID
-                const idCellAddr = XLSX.utils.encode_cell({ r: idRow, c: col });
-                const idCell = worksheet[idCellAddr];
-                let cavityId = idCell ? String(idCell.v || '').trim() : '';
+                for (let colOffset = 0; colOffset < idRangeParsed.endCol - idRangeParsed.startCol + 1; colOffset++) {
+                    const col = idRangeParsed.startCol - 1 + colOffset;
 
-                if (!cavityId) continue;
+                    // 獲取穴號 ID
+                    const idCellAddr = XLSX.utils.encode_cell({ r: idRow, c: col });
+                    const idCell = worksheet[idCellAddr];
+                    let cavityId = idCell ? String(idCell.v || '').trim() : '';
 
-                // 提取穴號數字（如 "1號穴" -> 1）
-                const numMatch = cavityId.match(/\d+/);
-                if (numMatch) {
-                    cavityId = numMatch[0];
-                }
+                    if (!cavityId) continue;
 
-                // 獲取對應數據（可能跨多行）
-                for (let rowOffset = 0; rowOffset <= dataRangeParsed.endRow - dataRangeParsed.startRow; rowOffset++) {
-                    const dataRowIdx = dataRangeParsed.startRow - 1 + rowOffset;
-                    const dataCellAddr = XLSX.utils.encode_cell({ r: dataRowIdx, c: col });
+                    // 提取穴號數字
+                    const numMatch = cavityId.match(/\d+/);
+                    if (numMatch) {
+                        cavityId = numMatch[0];
+                    }
+
+                    // 獲取數據
+                    const dataCellAddr = XLSX.utils.encode_cell({ r: dataRow, c: col });
                     const dataCell = worksheet[dataCellAddr];
 
                     if (dataCell && dataCell.v !== undefined) {
                         const cleanValue = this.cleanCellValue(dataCell.v);
                         if (cleanValue !== '' && !isNaN(parseFloat(cleanValue))) {
                             data[cavityId] = parseFloat(cleanValue);
-                            break; // 找到有效數據就停止
+                            hasData = true;
                         }
+                    }
+                }
+
+                if (hasData && itemName) {
+                    result.push({
+                        inspectionItem: itemName,
+                        data: data
+                    });
+                }
+            }
+
+        } catch (error) {
+            console.error('DataExtractor.extractInspectionItemsFromGroup error:', error);
+        }
+
+        return result;
+    }
+
+    /**
+     * 提取產品資訊 (Product Name & Measurement Unit)
+     * @param {Object} workbook 
+     * @returns {Object}
+     */
+    static extractProductInfo(workbook) {
+        let productName = '';
+        let measurementUnit = '';
+
+        for (const sheetName of workbook.SheetNames) {
+            const ws = workbook.Sheets[sheetName];
+
+            // 提取產品名稱 (P2 或 P3)
+            if (!productName) {
+                const cellP2 = ws['P2'];
+                if (cellP2 && cellP2.v) productName = String(cellP2.v).trim();
+
+                if (!productName) {
+                    const cellP3 = ws['P3'];
+                    if (cellP3 && cellP3.v) productName = String(cellP3.v).trim();
+                }
+
+                // 掃描 P2:V3 區域
+                if (!productName) {
+                    for (let r = 1; r <= 2; r++) {
+                        for (let c = 15; c <= 21; c++) {
+                            const addr = XLSX.utils.encode_cell({ r, c });
+                            const cell = ws[addr];
+                            if (cell && cell.v && String(cell.v).trim() !== '0' && String(cell.v).trim() !== 'False') {
+                                productName = String(cell.v).trim();
+                                break;
+                            }
+                        }
+                        if (productName) break;
                     }
                 }
             }
 
-            return { inspectionItem, data };
-        } catch (error) {
-            console.error('DataExtractor.extractCavityDataWithIds error:', error);
-            return { inspectionItem: '', data: {} };
+            // 提取測量單位 (W23)
+            if (!measurementUnit) {
+                const cellW23 = ws['W23'];
+                if (cellW23 && cellW23.v) {
+                    let val = String(cellW23.v).trim();
+                    // 移除 "單位：" 前綴
+                    val = val.replace(/單位[:：]/g, '').trim();
+                    measurementUnit = val;
+                }
+            }
+
+            if (productName && measurementUnit) break;
         }
+
+        return { productName, measurementUnit };
     }
 
     /**

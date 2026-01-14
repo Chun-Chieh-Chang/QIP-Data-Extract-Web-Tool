@@ -84,7 +84,7 @@ class QIPProcessor {
             // 如果是第一個工作簿，提取產品資訊與規格 (假設後續檔案格式相同)
             if (fileIndex === 0) {
                 // 提取產品資訊
-                this.results.productInfo = this.extractProductInfo(workbook);
+                this.results.productInfo = DataExtractor.extractProductInfo(workbook);
                 // 提取規格
                 await this.extractSpecifications(workbook, progressCallback);
             }
@@ -123,7 +123,7 @@ class QIPProcessor {
             const targetWs = workbook.Sheets[workbook.SheetNames[targetSheetIndex]];
 
             // 從該穴組提取檢驗項目數據
-            const items = this.extractInspectionItemsFromGroup(targetWs, groupConfig);
+            const items = DataExtractor.extractInspectionItemsFromGroup(targetWs, groupConfig);
 
             for (const item of items) {
                 this.addToResults(item.inspectionItem, batchName, item.data);
@@ -131,96 +131,7 @@ class QIPProcessor {
         }
     }
 
-    /**
-     * 從穴組提取檢驗項目數據
-     * @param {Object} worksheet 
-     * @param {Object} groupConfig 
-     * @returns {Array}
-     */
-    extractInspectionItemsFromGroup(worksheet, groupConfig) {
-        const result = [];
-
-        try {
-            const idRangeParsed = DataValidator.parseRangeString(groupConfig.cavityIdRange);
-            const dataRangeParsed = DataValidator.parseRangeString(groupConfig.dataRange);
-
-            if (!idRangeParsed || !dataRangeParsed) {
-                return result;
-            }
-
-            // 遍歷數據範圍的每一行（每行可能是不同的檢驗項目）
-            for (let rowOffset = 0; rowOffset <= dataRangeParsed.endRow - dataRangeParsed.startRow; rowOffset++) {
-                const dataRow = dataRangeParsed.startRow - 1 + rowOffset; // 0-indexed
-                const data = {};
-                let itemName = '';
-
-                // 提取檢驗項目名稱（從 A 或 B 欄）
-                for (let c = 0; c < dataRangeParsed.startCol - 1; c++) {
-                    const cellAddr = XLSX.utils.encode_cell({ r: dataRow, c: c });
-                    const cell = worksheet[cellAddr];
-
-                    if (cell) {
-                        // 優先使用格式化後的內容 (cell.w)，以處理 (1), (2) 等會被 Excel 視為數字的格式
-                        const cellValue = cell.w || String(cell.v || '').trim();
-                        if (cellValue && cellValue !== '0') {
-                            // 如果包含括號如 (1)，isNumericString 會回傳 false，從而正確識別為檢驗項目
-                            if (!DataExtractor.isNumericString(cellValue)) {
-                                itemName = cellValue;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                // 提取穴號數據
-                const idRow = idRangeParsed.startRow - 1; // 0-indexed
-                let hasData = false;
-
-                for (let colOffset = 0; colOffset < idRangeParsed.endCol - idRangeParsed.startCol + 1; colOffset++) {
-                    const col = idRangeParsed.startCol - 1 + colOffset;
-
-                    // 獲取穴號 ID
-                    const idCellAddr = XLSX.utils.encode_cell({ r: idRow, c: col });
-                    const idCell = worksheet[idCellAddr];
-                    let cavityId = idCell ? String(idCell.v || '').trim() : '';
-
-                    if (!cavityId) continue;
-
-                    // 提取穴號數字
-                    const numMatch = cavityId.match(/\d+/);
-                    if (numMatch) {
-                        cavityId = numMatch[0];
-                    }
-
-                    // 獲取數據
-                    const dataCellAddr = XLSX.utils.encode_cell({ r: dataRow, c: col });
-                    const dataCell = worksheet[dataCellAddr];
-
-                    if (dataCell && dataCell.v !== undefined) {
-                        const cleanValue = DataExtractor.cleanCellValue(dataCell.v);
-                        if (cleanValue !== '' && !isNaN(parseFloat(cleanValue))) {
-                            data[cavityId] = parseFloat(cleanValue);
-                            hasData = true;
-                        }
-                    }
-                }
-
-                if (hasData && itemName) {
-                    result.push({
-                        inspectionItem: itemName,
-                        data: data
-                    });
-                    console.log(`提取檢驗項目: ${itemName}, 穴數: ${Object.keys(data).length}`);
-                }
-            }
-
-        } catch (error) {
-            console.error('extractInspectionItemsFromGroup error:', error);
-            this.errorLogger.logError('數據提取', error.message);
-        }
-
-        return result;
-    }
+    // extractInspectionItemsFromGroup 已遷移至 DataExtractor.js
 
     /**
      * 將數據添加到結果
@@ -279,62 +190,7 @@ class QIPProcessor {
         }
     }
 
-    /**
-     * 提取產品資訊 (Product Name & Measurement Unit)
-     * @param {Object} workbook 
-     * @returns {Object}
-     */
-    extractProductInfo(workbook) {
-        let productName = '';
-        let measurementUnit = '';
-
-        for (const sheetName of workbook.SheetNames) {
-            const ws = workbook.Sheets[sheetName];
-
-            // 提取產品名稱 (P2 或 P3)
-            // P2 = Index {c:15, r:1}, P3 = {c:15, r:2}
-            if (!productName) {
-                const cellP2 = ws['P2'];
-                if (cellP2 && cellP2.v) productName = String(cellP2.v).trim();
-
-                if (!productName) {
-                    const cellP3 = ws['P3'];
-                    if (cellP3 && cellP3.v) productName = String(cellP3.v).trim();
-                }
-
-                // 掃描 P2:V3 區域
-                if (!productName) {
-                    for (let r = 1; r <= 2; r++) {
-                        for (let c = 15; c <= 21; c++) {
-                            const addr = XLSX.utils.encode_cell({ r, c });
-                            const cell = ws[addr];
-                            if (cell && cell.v && String(cell.v).trim() !== '0' && String(cell.v).trim() !== 'False') {
-                                productName = String(cell.v).trim();
-                                break;
-                            }
-                        }
-                        if (productName) break;
-                    }
-                }
-            }
-
-            // 提取測量單位 (W23) -> Index {c:22, r:22}
-            if (!measurementUnit) {
-                const cellW23 = ws['W23'];
-                if (cellW23 && cellW23.v) {
-                    let val = String(cellW23.v).trim();
-                    // 移除 "單位：" 前綴
-                    val = val.replace(/單位[:：]/g, '').trim();
-                    measurementUnit = val;
-                }
-            }
-
-            if (productName && measurementUnit) break;
-        }
-
-        console.log('提取到的產品資訊:', { productName, measurementUnit });
-        return { productName, measurementUnit };
-    }
+    // extractProductInfo 已遷移至 DataExtractor.js
 
     /**
      * 獲取處理結果
