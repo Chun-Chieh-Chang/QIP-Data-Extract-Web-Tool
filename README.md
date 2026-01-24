@@ -71,39 +71,43 @@ QIP_DataExtract/
 ├── docs/                    # 🌐 Web 應用 (GitHub Pages)
 │   ├── index.html           # 主頁面
 │   ├── css/style.css        # 樣式表
-│   └── js/                  # JavaScript 模組
-│       ├── app.js           # UI 控制器
-│       ├── processor.js     # 核心處理器
-│       ├── data-extractor.js
-│       ├── spec-extractor.js
-│       └── ...
-└── vba-reference/           # 🔧 VBA 參考代碼 (僅供參考)
-    ├── theCode.bas          # 原始完整 VBA
-    └── ...
-
+│   ├── js/                  # JavaScript 模組
+│   │   ├── core/            # 核心邏輯 (MECE: Internal data handling)
+│   │   │   ├── extractor.js
+│   │   │   ├── spec-extractor.js
+│   │   │   ├── processor.js
+│   │   │   └── validator.js
+│   │   ├── ui/              # 使用者介面 (MECE: Interface management)
+│   │   │   ├── app.js
+│   │   │   └── logger.js
+│   │   ├── utils/           # 工具函式 (MECE: Reusable tools)
+│   │   │   └── exporter.js
+│   │   └── lib/             # 第三方庫
+│   └── notes/               # 設計文件紀錄
+└── reference/               # 🔧 原始參考代碼
 ```
 
-📚 **詳細說明**: [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md)
+📚 **詳細說明**: [docs/notes/PROJECT_STRUCTURE.md](docs/notes/PROJECT_STRUCTURE.md)
 
 ---
 
 ## 🛠 技術架構
 
 ### 前端技術
-- **HTML5 + CSS3**: 現代化 UI
+- **HTML5 + CSS3 + Tailwind**: 現代化 UI 與高效開發
 - **Vanilla JavaScript**: 無框架依賴,輕量高效
 - **SheetJS (xlsx.js)**: Excel 檔案處理
 
 ### 模組化設計 (MECE 原則)
-| 模組 | 職責 |
-|------|------|
-| `app.js` | UI 交互與流程控制 |
-| `processor.js` | 核心業務邏輯 |
-| `data-extractor.js` | 數據提取 |
-| `spec-extractor.js` | 規格提取 |
-| `data-validator.js` | 數據驗證 |
-| `error-logger.js` | 錯誤處理 |
-| `excel-exporter.js` | Excel 輸出 |
+| 類別 | 模組 | 職責 |
+|------|------|------|
+| **Core** | `extractor.js` | 數據提取邏輯 |
+| **Core** | `spec-extractor.js` | 規格提取邏輯 |
+| **Core** | `processor.js` | 業務流程編排 |
+| **Core** | `validator.js` | 數據格式驗證 |
+| **UI**   | `app.js` | UI 交互與事件綁定 |
+| **UI**   | `logger.js` | 錯誤日誌與回饋 |
+| **Utils**| `exporter.js` | Excel 格式導出 |
 
 ---
 
