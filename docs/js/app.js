@@ -12,6 +12,7 @@ let selectionMode = null;
 let selectionTarget = null;
 let selectionStart = null;
 let selectionEnd = null;
+let groupSheetIndices = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 }; // 紀錄各穴組對應的工作表索引
 
 // DOM 元素緩存
 const elements = {};
@@ -256,6 +257,12 @@ async function loadFiles(files) {
                 const baseName = firstFile.name.replace(/\.[^/.]+$/, '');
                 elements.productCode.value = baseName;
                 elements.productCode.classList.add('has-value');
+            }
+
+            // 預設選取第一個工作表並預覽
+            if (currentWorkbook.SheetNames.length > 0) {
+                elements.worksheetSelect.selectedIndex = 1; // 索引 1 是第一個 Sheet (0 是佔位符)
+                previewWorksheet();
             }
         }
 
@@ -564,6 +571,13 @@ function confirmSelection() {
         input.value = rangeStr;
         input.classList.add('has-value');
 
+        // 紀錄該穴組目前選取時的工作表索引
+        const groupId = parseInt(selectionTarget.split('-').pop());
+        if (!isNaN(groupId)) {
+            groupSheetIndices[groupId] = elements.worksheetSelect.selectedIndex - 1;
+            console.log(`穴組 ${groupId} 已綁定至工作表索引: ${groupSheetIndices[groupId]}`);
+        }
+
         // 觸發 input 事件以更新狀態 (如按鈕啟用)
         const event = new Event('input', { bubbles: true });
         input.dispatchEvent(event);
@@ -629,11 +643,13 @@ function gatherConfiguration() {
         cavityGroups: {}
     };
 
+    const baseIndex = groupSheetIndices[1] || 0;
+
     for (let i = 1; i <= 6; i++) {
         config.cavityGroups[i] = {
             cavityIdRange: document.getElementById(`cavity-id-${i}`)?.value || '',
             dataRange: document.getElementById(`data-range-${i}`)?.value || '',
-            pageOffset: i === 1 ? 0 : parseInt(document.getElementById(`offset-${i}`)?.value || '1') - 1
+            pageOffset: (groupSheetIndices[i] || 0) - baseIndex
         };
     }
 
@@ -706,9 +722,8 @@ function loadConfiguration(index) {
                 dataRangeInput.value = group.dataRange || '';
                 dataRangeInput.classList.toggle('has-value', !!group.dataRange);
             }
-            if (offsetInput && i > 1) {
-                offsetInput.value = (group.pageOffset || 0) + 1;
-            }
+            // 恢復索引記憶 (根據 pageOffset 恢復，假設基底是索引 0)
+            groupSheetIndices[i] = group.pageOffset || 0;
         }
     }
 
@@ -739,6 +754,7 @@ function resetConfiguration() {
     elements.productCode.value = '';
     elements.cavityCount.value = '';
     elements.configName.value = '';
+    groupSheetIndices = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
 
     for (let i = 1; i <= 6; i++) {
         const cavityIdInput = document.getElementById(`cavity-id-${i}`);
