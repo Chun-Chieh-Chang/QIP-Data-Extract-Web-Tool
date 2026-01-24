@@ -205,375 +205,372 @@
 
         <!-- 主要內容區 -->
         <main class="flex-1 overflow-y-auto custom-scrollbar bg-slate-100 dark:bg-slate-900/50">
-            <div class="max-w-6xl mx-auto p-6 space-y-6">
-                <!-- 步驟 1: 檔案上傳 -->
-                <section
-                    class="bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
-                    id="step1">
-                    <div class="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <span
-                                class="w-6 h-6 rounded bg-primary text-white text-xs flex items-center justify-center font-bold">1</span>
-                            <h2 class="font-bold text-slate-800 dark:text-white">檔案上傳與狀態</h2>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <div id="upload-area"
-                            class="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-8 text-center hover:border-primary/50 transition-all group bg-slate-50/50 dark:bg-slate-800/30 cursor-pointer">
-                            <div class="flex flex-col items-center">
-                                <div
-                                    class="w-16 h-16 bg-amber-100 dark:bg-amber-900/30 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                    <span class="material-icons-round text-amber-500 text-3xl">folder</span>
-                                </div>
-                                <h3 class="text-sm font-semibold mb-1">拖放 Excel 檔案至此處</h3>
-                                <p class="text-xs text-slate-400 mb-4">支援 .xls, .xlsx, .xlsm 格式</p>
-                                <button id="browse-btn"
-                                    class="bg-primary hover:bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 mx-auto">
-                                    <span class="material-icons-round text-sm">cloud_upload</span>
-                                    選擇檔案
-                                </button>
-                                <input type="file" id="file-input" accept=".xls,.xlsx,.xlsm" multiple hidden>
+            <div class="max-w-[1600px] mx-auto p-6 space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                    <!-- 步驟 1: 檔案上傳 (佔 4/12) -->
+                    <section
+                        class="lg:col-span-4 bg-card-light dark:bg-card-dark rounded-xl shadow-md border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col h-full"
+                        id="step1">
+                        <div
+                            class="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span
+                                    class="w-6 h-6 rounded bg-primary text-white text-sm flex items-center justify-center font-bold">1</span>
+                                <h2 class="font-bold text-slate-800 dark:text-white">檔案上傳與狀態</h2>
                             </div>
                         </div>
-
-                        <!-- 檔案資訊區 -->
-                        <div id="file-info"
-                            class="mt-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700"
-                            style="display: none;">
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="flex items-center gap-3">
+                        <div class="p-6 flex-1 flex flex-col justify-center">
+                            <div id="upload-area"
+                                class="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-8 text-center hover:border-primary/50 transition-all group bg-slate-50/50 dark:bg-slate-800/30 cursor-pointer mb-4">
+                                <div class="flex flex-col items-center">
                                     <div
-                                        class="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
-                                        <span
-                                            class="material-icons-round text-emerald-600 dark:text-emerald-400">description</span>
+                                        class="w-16 h-16 bg-amber-100 dark:bg-amber-900/30 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                        <span class="material-icons-round text-amber-500 text-3xl">folder</span>
                                     </div>
-                                    <div>
-                                        <p id="selected-file-name"
-                                            class="text-sm font-bold text-slate-700 dark:text-slate-200"></p>
-                                        <div id="workbook-info" class="text-[11px] text-slate-500 dark:text-slate-400">
+                                    <h3 class="text-base font-semibold mb-1">拖放 Excel 檔案至此處</h3>
+                                    <p class="text-sm text-slate-400 mb-4">支援 .xls, .xlsx, .xlsm 格式</p>
+                                    <button id="browse-btn"
+                                        class="bg-primary hover:bg-blue-600 text-white px-6 py-2.5 rounded-lg text-base font-medium transition-colors flex items-center gap-2 mx-auto">
+                                        <span class="material-icons-round text-sm">cloud_upload</span>
+                                        選擇檔案
+                                    </button>
+                                    <input type="file" id="file-input" accept=".xls,.xlsx,.xlsm" multiple hidden>
+                                </div>
+                            </div>
+
+                            <!-- 檔案資訊區 -->
+                            <div id="file-info"
+                                class="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700"
+                                style="display: none;">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="flex items-center gap-3">
+                                        <div
+                                            class="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
+                                            <span
+                                                class="material-icons-round text-emerald-600 dark:text-emerald-400">description</span>
+                                        </div>
+                                        <div>
+                                            <p id="selected-file-name"
+                                                class="text-base font-bold text-slate-700 dark:text-slate-200"></p>
+                                            <div id="workbook-info" class="text-xs text-slate-500 dark:text-slate-400">
+                                            </div>
                                         </div>
                                     </div>
+                                    <div class="flex gap-2">
+                                        <button id="remove-file"
+                                            class="p-2 text-slate-400 hover:text-rose-500 transition-colors">
+                                            <span class="material-icons-round">delete</span>
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="flex gap-2">
-                                    <button id="remove-file"
-                                        class="p-2 text-slate-400 hover:text-rose-500 transition-colors">
-                                        <span class="material-icons-round">delete</span>
+                                <button id="full-reset"
+                                    class="w-full py-2.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-sm font-bold rounded-lg transition-colors flex items-center justify-center gap-2">
+                                    <span class="material-icons-round text-sm">refresh</span>
+                                    完全重置
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 步驟 2: 參數配置 (佔 8/12) -->
+                    <section
+                        class="lg:col-span-8 bg-card-light dark:bg-card-dark rounded-xl shadow-md border border-slate-200 dark:border-slate-700 overflow-hidden"
+                        id="step2">
+                        <div class="p-4 border-b border-slate-100 dark:border-slate-700 bg-primary/5">
+                            <div class="flex items-center gap-2">
+                                <span
+                                    class="w-6 h-6 rounded bg-primary text-white text-sm flex items-center justify-center font-bold">2</span>
+                                <h2 class="font-bold text-slate-800 dark:text-white">參數配置與管理</h2>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <!-- 基本參數 -->
+                            <div class="mb-6">
+                                <div class="flex items-center gap-2 mb-4">
+                                    <span class="bg-primary w-1 h-4 rounded-full"></span>
+                                    <h3 class="text-base font-bold text-slate-700 dark:text-slate-300">基本參數設定</h3>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    <div class="space-y-1.5">
+                                        <label
+                                            class="block text-sm font-semibold text-slate-500 dark:text-slate-400">產品品號
+                                            <span class="text-rose-500">*</span></label>
+                                        <input id="product-code"
+                                            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-base focus:ring-2 focus:ring-primary/20 outline-none config-input"
+                                            placeholder="用於識別此檔案的品號" type="text" />
+                                        <p class="text-xs text-slate-400">從檔案名自動提取</p>
+                                    </div>
+                                    <div class="space-y-1.5">
+                                        <label
+                                            class="block text-sm font-semibold text-slate-500 dark:text-slate-400">模穴數
+                                            <span class="text-rose-500">*</span></label>
+                                        <select id="cavity-count"
+                                            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-base focus:ring-2 focus:ring-primary/20 outline-none">
+                                            <option value="">-- 請選擇 --</option>
+                                            <option value="8">8 穴</option>
+                                            <option value="16">16 穴</option>
+                                            <option value="24">24 穴</option>
+                                            <option value="32">32 穴</option>
+                                            <option value="40">40 穴</option>
+                                            <option value="48">48 穴</option>
+                                        </select>
+                                        <p class="text-xs text-slate-400">選擇後會顯示對應的穴組</p>
+                                    </div>
+                                    <!-- 工作表選擇 (隱藏下拉選單，由預覽控制) -->
+                                    <div id="worksheet-group" class="space-y-1.5" style="display: none;">
+                                        <label
+                                            class="block text-sm font-semibold text-slate-500 dark:text-slate-400">當前範本工作表</label>
+                                        <div class="flex gap-2">
+                                            <select id="worksheet-select" disabled
+                                                class="flex-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-base focus:ring-2 focus:ring-primary/20 outline-none cursor-not-allowed">
+                                                <option value="">-- 請先上傳檔案 --</option>
+                                            </select>
+                                            <button id="preview-worksheet"
+                                                class="bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 px-3 rounded-lg text-sm">
+                                                <span class="material-icons-round text-base">visibility</span>
+                                            </button>
+                                        </div>
+                                        <p class="text-xs text-slate-400">目前顯示於預覽區</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 配置管理 -->
+                            <div class="pt-6 border-t border-slate-100 dark:border-slate-800">
+                                <div class="flex items-center gap-2 mb-4">
+                                    <span class="bg-blue-400 w-1 h-4 rounded-full"></span>
+                                    <h3 class="text-base font-bold text-slate-700 dark:text-slate-300">配置儲存與載入</h3>
+                                </div>
+                                <div class="flex flex-wrap items-center gap-3">
+                                    <div class="flex-1 min-w-[200px]">
+                                        <input id="config-name"
+                                            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-base focus:ring-2 focus:ring-primary/20 outline-none"
+                                            placeholder="輸入配置名稱" type="text" />
+                                    </div>
+                                    <button id="save-config"
+                                        class="flex items-center gap-1.5 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-base font-medium transition-colors">
+                                        <span class="material-icons-round text-base">save</span>
+                                        保存
+                                    </button>
+                                    <button id="load-config"
+                                        class="flex items-center gap-1.5 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-base font-medium transition-colors">
+                                        <span class="material-icons-round text-base text-amber-500">folder_open</span>
+                                        載入
+                                    </button>
+                                    <button id="reset-config"
+                                        class="flex items-center gap-1.5 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-base font-medium transition-colors">
+                                        <span class="material-icons-round text-base text-rose-500">refresh</span>
+                                        重置
                                     </button>
                                 </div>
                             </div>
-                            <button id="full-reset"
-                                class="w-full py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-2">
-                                <span class="material-icons-round text-sm">refresh</span>
-                                完全重置 (清空資料)
-                            </button>
                         </div>
-                    </div>
-                </section>
+                    </section>
+                </div>
 
-                <!-- 步驟 2: 參數配置 -->
-                <section
-                    class="bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
-                    id="step2">
-                    <div class="p-4 border-b border-slate-100 dark:border-slate-700 bg-primary/5">
+                <!-- 讀取範圍設定 (全寬顯示) -->
+                <div id="range-group"
+                    class="bg-card-light dark:bg-card-dark rounded-xl shadow-md border border-slate-200 dark:border-slate-700 overflow-hidden"
+                    style="display: none;">
+                    <div class="p-4 border-b border-slate-100 dark:border-slate-700 bg-emerald-500/5">
                         <div class="flex items-center gap-2">
+                            <span class="bg-emerald-500 w-1 h-4 rounded-full"></span>
+                            <h3 class="text-base font-bold text-slate-700 dark:text-slate-300">讀取範圍設定</h3>
                             <span
-                                class="w-6 h-6 rounded bg-primary text-white text-xs flex items-center justify-center font-bold">2</span>
-                            <h2 class="font-bold text-slate-800 dark:text-white">參數配置與管理</h2>
+                                class="ml-auto text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-3 py-1 rounded-full flex items-center gap-1">
+                                <span class="material-icons-round text-sm">tips_and_updates</span>
+                                請在下方預覽表格中選擇數據範圍
+                            </span>
                         </div>
                     </div>
-                    <div class="p-6">
-                        <!-- 基本參數 -->
-                        <div class="mb-8">
-                            <div class="flex items-center gap-2 mb-4">
-                                <span class="bg-primary w-1 h-4 rounded-full"></span>
-                                <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300">基本參數設定</h3>
+
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                        <!-- 第1-8穴 -->
+                        <div id="cavity-group-1"
+                            class="p-5 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4">
+                            <div class="flex items-center justify-between border-b pb-2 mb-2">
+                                <span class="text-base font-bold text-primary">第 1-8 穴</span>
+                                <span class="text-xs text-slate-400 font-mono tracking-tighter">REQUIRED</span>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                <div class="space-y-1.5">
-                                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400">產品品號
-                                        <span class="text-rose-500">*</span></label>
-                                    <input id="product-code"
-                                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 outline-none config-input"
-                                        placeholder="用於識別此檔案的品號" type="text" />
-                                    <p class="text-[10px] text-slate-400">從檔案名自動提取（可編輯）</p>
-                                </div>
-                                <div class="space-y-1.5">
-                                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400">模穴數
-                                        <span class="text-rose-500">*</span></label>
-                                    <select id="cavity-count"
-                                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 outline-none">
-                                        <option value="">-- 請選擇 --</option>
-                                        <option value="8">8 穴</option>
-                                        <option value="16">16 穴</option>
-                                        <option value="24">24 穴</option>
-                                        <option value="32">32 穴</option>
-                                        <option value="40">40 穴</option>
-                                        <option value="48">48 穴</option>
-                                    </select>
-                                    <p class="text-[10px] text-slate-400">選擇後會顯示對應的穴組設定</p>
-                                </div>
-                                <!-- 工作表選擇 (隱藏下拉選單，由預覽控制) -->
-                                <div id="worksheet-group" class="space-y-1.5" style="display: none;">
-                                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400">當前範本工作表</label>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">穴號範圍 (如:
+                                        K3:R3)</label>
                                     <div class="flex gap-2">
-                                        <select id="worksheet-select" disabled
-                                            class="flex-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 outline-none cursor-not-allowed">
-                                            <option value="">-- 請先上傳檔案 --</option>
-                                        </select>
-                                        <button id="preview-worksheet"
-                                            class="bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 px-3 rounded-lg text-sm">
-                                            <span class="material-icons-round text-sm">visibility</span>
-                                        </button>
-                                    </div>
-                                    <p class="text-[10px] text-slate-400">目前顯示於預覽區的工作表</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 讀取範圍設定 (動態顯示) -->
-                        <div id="range-group" class="pt-6 border-t border-slate-100 dark:border-slate-800 mb-8"
-                            style="display: none;">
-                            <div class="flex items-center gap-2 mb-4">
-                                <span class="bg-emerald-500 w-1 h-4 rounded-full"></span>
-                                <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300">讀取範圍設定</h3>
-                                <span
-                                    class="ml-auto text-[10px] text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-2 py-0.5 rounded flex items-center gap-1">
-                                    <span class="material-icons-round text-xs">tips_and_updates</span>
-                                    請在下方預覽表格中選擇數據範圍
-                                </span>
-                            </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                                <!-- 第1-8穴 -->
-                                <div id="cavity-group-1"
-                                    class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-xs font-bold text-primary">第 1-8 穴</span>
-                                        <span class="text-[10px] text-slate-400 font-mono">REQUIRED</span>
-                                    </div>
-                                    <div class="space-y-3">
-                                        <div>
-                                            <label
-                                                class="block text-[10px] font-bold text-slate-400 uppercase mb-1">穴號範圍
-                                                (如: K3:R3)</label>
-                                            <div class="flex gap-2">
-                                                <input id="cavity-id-1" type="text"
-                                                    class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs config-input range-input"
-                                                    placeholder="K3:R3">
-                                                <button
-                                                    class="bg-slate-200 dark:bg-slate-700 px-2 rounded-lg text-xs select-range-btn"
-                                                    data-target="cavity-id-1" data-type="cavity">選擇</button>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <label
-                                                class="block text-[10px] font-bold text-slate-400 uppercase mb-1">數據範圍
-                                                (如: K4:R4)</label>
-                                            <div class="flex gap-2">
-                                                <input id="data-range-1" type="text"
-                                                    class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs config-input range-input"
-                                                    placeholder="K4:R4">
-                                                <button
-                                                    class="bg-slate-200 dark:bg-slate-700 px-2 rounded-lg text-xs select-range-btn"
-                                                    data-target="data-range-1" data-type="data">選擇</button>
-                                            </div>
-                                        </div>
+                                        <input id="cavity-id-1" type="text"
+                                            class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm config-input range-input"
+                                            placeholder="K3:R3">
+                                        <button
+                                            class="bg-slate-200 dark:bg-slate-700 px-3 rounded-lg text-sm select-range-btn"
+                                            data-target="cavity-id-1" data-type="cavity">選擇</button>
                                     </div>
                                 </div>
-
-                                <!-- 第9-16穴 -->
-                                <div id="cavity-group-2"
-                                    class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4 hidden">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-xs font-bold text-slate-500">第 9-16 穴</span>
-                                    </div>
-                                    <div class="space-y-3">
-                                        <div>
-                                            <label
-                                                class="block text-[10px] font-bold text-slate-400 uppercase mb-1">穴號範圍</label>
-                                            <div class="flex gap-2">
-                                                <input id="cavity-id-2" type="text"
-                                                    class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs config-input range-input">
-                                                <button
-                                                    class="bg-slate-200 dark:bg-slate-700 px-2 rounded-lg text-xs select-range-btn"
-                                                    data-target="cavity-id-2" data-type="cavity">選擇</button>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <label
-                                                class="block text-[10px] font-bold text-slate-400 uppercase mb-1">數據範圍</label>
-                                            <div class="flex gap-2">
-                                                <input id="data-range-2" type="text"
-                                                    class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs config-input range-input">
-                                                <button
-                                                    class="bg-slate-200 dark:bg-slate-700 px-2 rounded-lg text-xs select-range-btn"
-                                                    data-target="data-range-2" data-type="data">選擇</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- 第17-24穴 -->
-                                <div id="cavity-group-3"
-                                    class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4 hidden">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-xs font-bold text-slate-500">第 17-24 穴</span>
-                                    </div>
-                                    <div class="space-y-3">
-                                        <div>
-                                            <label
-                                                class="block text-[10px] font-bold text-slate-400 uppercase mb-1">穴號範圍</label>
-                                            <div class="flex gap-2">
-                                                <input id="cavity-id-3" type="text"
-                                                    class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs config-input range-input">
-                                                <button
-                                                    class="bg-slate-200 dark:bg-slate-700 px-2 rounded-lg text-xs select-range-btn"
-                                                    data-target="cavity-id-3" data-type="cavity">選擇</button>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <label
-                                                class="block text-[10px] font-bold text-slate-400 uppercase mb-1">數據範圍</label>
-                                            <div class="flex gap-2">
-                                                <input id="data-range-3" type="text"
-                                                    class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs config-input range-input">
-                                                <button
-                                                    class="bg-slate-200 dark:bg-slate-700 px-2 rounded-lg text-xs select-range-btn"
-                                                    data-target="data-range-3" data-type="data">選擇</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- 第25-32穴 -->
-                                <div id="cavity-group-4"
-                                    class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4 hidden">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-xs font-bold text-slate-500">第 25-32 穴</span>
-                                    </div>
-                                    <div class="space-y-3">
-                                        <div>
-                                            <label
-                                                class="block text-[10px] font-bold text-slate-400 uppercase mb-1">穴號範圍</label>
-                                            <div class="flex gap-2">
-                                                <input id="cavity-id-4" type="text"
-                                                    class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs config-input range-input">
-                                                <button
-                                                    class="bg-slate-200 dark:bg-slate-700 px-2 rounded-lg text-xs select-range-btn"
-                                                    data-target="cavity-id-4" data-type="cavity">選擇</button>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <label
-                                                class="block text-[10px] font-bold text-slate-400 uppercase mb-1">數據範圍</label>
-                                            <div class="flex gap-2">
-                                                <input id="data-range-4" type="text"
-                                                    class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs config-input range-input">
-                                                <button
-                                                    class="bg-slate-200 dark:bg-slate-700 px-2 rounded-lg text-xs select-range-btn"
-                                                    data-target="data-range-4" data-type="data">選擇</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- 第33-40穴 -->
-                                <div id="cavity-group-5"
-                                    class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4 hidden">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-xs font-bold text-slate-500">第 33-40 穴</span>
-                                    </div>
-                                    <div class="space-y-3">
-                                        <div>
-                                            <label
-                                                class="block text-[10px] font-bold text-slate-400 uppercase mb-1">穴號範圍</label>
-                                            <div class="flex gap-2">
-                                                <input id="cavity-id-5" type="text"
-                                                    class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs config-input range-input">
-                                                <button
-                                                    class="bg-slate-200 dark:bg-slate-700 px-2 rounded-lg text-xs select-range-btn"
-                                                    data-target="cavity-id-5" data-type="cavity">選擇</button>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <label
-                                                class="block text-[10px] font-bold text-slate-400 uppercase mb-1">數據範圍</label>
-                                            <div class="flex gap-2">
-                                                <input id="data-range-5" type="text"
-                                                    class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs config-input range-input">
-                                                <button
-                                                    class="bg-slate-200 dark:bg-slate-700 px-2 rounded-lg text-xs select-range-btn"
-                                                    data-target="data-range-5" data-type="data">選擇</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- 第41-48穴 -->
-                                <div id="cavity-group-6"
-                                    class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4 hidden">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-xs font-bold text-slate-500">第 41-48 穴</span>
-                                    </div>
-                                    <div class="space-y-3">
-                                        <div>
-                                            <label
-                                                class="block text-[10px] font-bold text-slate-400 uppercase mb-1">穴號範圍</label>
-                                            <div class="flex gap-2">
-                                                <input id="cavity-id-6" type="text"
-                                                    class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs config-input range-input">
-                                                <button
-                                                    class="bg-slate-200 dark:bg-slate-700 px-2 rounded-lg text-xs select-range-btn"
-                                                    data-target="cavity-id-6" data-type="cavity">選擇</button>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <label
-                                                class="block text-[10px] font-bold text-slate-400 uppercase mb-1">數據範圍</label>
-                                            <div class="flex gap-2">
-                                                <input id="data-range-6" type="text"
-                                                    class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs config-input range-input">
-                                                <button
-                                                    class="bg-slate-200 dark:bg-slate-700 px-2 rounded-lg text-xs select-range-btn"
-                                                    data-target="data-range-6" data-type="data">選擇</button>
-                                            </div>
-                                        </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">數據範圍 (如:
+                                        K4:R4)</label>
+                                    <div class="flex gap-2">
+                                        <input id="data-range-1" type="text"
+                                            class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm config-input range-input"
+                                            placeholder="K4:R4">
+                                        <button
+                                            class="bg-slate-200 dark:bg-slate-700 px-3 rounded-lg text-sm select-range-btn"
+                                            data-target="data-range-1" data-type="data">選擇</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- 配置管理 -->
-                        <div class="pt-6 border-t border-slate-100 dark:border-slate-800">
-                            <div class="flex items-center gap-2 mb-4">
-                                <span class="bg-blue-400 w-1 h-4 rounded-full"></span>
-                                <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300">配置管理</h3>
+                        <!-- 第9-16穴 -->
+                        <div id="cavity-group-2"
+                            class="p-5 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4 hidden">
+                            <div class="flex items-center justify-between border-b pb-2 mb-2">
+                                <span class="text-base font-bold text-slate-500">第 9-16 穴</span>
                             </div>
-                            <div class="flex flex-wrap items-center gap-3">
-                                <div class="flex-1 min-w-[200px]">
-                                    <input id="config-name"
-                                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 outline-none"
-                                        placeholder="輸入配置名稱以儲存或搜尋" type="text" />
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">穴號範圍</label>
+                                    <div class="flex gap-2">
+                                        <input id="cavity-id-2" type="text"
+                                            class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm config-input range-input">
+                                        <button
+                                            class="bg-slate-200 dark:bg-slate-700 px-3 rounded-lg text-sm select-range-btn"
+                                            data-target="cavity-id-2" data-type="cavity">選擇</button>
+                                    </div>
                                 </div>
-                                <button id="save-config"
-                                    class="flex items-center gap-1.5 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-sm font-medium transition-colors">
-                                    <span class="material-icons-round text-sm">save</span>
-                                    保存配置
-                                </button>
-                                <button id="load-config"
-                                    class="flex items-center gap-1.5 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-sm font-medium transition-colors">
-                                    <span class="material-icons-round text-sm text-amber-500">folder_open</span>
-                                    載入配置
-                                </button>
-                                <button id="reset-config"
-                                    class="flex items-center gap-1.5 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-sm font-medium transition-colors">
-                                    <span class="material-icons-round text-sm text-rose-500">refresh</span>
-                                    重置
-                                </button>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">數據範圍</label>
+                                    <div class="flex gap-2">
+                                        <input id="data-range-2" type="text"
+                                            class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm config-input range-input">
+                                        <button
+                                            class="bg-slate-200 dark:bg-slate-700 px-3 rounded-lg text-sm select-range-btn"
+                                            data-target="data-range-2" data-type="data">選擇</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 第17-24穴 -->
+                        <div id="cavity-group-3"
+                            class="p-5 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4 hidden">
+                            <div class="flex items-center justify-between border-b pb-2 mb-2">
+                                <span class="text-base font-bold text-slate-500">第 17-24 穴</span>
+                            </div>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">穴號範圍</label>
+                                    <div class="flex gap-2">
+                                        <input id="cavity-id-3" type="text"
+                                            class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm config-input range-input">
+                                        <button
+                                            class="bg-slate-200 dark:bg-slate-700 px-3 rounded-lg text-sm select-range-btn"
+                                            data-target="cavity-id-3" data-type="cavity">選擇</button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">數據範圍</label>
+                                    <div class="flex gap-2">
+                                        <input id="data-range-3" type="text"
+                                            class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm config-input range-input">
+                                        <button
+                                            class="bg-slate-200 dark:bg-slate-700 px-3 rounded-lg text-sm select-range-btn"
+                                            data-target="data-range-3" data-type="data">選擇</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 第25-32穴 -->
+                        <div id="cavity-group-4"
+                            class="p-5 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4 hidden">
+                            <div class="flex items-center justify-between border-b pb-2 mb-2">
+                                <span class="text-base font-bold text-slate-500">第 25-32 穴</span>
+                            </div>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">穴號範圍</label>
+                                    <div class="flex gap-2">
+                                        <input id="cavity-id-4" type="text"
+                                            class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm config-input range-input">
+                                        <button
+                                            class="bg-slate-200 dark:bg-slate-700 px-3 rounded-lg text-sm select-range-btn"
+                                            data-target="cavity-id-4" data-type="cavity">選擇</button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">數據範圍</label>
+                                    <div class="flex gap-2">
+                                        <input id="data-range-4" type="text"
+                                            class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm config-input range-input">
+                                        <button
+                                            class="bg-slate-200 dark:bg-slate-700 px-3 rounded-lg text-sm select-range-btn"
+                                            data-target="data-range-4" data-type="data">選擇</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 第33-40穴 -->
+                        <div id="cavity-group-5"
+                            class="p-5 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4 hidden">
+                            <div class="flex items-center justify-between border-b pb-2 mb-2">
+                                <span class="text-base font-bold text-slate-500">第 33-40 穴</span>
+                            </div>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">穴號範圍</label>
+                                    <div class="flex gap-2">
+                                        <input id="cavity-id-5" type="text"
+                                            class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm config-input range-input">
+                                        <button
+                                            class="bg-slate-200 dark:bg-slate-700 px-3 rounded-lg text-sm select-range-btn"
+                                            data-target="cavity-id-5" data-type="cavity">選擇</button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">數據範圍</label>
+                                    <div class="flex gap-2">
+                                        <input id="data-range-5" type="text"
+                                            class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm config-input range-input">
+                                        <button
+                                            class="bg-slate-200 dark:bg-slate-700 px-3 rounded-lg text-sm select-range-btn"
+                                            data-target="data-range-5" data-type="data">選擇</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 第41-48穴 -->
+                        <div id="cavity-group-6"
+                            class="p-5 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4 hidden">
+                            <div class="flex items-center justify-between border-b pb-2 mb-2">
+                                <span class="text-base font-bold text-slate-500">第 41-48 穴</span>
+                            </div>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">穴號範圍</label>
+                                    <div class="flex gap-2">
+                                        <input id="cavity-id-6" type="text"
+                                            class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm config-input range-input">
+                                        <button
+                                            class="bg-slate-200 dark:bg-slate-700 px-3 rounded-lg text-sm select-range-btn"
+                                            data-target="cavity-id-6" data-type="cavity">選擇</button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">數據範圍</label>
+                                    <div class="flex gap-2">
+                                        <input id="data-range-6" type="text"
+                                            class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm config-input range-input">
+                                        <button
+                                            class="bg-slate-200 dark:bg-slate-700 px-3 rounded-lg text-sm select-range-btn"
+                                            data-target="data-range-6" data-type="data">選擇</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </section>
+                </div>
 
                 <!-- 工作表預覽區 -->
                 <section id="preview-section"
@@ -656,7 +653,7 @@
                                     </div>
                                 </div>
                                 <p id="progress-text"
-                                    class="text-center text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                                    class="text-center text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                                     準備中...</p>
                             </div>
 
@@ -696,7 +693,7 @@
                                 <span class="material-icons-round text-sm">warning</span> 處理異常記錄
                             </h3>
                             <div id="error-list"
-                                class="text-[11px] text-rose-600 dark:text-rose-400 space-y-1 max-h-32 overflow-y-auto custom-scrollbar">
+                                class="text-xs text-rose-600 dark:text-rose-400 space-y-1 max-h-32 overflow-y-auto custom-scrollbar">
                             </div>
                         </div>
                     </section>
