@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 這裡保留您原本 style.css 的自定義樣式 */
+body {
+    font-family: 'Inter', 'Noto Sans TC', sans-serif;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #4b5563;
+}
+
+/* Preview Table Styles */
+.preview-table {
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    min-width: 100%;
+}
+
+.preview-table th,
+.preview-table td {
+    border: 1px solid #dee2e6;
+    padding: 6px 10px;
+    text-align: center;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.dark .preview-table th,
+.dark .preview-table td {
+    border-color: #374151;
+    color: #e5e7eb;
+}
+
+.preview-table th {
+    background: #e9ecef;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.dark .preview-table th {
+    background: #374151;
+}
+
+.preview-table td:hover {
+    background: rgba(68, 114, 196, 0.1);
+}
+
+.preview-table td.selected {
+    background: rgba(68, 114, 196, 0.3);
+}
+
+.preview-table td.selection-start {
+    background: #4472C4;
+    color: white;
+}
+
+.config-input.has-value {
+    background-color: #FFF8DC;
+}
+
+.dark .config-input.has-value {
+    background-color: #374151;
+    border-color: #4472C4;
+}
+
+.cavity-group {
+    transition: all 0.25s ease;
+}
+
+.hidden {
+    display: none !important;
+}
