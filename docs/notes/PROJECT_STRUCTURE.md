@@ -10,8 +10,11 @@
 ```
 QIP_DataExtract/
 ├── 📄 README.md                    # 專案說明與使用指南
-├── 📄 PROJECT_STRUCTURE.md         # 本檔案 - 專案結構詳細說明
 ├── 📄 .gitignore                   # Git 忽略規則
+│
+├── 📁 .github/                     # 🤖 GitHub 專案配置
+│   └── 📁 workflows/               # GitHub Actions 工作流程
+│       └── 📄 static.yml           # 自動部署至 GitHub Pages
 │
 ├── 📁 docs/                        # 🌐 Web 應用程式 (GitHub Pages 發布來源)
 │   ├── 📄 index.html               # 主頁面 - UI 結構
@@ -21,18 +24,24 @@ QIP_DataExtract/
 │   ├── 📁 css/                     # 樣式表
 │   │   └── 📄 style.css            # 主樣式檔案
 │   │
-│   └── 📁 js/                      # JavaScript 模組
-│       ├── 📄 app.js               # 主應用程式 - UI 交互與流程控制
-│       ├── 📄 processor.js         # 核心處理器 - 批號合併與數據處理邏輯
-│       ├── 📄 data-extractor.js    # 數據提取模組
-│       ├── 📄 spec-extractor.js    # 規格提取模組
-│       ├── 📄 data-validator.js    # 數據驗證模組
-│       ├── 📄 error-logger.js      # 錯誤日誌模組
-│       ├── 📄 excel-exporter.js    # Excel 輸出模組
-│       └── 📁 lib/                 # 第三方函式庫
-│           └── 📄 xlsx.full.min.js # SheetJS - Excel 檔案處理
+│   ├── 📁 js/                      # JavaScript 模組
+│   │   ├── 📄 app.js               # 主應用程式 - UI 交互與流程控制
+│   │   ├── 📄 processor.js         # 核心處理器 - 批號合併與數據處理邏輯
+│   │   ├── 📄 data-extractor.js    # 數據提取模組
+│   │   ├── 📄 spec-extractor.js    # 規格提取模組
+│   │   ├── 📄 data-validator.js    # 數據驗證模組
+│   │   ├── 📄 error-logger.js      # 錯誤日誌模組
+│   │   ├── 📄 excel-exporter.js    # Excel 輸出模組
+│   │   └── 📁 lib/                 # 第三方函式庫
+│   │       └── 📄 xlsx.full.min.js # SheetJS - Excel 檔案處理
+│   │
+│   └── 📁 notes/                   # 📝 開發文件與設計紀錄
+│       ├── 📄 PROJECT_STRUCTURE.md # 專案結構詳細說明
+│       ├── 📄 REFACTORING_SUMMARY.md # 重構總結
+│       └── 📄 UI_Redesign.txt      # UI 重新設計紀錄
 │
-└── 📁 vba-reference/               # 🔧 VBA 參考代碼 (僅供參考,不參與 Web 運行)
+└── 📁 reference/                   # 🔧 VBA 參考代碼 (僅供參考,不參與 Web 運行)
+    ├── 📄 README.md                # VBA 參考代碼說明
     ├── 📄 theCode.bas              # 原始 VBA 完整代碼 (單體檔案)
     ├── 📄 DataExtractor.bas        # VBA 數據提取模組
     ├── 📄 DataValidator.bas        # VBA 數據驗證模組
@@ -96,11 +105,20 @@ excel-exporter.js (生成輸出)
 
 ## 🚀 部署說明
 
-### GitHub Pages 設定
+### GitHub Pages 設定 (透過 GitHub Actions)
 1. Repository Settings → Pages
-2. Source: **Deploy from a branch**
-3. Branch: **main** / Folder: **/docs**
-4. 訪問: `https://chun-chieh-chang.github.io/QIP-Data-Extract-Web-Tool/docs/`
+2. Source: **GitHub Actions**
+3. 工作流程: `.github/workflows/static.yml`
+4. 觸發條件:
+   - 自動: 推送至 `main` 分支時自動部署
+   - 手動: Actions 頁面手動觸發 workflow
+5. 訪問: `https://chun-chieh-chang.github.io/QIP-Data-Extract-Web-Tool/docs/`
+
+### GitHub Actions 工作流程
+- **檔案位置**: `.github/workflows/static.yml`
+- **部署內容**: 整個 repository (包含 docs 目錄)
+- **權限設定**: 已配置 `pages: write` 和 `id-token: write`
+- **並發控制**: 僅允許一個部署同時進行
 
 ### 本地開發
 ```bash

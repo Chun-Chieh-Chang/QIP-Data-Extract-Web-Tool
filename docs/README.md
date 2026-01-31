@@ -29,7 +29,7 @@
 
 - **前端框架**：純 HTML/CSS/JavaScript
 - **Excel 解析**：[SheetJS](https://sheetjs.com/)
-- **部署**：GitHub Pages
+- **部署**：GitHub Pages (透過 GitHub Actions 自動部署)
 
 ## 📦 檔案結構
 

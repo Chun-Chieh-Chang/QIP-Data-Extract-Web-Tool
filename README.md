@@ -68,6 +68,9 @@ python -m http.server 8000
 
 ```
 QIP_DataExtract/
+├── .github/                 # 🤖 GitHub 配置
+│   └── workflows/           # GitHub Actions 工作流程
+│       └── static.yml       # 自動部署至 GitHub Pages
 ├── docs/                    # 🌐 Web 應用 (GitHub Pages)
 │   ├── index.html           # 主頁面
 │   ├── css/style.css        # 樣式表
