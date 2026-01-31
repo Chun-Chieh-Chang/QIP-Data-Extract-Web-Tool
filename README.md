@@ -2,7 +2,7 @@
 
 > 🌐 **基於網頁的 QIP 數據提取工具** - 無需 Excel,跨平台運行,完整復刻 VBA 功能
 
-[![GitHub Pages](https://img.shields.io/badge/Demo-Live-success?style=flat-square)](https://chun-chieh-chang.github.io/QIP-Data-Extract-Web-Tool/docs/)
+[![GitHub Pages](https://img.shields.io/badge/Demo-Live-success?style=flat-square)](https://chun-chieh-chang.github.io/QIP-Data-Extract-Web-Tool/)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 
 ---
@@ -10,7 +10,7 @@
 ## 🚀 快速開始
 
 ### 線上使用 (推薦)
-**[🔗 點擊開啟工具](https://chun-chieh-chang.github.io/QIP-Data-Extract-Web-Tool/docs/)**
+**[🔗 點擊開啟工具](https://chun-chieh-chang.github.io/QIP-Data-Extract-Web-Tool/)**
 
 ### 本地運行
 ```bash
@@ -20,7 +20,7 @@ cd QIP-Data-Extract-Web-Tool
 
 # 啟動本地伺服器 (避免 CORS 問題)
 python -m http.server 8000
-# 訪問 http://localhost:8000/docs/
+# 訪問 http://localhost:8000/
 ```
 
 ---
@@ -71,26 +71,26 @@ QIP_DataExtractor/
 ├── .github/                 # 🤖 GitHub 配置
 │   └── workflows/           # GitHub Actions 工作流程
 │       └── static.yml       # 自動部署至 GitHub Pages
-├── docs/                    # 🌐 Web 應用 (GitHub Pages)
-│   ├── index.html           # 主頁面
-│   ├── css/style.css        # 樣式表
-│   ├── js/                  # JavaScript 模組
-│   │   ├── core/            # 核心邏輯 (MECE: Internal data handling)
-│   │   │   ├── extractor.js
-│   │   │   ├── spec-extractor.js
-│   │   │   ├── processor.js
-│   │   │   └── validator.js
-│   │   ├── ui/              # 使用者介面 (MECE: Interface management)
-│   │   │   ├── app.js
-│   │   │   └── logger.js
-│   │   ├── utils/           # 工具函式 (MECE: Reusable tools)
-│   │   │   └── exporter.js
-│   │   └── lib/             # 第三方庫
-│   └── notes/               # 設計文件紀錄
-└── reference/               # 🔧 原始參考代碼
+├── index.html           # 主頁面
+├── css/style.css        # 樣式表
+├── js/                  # JavaScript 模組
+│   ├── core/            # 核心邏輯 (MECE: Internal data handling)
+│   │   ├── extractor.js
+│   │   ├── spec-extractor.js
+│   │   ├── processor.js
+│   │   └── validator.js
+│   ├── ui/              # 使用者介面 (MECE: Interface management)
+│   │   ├── app.js
+│   │   └── logger.js
+│   ├── utils/           # 工具函式 (MECE: Reusable tools)
+│   │   └── exporter.js
+│   └── lib/             # 第三方庫
+├── notes/               # 設計文件紀錄
+└── vba-reference/           # 🔧 原始參考代碼
+
 ```
 
-📚 **詳細說明**: [docs/notes/PROJECT_STRUCTURE.md](docs/notes/PROJECT_STRUCTURE.md)
+📚 **詳細說明**: [notes/PROJECT_STRUCTURE.md](notes/PROJECT_STRUCTURE.md)
 
 ---
 
