@@ -11,7 +11,7 @@
 
 ### 🔴 重構前的問題
 ```
-QIP_DataExtract/
+QIP_DataExtractor/
 ├── theCode.bas                  ❌ 單體 VBA 檔案
 ├── DataExtractor.bas            ❌ 與 theCode.bas 功能重複
 ├── DataValidator.bas            ❌ 與 theCode.bas 功能重複
@@ -32,7 +32,7 @@ QIP_DataExtract/
 ### 🟢 重構後的結構
 
 ```
-QIP_DataExtract/
+QIP_DataExtractor/
 ├── 📄 README.md                    ✅ 專業化,包含 Badges、使用指南
 ├── 📄 PROJECT_STRUCTURE.md         ✅ 新增:詳細專案結構說明
 ├── 📄 .gitignore                   ✅ Git 忽略規則

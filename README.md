@@ -67,7 +67,7 @@ python -m http.server 8000
 ## 📁 專案結構
 
 ```
-QIP_DataExtract/
+QIP_DataExtractor/
 ├── .github/                 # 🤖 GitHub 配置
 │   └── workflows/           # GitHub Actions 工作流程
 │       └── static.yml       # 自動部署至 GitHub Pages

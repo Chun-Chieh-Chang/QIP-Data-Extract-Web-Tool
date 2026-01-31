@@ -8,7 +8,7 @@
 ## 📂 目錄結構 (MECE 原則)
 
 ```
-QIP_DataExtract/
+QIP_DataExtractor/
 ├── 📄 README.md                    # 專案說明與使用指南
 ├── 📄 .gitignore                   # Git 忽略規則
 │

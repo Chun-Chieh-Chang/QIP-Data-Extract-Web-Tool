@@ -54,7 +54,7 @@ docs/
 ## 📝 版本資訊
 
 - **版本**：1.0.0
-- **原始版本**：VBA QIP_DataExtract
+- **原始版本**：VBA QIP_DataExtractor
 
 ## 📄 授權
 
