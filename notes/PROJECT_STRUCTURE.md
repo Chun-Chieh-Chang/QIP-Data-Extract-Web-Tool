@@ -8,40 +8,29 @@
 ## 📂 目錄結構 (MECE 原則)
 
 ```
-QIP_DataExtractor/
+QIP_DataExtract/
 ├── 📄 README.md                    # 專案說明與使用指南
+├── 📄 PROJECT_STRUCTURE.md         # 本檔案 - 專案結構詳細說明
 ├── 📄 .gitignore                   # Git 忽略規則
 │
-├── 📁 .github/                     # 🤖 GitHub 專案配置
-│   └── 📁 workflows/               # GitHub Actions 工作流程
-│       └── 📄 static.yml           # 自動部署至 GitHub Pages
+├── 📄 index.html               # 主頁面 - UI 結構
+├── 📄 .nojekyll                # GitHub Pages 配置
 │
-├── 📁 docs/                        # 🌐 Web 應用程式 (GitHub Pages 發布來源)
-│   ├── 📄 index.html               # 主頁面 - UI 結構
-│   ├── 📄 README.md                # Web 應用說明
-│   ├── 📄 .nojekyll                # GitHub Pages 配置
-│   │
-│   ├── 📁 css/                     # 樣式表
-│   │   └── 📄 style.css            # 主樣式檔案
-│   │
-│   ├── 📁 js/                      # JavaScript 模組
-│   │   ├── 📄 app.js               # 主應用程式 - UI 交互與流程控制
-│   │   ├── 📄 processor.js         # 核心處理器 - 批號合併與數據處理邏輯
-│   │   ├── 📄 data-extractor.js    # 數據提取模組
-│   │   ├── 📄 spec-extractor.js    # 規格提取模組
-│   │   ├── 📄 data-validator.js    # 數據驗證模組
-│   │   ├── 📄 error-logger.js      # 錯誤日誌模組
-│   │   ├── 📄 excel-exporter.js    # Excel 輸出模組
-│   │   └── 📁 lib/                 # 第三方函式庫
-│   │       └── 📄 xlsx.full.min.js # SheetJS - Excel 檔案處理
-│   │
-│   └── 📁 notes/                   # 📝 開發文件與設計紀錄
-│       ├── 📄 PROJECT_STRUCTURE.md # 專案結構詳細說明
-│       ├── 📄 REFACTORING_SUMMARY.md # 重構總結
-│       └── 📄 UI_Redesign.txt      # UI 重新設計紀錄
+├── 📁 css/                     # 樣式表
+│   └── 📄 style.css            # 主樣式檔案
 │
-└── 📁 reference/                   # 🔧 VBA 參考代碼 (僅供參考,不參與 Web 運行)
-    ├── 📄 README.md                # VBA 參考代碼說明
+├── 📁 js/                      # JavaScript 模組
+│   ├── 📄 app.js               # 主應用程式 - UI 交互與流程控制
+│   ├── 📄 processor.js         # 核心處理器 - 批號合併與數據處理邏輯
+│   ├── 📄 data-extractor.js    # 數據提取模組
+│   ├── 📄 spec-extractor.js    # 規格提取模組
+│   ├── 📄 data-validator.js    # 數據驗證模組
+│   ├── 📄 error-logger.js      # 錯誤日誌模組
+│   ├── 📄 excel-exporter.js    # Excel 輸出模組
+│   └── 📁 lib/                 # 第三方函式庫
+│       └── 📄 xlsx.full.min.js # SheetJS - Excel 檔案處理
+│
+└── 📁 vba-reference/               # 🔧 VBA 參考代碼 (僅供參考,不參與 Web 運行)
     ├── 📄 theCode.bas              # 原始 VBA 完整代碼 (單體檔案)
     ├── 📄 DataExtractor.bas        # VBA 數據提取模組
     ├── 📄 DataValidator.bas        # VBA 數據驗證模組
@@ -53,7 +42,7 @@ QIP_DataExtractor/
 
 ## 🧩 模組職責劃分 (MECE)
 
-### 1️⃣ **Web 應用層** (`docs/`)
+### 1️⃣ **Web 應用層** (根目錄)
 - **目的**: 提供完整的前端應用,可直接部署至 GitHub Pages
 - **核心檔案**:
   - `index.html`: UI 結構與佈局
@@ -61,7 +50,7 @@ QIP_DataExtractor/
   - `js/app.js`: 使用者交互、檔案上傳、配置管理
   - `js/processor.js`: 核心業務邏輯 (批號合併、跨頁處理)
 
-### 2️⃣ **業務邏輯層** (`docs/js/`)
+### 2️⃣ **業務邏輯層** (`js/`)
 各模組遵循 **單一職責原則**:
 
 | 模組 | 職責 | 主要功能 |
@@ -105,27 +94,18 @@ excel-exporter.js (生成輸出)
 
 ## 🚀 部署說明
 
-### GitHub Pages 設定 (透過 GitHub Actions)
+### GitHub Pages 設定
 1. Repository Settings → Pages
-2. Source: **GitHub Actions**
-3. 工作流程: `.github/workflows/static.yml`
-4. 觸發條件:
-   - 自動: 推送至 `main` 分支時自動部署
-   - 手動: Actions 頁面手動觸發 workflow
-5. 訪問: `https://chun-chieh-chang.github.io/QIP-Data-Extract-Web-Tool/docs/`
-
-### GitHub Actions 工作流程
-- **檔案位置**: `.github/workflows/static.yml`
-- **部署內容**: 整個 repository (包含 docs 目錄)
-- **權限設定**: 已配置 `pages: write` 和 `id-token: write`
-- **並發控制**: 僅允許一個部署同時進行
+2. Source: **Deploy from a branch**
+3. Branch: **main** / Folder: **/(root)**
+4. 訪問: `https://chun-chieh-chang.github.io/QIP-Data-Extract-Web-Tool/`
 
 ### 本地開發
 ```bash
-# 直接開啟 docs/index.html (需要本地伺服器以避免 CORS 問題)
+# 直接開啟 index.html (需要本地伺服器以避免 CORS 問題)
 # 推薦使用 VS Code Live Server 或 Python HTTP Server
 python -m http.server 8000
-# 然後訪問 http://localhost:8000/docs/
+# 然後訪問 http://localhost:8000/
 ```
 
 ---
@@ -133,9 +113,9 @@ python -m http.server 8000
 ## 📝 維護指南
 
 ### 新增功能時
-1. **UI 變更**: 修改 `docs/index.html` 和 `docs/css/style.css`
+1. **UI 變更**: 修改 `index.html` 和 `css/style.css`
 2. **業務邏輯**: 修改對應的 JS 模組 (遵循單一職責)
-3. **新增模組**: 在 `docs/js/` 建立新檔案,並在 `index.html` 引入
+3. **新增模組**: 在 `js/` 建立新檔案,並在 `index.html` 引入
 
 ### 測試流程
 1. 本地測試: 使用 Live Server 測試完整流程
@@ -146,5 +126,5 @@ python -m http.server 8000
 
 ## 📌 版本資訊
 - **建立日期**: 2026-01-07
-- **最後更新**: 2026-01-07
+- **最後更新**: 2026-01-31
 - **維護者**: Chun-Chieh Chang
