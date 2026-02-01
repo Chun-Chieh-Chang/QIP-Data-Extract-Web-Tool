@@ -25,6 +25,7 @@ This session focused on refining the application's UI/UX, specifically targeting
   - **Visuals**: Normalized all nav links to neutral state by default, ensuring consistency.
 
 ### 2.3 UI Components & Header
+- **App Title**: Renamed main header from "QIP 數據分析系統" to "**QIP 數據提取系統**" to better reflect the tool's core function.
 - **Theme Toggle**: Redesigned as a "Pill Shape" button with label ("切換深色/淺色") to match the adjacent "System Ready" indicator.
 - **Help Button**: 
   - Moved from sidebar footer to Top Header.
