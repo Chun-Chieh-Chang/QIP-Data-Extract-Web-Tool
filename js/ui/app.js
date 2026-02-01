@@ -32,6 +32,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // 載入已保存的配置
     loadSavedConfigs();
 
+    // 啟動滾動監聽 (Scroll Spy)
+    if (typeof setupScrollSpy === 'function') {
+        setupScrollSpy();
+    }
+
     console.log('初始化完成');
 });
 
@@ -89,6 +94,12 @@ function cacheElements() {
     elements.configDialog = document.getElementById('config-dialog');
     elements.configList = document.getElementById('config-list');
     elements.closeConfigDialog = document.getElementById('close-config-dialog');
+
+    elements.helpBtn = document.getElementById('help-btn');
+    elements.helpDialog = document.getElementById('help-dialog');
+    elements.closeHelpDialog = document.getElementById('close-help-dialog');
+
+    elements.runtimeSpinner = document.getElementById('runtime-spinner');
 }
 
 /**
@@ -186,6 +197,19 @@ function bindEvents() {
 
     if (elements.clearAllConfigs) elements.clearAllConfigs.addEventListener('click', clearAllConfigurations);
     if (elements.closeConfigDialog) elements.closeConfigDialog.addEventListener('click', () => elements.configDialog.close());
+
+    // 使用說明
+    if (elements.helpBtn) elements.helpBtn.addEventListener('click', () => elements.helpDialog.showModal());
+    if (elements.closeHelpDialog) elements.closeHelpDialog.addEventListener('click', () => elements.helpDialog.close());
+
+    // 點擊對話框外部關閉
+    [elements.configDialog, elements.helpDialog].forEach(dialog => {
+        if (dialog) {
+            dialog.addEventListener('click', (e) => {
+                if (e.target === dialog) dialog.close();
+            });
+        }
+    });
 
     // 搜尋功能
     if (elements.searchConfig) {
@@ -313,11 +337,26 @@ async function loadFiles(files) {
         // 顯示工作簿信息 (顯示目前作為範本的檔案)
         if (currentWorkbook) {
             const sheetCount = currentWorkbook.SheetNames.length;
+            const sizeInMB = selectedFiles.reduce((acc, f) => acc + f.size, 0) / (1024 * 1024);
             elements.workbookInfo.innerHTML = `
-                <p>📄 範本檔案: <strong>${currentFileName}</strong></p>
-                <p>📊 工作表數量: <strong>${sheetCount}</strong></p>
-                <p>工作表: ${currentWorkbook.SheetNames.slice(0, 5).join(', ')}${sheetCount > 5 ? '...' : ''}</p>
-                <p class="mt-2 text-primary font-bold">已就緒，將提取共 ${fileCount} 個檔案的數據</p>
+                <div class="space-y-4 w-full">
+                    <div class="flex flex-col gap-1 w-full max-w-full">
+                        <span class="text-slate-400 flex-shrink-0 text-xs uppercase tracking-wider">範本來源:</span>
+                        <span class="text-slate-700 dark:text-slate-200 font-black break-all text-sm leading-relaxed block w-full" title="${currentFileName}">${currentFileName}</span>
+                    </div>
+                    <div class="flex flex-col gap-1 w-full max-w-full">
+                        <span class="text-slate-400 flex-shrink-0 text-xs uppercase tracking-wider">工作表數:</span>
+                        <span class="text-slate-700 dark:text-slate-200 font-black text-sm">${sheetCount} 個分頁</span>
+                    </div>
+                    <div class="flex flex-col gap-1 w-full max-w-full">
+                        <span class="text-slate-400 flex-shrink-0 text-xs uppercase tracking-wider">分頁清單:</span>
+                        <span class="text-slate-500 dark:text-slate-400 break-all text-sm leading-relaxed block w-full">${currentWorkbook.SheetNames.slice(0, 8).join(', ')}${sheetCount > 8 ? '...' : ''}</span>
+                    </div>
+                    <div class="pt-4 flex flex-wrap items-center gap-3">
+                        <span class="px-3 py-2 bg-primary/10 text-primary text-sm font-black uppercase rounded-xl">共 ${fileCount} 檔</span>
+                        <span class="px-3 py-2 bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400 text-sm font-black uppercase rounded-xl">${sizeInMB.toFixed(2)} MB</span>
+                    </div>
+                </div>
             `;
         }
 
@@ -502,6 +541,24 @@ function renderPreviewTable(worksheet) {
     // 綁定儲存格選擇事件
     elements.previewTable.querySelectorAll('td').forEach(td => {
         td.addEventListener('click', handleCellClick);
+    });
+
+    // 自動捲動到指定位置 (Row 24 & Most Right)
+    requestAnimationFrame(() => {
+        const container = elements.previewTable.parentElement;
+        if (container) {
+            // 水平捲動到最右邊
+            container.scrollLeft = container.scrollWidth;
+
+            // 垂直捲動到第 24 行
+            // 注意：tbody 的 index 是從 0 開始，所以第 24 行是 index 23
+            const rows = elements.previewTable.querySelectorAll('tbody tr');
+            if (rows.length > 23) {
+                const targetRow = rows[23];
+                // 使用 offsetTop 定位
+                container.scrollTop = targetRow.offsetTop;
+            }
+        }
     });
 }
 
@@ -984,9 +1041,20 @@ async function startProcessing() {
     console.log('開始處理，配置:', config);
 
     // 顯示進度
+    // 顯示進度
     elements.progressContainer.style.display = 'block';
     elements.startProcess.disabled = true;
     elements.resultSection.style.display = 'none';
+
+    // 更新狀態為處理中
+    if (typeof statusManager !== 'undefined') {
+        statusManager.setStatus('processing');
+    }
+
+    // 啟動動畫
+    if (elements.runtimeSpinner) {
+        elements.runtimeSpinner.classList.add('animate-spin');
+    }
 
     try {
         const processor = new QIPProcessor(config);
@@ -1017,8 +1085,18 @@ async function startProcessing() {
     } catch (error) {
         console.error('處理失敗:', error);
         alert('處理失敗: ' + error.message);
+
+        // 更新狀態為錯誤
+        if (typeof statusManager !== 'undefined') {
+            statusManager.setStatus('error');
+        }
     } finally {
         elements.startProcess.disabled = false;
+        // 停止動畫
+        if (elements.runtimeSpinner) {
+        }
+
+        // 狀態更新將在 showResults 中處理成功，或者在這裡處理完成態
     }
 }
 
@@ -1027,31 +1105,38 @@ async function startProcessing() {
  */
 function showResults(results) {
     elements.progressFill.style.width = '100%';
-    elements.progressText.textContent = '處理完成！';
+    elements.progressText.textContent = '數據提取執行完成！';
+
+    // 更新狀態為成功
+    if (typeof statusManager !== 'undefined') {
+        statusManager.setStatus('success');
+    }
 
     elements.resultSection.style.display = 'block';
 
     const itemCount = Object.keys(results.inspectionItems).length;
 
     elements.resultSummary.innerHTML = `
-        <h3 class="font-bold flex items-center gap-2 mb-3">
-             <span class="material-icons-round">check_circle</span> 數據提取成功
+        <h3 class="text-lg font-black flex items-center gap-3 mb-6 text-emerald-600 dark:text-emerald-400">
+             <span class="material-icons-round text-2xl">check_circle</span> 數據提取成功
         </h3>
-        <div class="grid grid-cols-3 gap-4">
-            <div class="bg-white/50 dark:bg-black/10 p-3 rounded-lg text-center">
-                <p class="text-[10px] uppercase font-bold opacity-60">檢驗項目</p>
-                <p class="text-xl font-bold">${itemCount}</p>
+        <div class="grid grid-cols-3 gap-6">
+            <div class="bg-white/50 dark:bg-slate-800/50 p-5 rounded-2xl text-center border border-slate-200 dark:border-white/5">
+                <p class="text-xs uppercase font-black text-slate-500 dark:text-slate-400 tracking-widest mb-2">檢驗項目數</p>
+                <p class="text-3xl font-black text-slate-800 dark:text-white">${itemCount}</p>
             </div>
-            <div class="bg-white/50 dark:bg-black/10 p-3 rounded-lg text-center">
-                <p class="text-[10px] uppercase font-bold opacity-60">處理工作表</p>
-                <p class="text-xl font-bold">${results.processedSheets}</p>
+            <div class="bg-white/50 dark:bg-slate-800/50 p-5 rounded-2xl text-center border border-slate-200 dark:border-white/5">
+                <p class="text-xs uppercase font-black text-slate-500 dark:text-slate-400 tracking-widest mb-2">處理工作表</p>
+                <p class="text-3xl font-black text-slate-800 dark:text-white">${results.processedSheets}</p>
             </div>
-            <div class="bg-white/50 dark:bg-black/10 p-3 rounded-lg text-center">
-                <p class="text-[10px] uppercase font-bold opacity-60">總穴數</p>
-                <p class="text-xl font-bold">${results.totalCavities}</p>
+            <div class="bg-white/50 dark:bg-slate-800/50 p-5 rounded-2xl text-center border border-slate-200 dark:border-white/5">
+                <p class="text-xs uppercase font-black text-slate-500 dark:text-slate-400 tracking-widest mb-2">總計穴數</p>
+                <p class="text-3xl font-black text-slate-800 dark:text-white">${results.totalCavities}</p>
             </div>
         </div>
-        <p class="mt-4 text-xs opacity-80">資料處理已完成，您可以點擊下方按鈕下載 Excel 結果檔案。</p>
+        <p class="mt-8 text-sm font-bold text-slate-600 dark:text-slate-400 leading-loose">
+            所有數據提取任務已順利完成。您可以下載生成的 Excel 報表以進行進一步的分析與存檔。
+        </p>
     `;
 
     // 顯示錯誤日誌（如果有）
