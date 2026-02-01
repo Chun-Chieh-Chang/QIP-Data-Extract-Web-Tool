@@ -162,14 +162,30 @@ function bindEvents() {
     elements.nextSheetBtn.addEventListener('click', () => switchSheet(1));
 
     // 配置管理
-    elements.saveConfig.addEventListener('click', saveConfiguration);
-    elements.loadConfig.addEventListener('click', () => showConfigDialog());
-    elements.resetConfig.addEventListener('click', resetConfiguration);
-    elements.exportConfigs.addEventListener('click', exportConfigurations);
-    elements.importConfigsBtn.addEventListener('click', () => elements.importConfigsFile.click());
-    elements.importConfigsFile.addEventListener('change', importConfigurations);
-    elements.clearAllConfigs.addEventListener('click', clearAllConfigurations);
-    elements.closeConfigDialog.addEventListener('click', () => elements.configDialog.close());
+    if (elements.saveConfig) elements.saveConfig.addEventListener('click', saveConfiguration);
+    if (elements.loadConfig) elements.loadConfig.addEventListener('click', () => showConfigDialog());
+    if (elements.resetConfig) elements.resetConfig.addEventListener('click', resetConfiguration);
+
+    if (elements.exportConfigs) {
+        elements.exportConfigs.addEventListener('click', () => {
+            console.log('點擊導出按鈕');
+            exportConfigurations();
+        });
+    }
+
+    if (elements.importConfigsBtn && elements.importConfigsFile) {
+        elements.importConfigsBtn.addEventListener('click', () => {
+            console.log('點擊導入按鈕，觸發檔案選擇');
+            elements.importConfigsFile.click();
+        });
+        elements.importConfigsFile.addEventListener('change', (e) => {
+            console.log('偵測到導入檔案變更');
+            importConfigurations(e);
+        });
+    }
+
+    if (elements.clearAllConfigs) elements.clearAllConfigs.addEventListener('click', clearAllConfigurations);
+    if (elements.closeConfigDialog) elements.closeConfigDialog.addEventListener('click', () => elements.configDialog.close());
 
     // 搜尋功能
     if (elements.searchConfig) {
