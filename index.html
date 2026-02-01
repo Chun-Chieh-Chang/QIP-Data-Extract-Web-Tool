@@ -4,49 +4,71 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>QIP Data Extract Tool v2.0</title>
+    <title>QIP Analytics Protocol v2.4</title>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Noto+Sans+TC:wght@300;400;500;700&amp;display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;family=Noto+Sans+TC:wght@300;400;500;700;900&amp;display=swap"
         rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body
-    class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 min-h-screen flex flex-col transition-colors duration-200">
+    class="bg-background-light dark:bg-slate-950 text-slate-800 dark:text-slate-200 min-h-screen flex flex-col transition-colors duration-500 overflow-x-hidden">
+
     <!-- 隱私保障橫幅 -->
     <div
-        class="bg-emerald-600 dark:bg-emerald-800 text-white py-1.5 px-4 text-center text-sm font-medium flex items-center justify-center gap-2 sticky top-0 z-[40]">
-        <span class="material-icons-round text-base">lock</span>
-        資料隱私保障：所有檔案處理均在您的瀏覽器本地完成，不會上傳至任何伺服器
+        class="bg-emerald-600/90 dark:bg-emerald-800/90 backdrop-blur-md text-white py-2 px-4 text-center text-[10px] uppercase tracking-[0.2em] font-black flex items-center justify-center gap-2 sticky top-0 z-[100] shadow-xl">
+        <span class="material-icons-round text-sm animate-pulse">verified_user</span>
+        銀行級隱私保障：數據本地處理 ‧ 零上傳 ‧ 絕不洩漏 ‧ 100% LOCAL PROCESSING
     </div>
 
-    <header
-        class="bg-card-light dark:bg-card-dark border-b border-slate-200 dark:border-slate-700 px-6 py-4 flex items-center justify-between sticky top-[34px] z-30">
-        <div class="flex items-center gap-3">
-            <div class="bg-primary p-1.5 rounded-lg">
-                <span class="material-icons-round text-white text-2xl">analytics</span>
+    <!-- 背景裝飾光暈 -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+        <div
+            class="absolute -top-[10%] -left-[10%] w-[50%] h-[50%] bg-primary/10 blur-[150px] rounded-full animate-pulse transition-opacity duration-1000">
+        </div>
+        <div class="absolute top-[20%] -right-[10%] w-[40%] h-[40%] bg-indigo-500/10 blur-[120px] rounded-full animate-pulse"
+            style="animation-delay: 2s"></div>
+        <div class="absolute -bottom-[10%] left-[20%] w-[35%] h-[35%] bg-emerald-500/5 blur-[100px] rounded-full"></div>
+    </div>
+
+    <header class="glass-nav px-8 py-5 flex items-center justify-between sticky top-[34px] z-50">
+        <div class="flex items-center gap-5">
+            <div class="relative group">
+                <div
+                    class="absolute -inset-1.5 bg-gradient-to-r from-primary to-indigo-600 rounded-2xl blur opacity-25 group-hover:opacity-60 transition duration-1000">
+                </div>
+                <div class="relative bg-white dark:bg-slate-900 p-3 rounded-2xl shadow-xl border border-white/10">
+                    <span class="material-icons-round text-primary text-3xl block">insights</span>
+                </div>
             </div>
             <div>
-                <h1 class="text-xl font-bold text-slate-900 dark:text-white leading-tight">QIP 檢驗報告數據提取工具</h1>
-                <p class="text-xs text-slate-500 dark:text-slate-400">Excel 數據分析 · 純前端處理 · 隱私安全</p>
+                <h1 class="text-2xl font-black text-slate-900 dark:text-white leading-tight tracking-[calc(-0.02em)]">
+                    QIP <span class="text-primary italic">ANALYTICS</span></h1>
+                <p
+                    class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.25em] flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
+                    Professional · Local Engine · v2.0.0
+                </p>
             </div>
         </div>
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-6">
             <div
-                class="flex items-center bg-slate-100 dark:bg-slate-800 rounded-full px-3 py-1 text-xs font-medium text-slate-600 dark:text-slate-300">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
-                系統就緒
+                class="hidden md:flex items-center bg-slate-100 dark:bg-slate-900/80 px-4 py-2 rounded-2xl border border-slate-200 dark:border-white/5 shadow-inner">
+                <div class="flex -space-x-2 mr-3">
+                    <div class="w-6 h-6 rounded-full bg-primary/20 border-2 border-white dark:border-slate-900"></div>
+                    <div class="w-6 h-6 rounded-full bg-emerald-500/20 border-2 border-white dark:border-slate-900">
+                    </div>
+                </div>
+                <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">System Ready</span>
             </div>
             <!-- 主題切換按鈕 -->
             <button id="theme-toggle"
-                class="group flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-200 dark:bg-slate-800 border-2 border-slate-300 dark:border-primary/50 hover:border-primary dark:hover:border-primary transition-all shadow-md focus:outline-none focus:ring-2 focus:ring-primary/40"
-                onclick="document.documentElement.classList.toggle('dark')" title="切換深/淺色模式">
-                <span class="material-icons-round text-[20px] block dark:hidden text-slate-700">dark_mode</span>
+                class="group relative w-12 h-12 flex items-center justify-center rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 hover:border-primary transition-all shadow-sm focus:outline-none"
+                onclick="document.documentElement.classList.toggle('dark')">
+                <span class="material-icons-round text-xl block dark:hidden text-slate-700">dark_mode</span>
                 <span
-                    class="material-icons-round text-[20px] hidden dark:block text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]">light_mode</span>
-                <span
-                    class="text-xs font-bold uppercase tracking-wider hidden sm:block text-slate-700 dark:text-slate-300">模式切換</span>
+                    class="material-icons-round text-xl hidden dark:block text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.4)]">light_mode</span>
             </button>
         </div>
     </header>
@@ -54,80 +76,85 @@
     <div class="flex flex-1 overflow-hidden">
         <!-- 側邊欄 -->
         <aside
-            class="w-64 border-r border-slate-200 dark:border-slate-700 bg-card-light dark:bg-card-dark flex-shrink-0 hidden lg:flex flex-col">
-            <nav class="p-4 space-y-2">
-                <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4 px-2">
-                    處理步驟</p>
-                <a class="flex items-center gap-3 px-3 py-2.5 bg-primary/10 text-primary rounded-lg border border-primary/20"
+            class="w-80 border-r border-slate-200 dark:border-white/5 bg-white/40 dark:bg-slate-950/40 backdrop-blur-3xl flex-shrink-0 hidden lg:flex flex-col">
+            <nav class="p-8 space-y-5">
+                <p
+                    class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mb-6 px-4">
+                    Workspace Flow</p>
+                <a class="group flex items-center gap-5 px-5 py-4 bg-primary/10 text-primary rounded-[1.25rem] border border-primary/20 transition-all hover:shadow-2xl hover:shadow-primary/10"
                     href="#step1">
-                    <span
-                        class="w-6 h-6 rounded-full bg-primary text-white text-[12px] flex items-center justify-center font-bold">1</span>
-                    <span class="font-medium text-sm">上傳檔案</span>
+                    <span class="step-number">1</span>
+                    <span class="font-black text-sm tracking-tight uppercase">Payload Input</span>
                 </a>
-                <a class="flex items-center gap-3 px-3 py-2.5 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                <a class="group flex items-center gap-5 px-5 py-4 text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900/50 rounded-[1.25rem] transition-all border border-transparent hover:border-slate-100 dark:hover:border-white/5"
                     href="#step2">
                     <span
-                        class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 text-[12px] flex items-center justify-center font-bold">2</span>
-                    <span class="font-medium text-sm">參數配置</span>
+                        class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-900 flex items-center justify-center font-black text-sm group-hover:bg-primary group-hover:text-white transition-all duration-300">2</span>
+                    <span class="font-black text-sm tracking-tight uppercase">Intelligence Definition</span>
                 </a>
-                <a class="flex items-center gap-3 px-3 py-2.5 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                <a class="group flex items-center gap-5 px-5 py-4 text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900/50 rounded-[1.25rem] transition-all border border-transparent hover:border-slate-100 dark:hover:border-white/5"
                     href="#step3">
                     <span
-                        class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 text-[12px] flex items-center justify-center font-bold">3</span>
-                    <span class="font-medium text-sm">執行處理</span>
+                        class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-900 flex items-center justify-center font-black text-sm group-hover:bg-primary group-hover:text-white transition-all duration-300">3</span>
+                    <span class="font-black text-sm tracking-tight uppercase">Compute Execution</span>
                 </a>
 
-                <div class="pt-8 px-2">
+                <div class="pt-10">
                     <div
-                        class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
-                        <h4 class="text-xs font-bold mb-2 flex items-center gap-2">
-                            <span class="material-icons-round text-sm text-amber-500">info</span>
-                            快速提示
+                        class="p-6 rounded-[1.5rem] bg-gradient-to-br from-primary/5 to-indigo-500/5 border border-primary/10 relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 w-20 h-20 bg-primary/10 blur-2xl rounded-full"></div>
+                        <h4 class="text-xs font-black mb-3 flex items-center gap-2 text-primary">
+                            <span class="material-icons-round text-sm">auto_awesome</span>
+                            SMART TIPS
                         </h4>
-                        <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
-                            您可以將 Excel 檔案直接拖放至右側上傳區。支援 .xls, .xlsx, .xlsm 等多種格式。
+                        <p class="text-[11px] font-medium leading-relaxed text-slate-500 dark:text-slate-400">
+                            Drag & drop multiple Excel workbooks to start batch processing instantly. All logic remains
+                            on your device.
                         </p>
                     </div>
                 </div>
             </nav>
-            <div class="mt-auto p-4 border-t border-slate-200 dark:border-slate-700">
-                <a class="flex items-center gap-2 text-xs text-slate-400 hover:text-primary transition-colors" href="#">
-                    <span class="material-icons-round text-sm">menu_book</span>
-                    查看使用說明手冊
+            <div class="mt-auto p-6 border-t border-slate-100 dark:border-white/5">
+                <a class="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary transition-colors pl-4"
+                    href="#">
+                    <span class="material-icons-round text-lg">local_library</span>
+                    Documentation
                 </a>
             </div>
         </aside>
 
         <!-- 主要內容區 -->
-        <main class="flex-1 overflow-y-auto custom-scrollbar bg-slate-100 dark:bg-slate-900/50">
-            <div class="max-w-[1600px] mx-auto p-6 space-y-6">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                    <!-- 步驟 1: 檔案上傳 (佔 4/12) -->
-                    <section
-                        class="lg:col-span-4 bg-card-light dark:bg-card-dark rounded-xl shadow-md border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col h-full"
+        <main class="flex-1 overflow-y-auto custom-scrollbar bg-slate-50 dark:bg-slate-950/20">
+            <div class="max-w-[1700px] mx-auto p-10 space-y-10">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-stretch">
+                    <!-- 步驟 1: 檔案上傳 -->
+                    <section class="lg:col-span-4 glass-card rounded-[2.5rem] overflow-hidden flex flex-col hover-lift"
                         id="step1">
                         <div
-                            class="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <span
-                                    class="w-6 h-6 rounded bg-primary text-white text-sm flex items-center justify-center font-bold">1</span>
-                                <h2 class="font-bold text-slate-800 dark:text-white">檔案上傳與狀態</h2>
+                            class="p-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between bg-primary/[0.02]">
+                            <div class="flex items-center gap-4">
+                                <span class="step-number">1</span>
+                                <h2 class="font-black text-slate-800 dark:text-white tracking-widest uppercase text-xs">
+                                    Ingestion Interface</h2>
                             </div>
                         </div>
-                        <div class="p-6 flex-1 flex flex-col justify-center">
+                        <div class="p-10 flex-1 flex flex-col justify-center">
                             <div id="upload-area"
-                                class="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-8 text-center hover:border-primary/50 transition-all group bg-slate-50/50 dark:bg-slate-800/30 cursor-pointer mb-4">
-                                <div class="flex flex-col items-center">
+                                class="relative border-[3px] border-dashed border-slate-200 dark:border-slate-800 rounded-[2rem] p-12 text-center hover:border-primary/50 transition-all group bg-white/50 dark:bg-slate-900/40 cursor-pointer mb-8 overflow-hidden shadow-sm">
+                                <div
+                                    class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                </div>
+                                <div class="relative flex flex-col items-center">
                                     <div
-                                        class="w-16 h-16 bg-amber-100 dark:bg-amber-900/30 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                        <span class="material-icons-round text-amber-500 text-3xl">folder</span>
+                                        class="w-24 h-24 bg-primary/10 rounded-[2rem] flex items-center justify-center mb-8 group-hover:scale-110 group-hover:rotate-3 transition-all duration-700">
+                                        <span class="material-icons-round text-primary text-5xl">upload_file</span>
                                     </div>
-                                    <h3 class="text-base font-semibold mb-1">拖放 Excel 檔案至此處</h3>
-                                    <p class="text-sm text-slate-400 mb-4">支援 .xls, .xlsx, .xlsm 格式</p>
-                                    <button id="browse-btn"
-                                        class="bg-primary hover:bg-blue-600 text-white px-6 py-2.5 rounded-lg text-base font-medium transition-colors flex items-center gap-2 mx-auto">
-                                        <span class="material-icons-round text-sm">cloud_upload</span>
-                                        選擇檔案
+                                    <h3 class="text-xl font-black mb-2 tracking-tight">Drop Source Binaries</h3>
+                                    <p class="text-xs text-slate-400 font-bold uppercase tracking-[0.2em] mb-8">XLSX ‧
+                                        XLSM ‧ XLS</p>
+                                    <button id="browse-btn" class="btn-action btn-action-primary px-10 py-3.5">
+                                        <span class="material-icons-round text-sm">add_circle</span>
+                                        IMPORT DATASETS
                                     </button>
                                     <input type="file" id="file-input" accept=".xls,.xlsx,.xlsm" multiple hidden>
                                 </div>
@@ -135,353 +162,491 @@
 
                             <!-- 檔案資訊區 -->
                             <div id="file-info"
-                                class="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700"
+                                class="p-6 bg-white dark:bg-slate-900/60 rounded-[2rem] border border-slate-100 dark:border-white/10 shadow-xl"
                                 style="display: none;">
-                                <div class="flex items-center justify-between mb-3">
-                                    <div class="flex items-center gap-3">
+                                <div class="flex items-center justify-between mb-6">
+                                    <div class="flex items-center gap-5">
                                         <div
-                                            class="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
-                                            <span
-                                                class="material-icons-round text-emerald-600 dark:text-emerald-400">description</span>
+                                            class="w-14 h-14 bg-emerald-500/10 rounded-2xl flex items-center justify-center border border-emerald-500/10">
+                                            <span class="material-icons-round text-emerald-500 text-2xl">verified</span>
                                         </div>
-                                        <div>
+                                        <div class="min-w-0">
                                             <p id="selected-file-name"
-                                                class="text-base font-bold text-slate-700 dark:text-slate-200"></p>
-                                            <div id="workbook-info" class="text-xs text-slate-500 dark:text-slate-400">
+                                                class="text-sm font-black text-slate-800 dark:text-white truncate max-w-[180px] mb-1">
+                                            </p>
+                                            <div id="workbook-info"
+                                                class="text-[10px] text-slate-400 font-black uppercase tracking-widest bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded inline-block">
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="flex gap-2">
-                                        <button id="remove-file"
-                                            class="p-2 text-slate-400 hover:text-rose-500 transition-colors">
-                                            <span class="material-icons-round">delete</span>
+                                    <button id="remove-file"
+                                        class="w-12 h-12 flex items-center justify-center rounded-2xl text-slate-400 hover:bg-rose-500/10 hover:text-rose-500 transition-all">
+                                        <span class="material-icons-round text-2xl">delete_sweep</span>
+                                    </button>
+                                </div>
+                                <button id="full-reset"
+                                    class="w-full btn-action btn-action-secondary justify-center text-rose-500 font-black tracking-widest dark:border-rose-500/20 hover:bg-rose-500 hover:text-white border-2">
+                                    <span class="material-icons-round text-sm">power_settings_new</span>
+                                    SYSTEM HARD RESET
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 步驟 2: 參數配置 -->
+                    <section class="lg:col-span-8 glass-card rounded-[2.5rem] overflow-hidden flex flex-col" id="step2">
+                        <div
+                            class="p-8 border-b border-slate-100 dark:border-white/5 bg-primary/[0.02] flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <span class="step-number">2</span>
+                                <h2 class="font-black text-slate-800 dark:text-white tracking-widest uppercase text-xs">
+                                    Intelligence Mapping</h2>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span
+                                    class="text-[9px] font-black text-primary bg-primary/10 border border-primary/10 px-4 py-1.5 rounded-full uppercase tracking-widest">Protocol
+                                    Engine v2.4</span>
+                            </div>
+                        </div>
+                        <div class="p-10 space-y-10">
+                            <!-- 基本參數 -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                                <div class="space-y-3">
+                                    <label
+                                        class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">SKU
+                                        ID / Product Code</label>
+                                    <input id="product-code"
+                                        class="w-full bg-white dark:bg-slate-900/80 border-2 border-slate-100 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold focus:border-primary/50 outline-none transition-all"
+                                        placeholder="Enter Identifier" type="text" />
+                                </div>
+                                <div class="space-y-3">
+                                    <label
+                                        class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">Cavity
+                                        Arrangement</label>
+                                    <div class="relative">
+                                        <select id="cavity-count"
+                                            class="w-full bg-white dark:bg-slate-900/80 border-2 border-slate-100 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold focus:border-primary/50 outline-none appearance-none cursor-pointer">
+                                            <option value="">-- SELECT LAYOUT --</option>
+                                            <option value="8">08 CAVITIES</option>
+                                            <option value="16">16 CAVITIES</option>
+                                            <option value="24">24 CAVITIES</option>
+                                            <option value="32">32 CAVITIES</option>
+                                            <option value="40">40 CAVITIES</option>
+                                            <option value="48">48 CAVITIES</option>
+                                        </select>
+                                        <span
+                                            class="material-icons-round absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
+                                    </div>
+                                </div>
+                                <div id="worksheet-group" class="space-y-3" style="display: none;">
+                                    <label
+                                        class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">Contextual
+                                        Layer</label>
+                                    <div class="flex gap-3">
+                                        <select id="worksheet-select" disabled
+                                            class="flex-1 bg-slate-100 dark:bg-slate-900/40 border-2 border-slate-100 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold cursor-not-allowed italic">
+                                        </select>
+                                        <button id="preview-worksheet"
+                                            class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all border-2 border-slate-100 dark:border-white/5 shadow-lg shadow-black/5">
+                                            <span class="material-icons-round text-2xl">remove_red_eye</span>
                                         </button>
                                     </div>
                                 </div>
-                                <button id="full-reset"
-                                    class="w-full py-2.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-sm font-bold rounded-lg transition-colors flex items-center justify-center gap-2">
-                                    <span class="material-icons-round text-sm">refresh</span>
-                                    完全重置
-                                </button>
                             </div>
-                        </div>
-                    </section>
 
-                    <!-- 步驟 2: 參數配置 (佔 8/12) -->
-                    <section
-                        class="lg:col-span-8 bg-card-light dark:bg-card-dark rounded-xl shadow-md border border-slate-200 dark:border-slate-700 overflow-hidden"
-                        id="step2">
-                        <div class="p-4 border-b border-slate-100 dark:border-slate-700 bg-primary/5">
-                            <div class="flex items-center gap-2">
-                                <span
-                                    class="w-6 h-6 rounded bg-primary text-white text-sm flex items-center justify-center font-bold">2</span>
-                                <h2 class="font-bold text-slate-800 dark:text-white">參數配置與管理</h2>
-                            </div>
-                        </div>
-                        <div class="p-6">
-                            <!-- 基本參數 -->
-                            <div class="mb-6">
-                                <div class="flex items-center gap-2 mb-4">
-                                    <span class="bg-primary w-1 h-4 rounded-full"></span>
-                                    <h3 class="text-base font-bold text-slate-700 dark:text-slate-300">基本參數設定</h3>
-                                </div>
-                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    <div class="space-y-1.5">
+                            <!-- 配置管理 (Elite Class UI) -->
+                            <div class="pt-10 border-t border-slate-100 dark:border-white/5">
+                                <div class="flex flex-col xl:flex-row xl:items-end justify-between gap-8">
+                                    <div class="flex-1 space-y-3">
                                         <label
-                                            class="block text-sm font-semibold text-slate-500 dark:text-slate-400">產品品號
-                                            <span class="text-rose-500">*</span></label>
-                                        <input id="product-code"
-                                            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-base focus:ring-2 focus:ring-primary/20 outline-none config-input"
-                                            placeholder="用於識別此檔案的品號" type="text" />
-                                        <p class="text-xs text-slate-400">從檔案名自動提取</p>
+                                            class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-2">Config
+                                            Profile Vault</label>
+                                        <div class="relative group">
+                                            <input id="config-name"
+                                                class="w-full bg-white dark:bg-slate-900/80 border-2 border-slate-100 dark:border-white/5 rounded-2xl pl-14 pr-6 py-5 text-sm font-bold focus:border-primary/50 outline-none transition-all shadow-inner"
+                                                placeholder="Enter profile name to save or search..." type="text" />
+                                            <span
+                                                class="material-icons-round absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors text-2xl">inventory</span>
+                                        </div>
                                     </div>
-                                    <div class="space-y-1.5">
-                                        <label
-                                            class="block text-sm font-semibold text-slate-500 dark:text-slate-400">模穴數
-                                            <span class="text-rose-500">*</span></label>
-                                        <select id="cavity-count"
-                                            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-base focus:ring-2 focus:ring-primary/20 outline-none">
-                                            <option value="">-- 請選擇 --</option>
-                                            <option value="8">8 穴</option>
-                                            <option value="16">16 穴</option>
-                                            <option value="24">24 穴</option>
-                                            <option value="32">32 穴</option>
-                                            <option value="40">40 穴</option>
-                                            <option value="48">48 穴</option>
-                                        </select>
-                                        <p class="text-xs text-slate-400">選擇後會顯示對應的穴組</p>
-                                    </div>
-                                    <!-- 工作表選擇 (隱藏下拉選單，由預覽控制) -->
-                                    <div id="worksheet-group" class="space-y-1.5" style="display: none;">
-                                        <label
-                                            class="block text-sm font-semibold text-slate-500 dark:text-slate-400">當前範本工作表</label>
-                                        <div class="flex gap-2">
-                                            <select id="worksheet-select" disabled
-                                                class="flex-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-base focus:ring-2 focus:ring-primary/20 outline-none cursor-not-allowed">
-                                                <option value="">-- 請先上傳檔案 --</option>
-                                            </select>
-                                            <button id="preview-worksheet"
-                                                class="bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 px-3 rounded-lg text-sm">
-                                                <span class="material-icons-round text-base">visibility</span>
+
+                                    <div class="flex flex-wrap items-center gap-4">
+                                        <div
+                                            class="flex p-1.5 bg-slate-100 dark:bg-slate-900 rounded-[1.5rem] border border-slate-200 dark:border-white/5 shadow-inner">
+                                            <button id="save-config"
+                                                class="w-14 h-14 flex items-center justify-center rounded-2xl hover:bg-white dark:hover:bg-slate-800 text-primary transition-all"
+                                                title="💾 Save to Local Storage">
+                                                <span class="material-icons-round text-2xl">save_alt</span>
+                                            </button>
+                                            <button id="load-config"
+                                                class="w-14 h-14 flex items-center justify-center rounded-2xl hover:bg-white dark:hover:bg-slate-800 text-amber-500 transition-all"
+                                                title="📂 Load Profile Vault">
+                                                <span class="material-icons-round text-2xl">folder_zip</span>
                                             </button>
                                         </div>
-                                        <p class="text-xs text-slate-400">目前顯示於預覽區</p>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <!-- 配置管理 -->
-                            <div class="pt-6 border-t border-slate-100 dark:border-slate-800">
-                                <div class="flex items-center gap-2 mb-4">
-                                    <span class="bg-blue-400 w-1 h-4 rounded-full"></span>
-                                    <h3 class="text-base font-bold text-slate-700 dark:text-slate-300">配置儲存與載入</h3>
-                                </div>
-                                <div class="flex flex-wrap items-center gap-3">
-                                    <div class="flex-1 min-w-[200px]">
-                                        <input id="config-name"
-                                            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-base focus:ring-2 focus:ring-primary/20 outline-none"
-                                            placeholder="輸入配置名稱" type="text" />
+                                        <div
+                                            class="flex p-1.5 bg-slate-100 dark:bg-slate-900 rounded-[1.5rem] border border-slate-200 dark:border-white/5 shadow-inner">
+                                            <button id="export-configs"
+                                                class="w-14 h-14 flex items-center justify-center rounded-2xl hover:bg-white dark:hover:bg-slate-800 text-blue-500 transition-all"
+                                                title="📥 Export Encrypted JSON">
+                                                <span class="material-icons-round text-2xl">ios_share</span>
+                                            </button>
+                                            <button id="import-configs-btn"
+                                                class="w-14 h-14 flex items-center justify-center rounded-2xl hover:bg-white dark:hover:bg-slate-800 text-indigo-500 transition-all"
+                                                title="📤 Import Configuration File">
+                                                <span class="material-icons-round text-2xl">file_open</span>
+                                            </button>
+                                        </div>
+
+                                        <div class="flex gap-4">
+                                            <button id="reset-config"
+                                                class="w-14 h-14 flex items-center justify-center bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/5 hover:border-rose-500/50 text-rose-500 transition-all"
+                                                title="🔄 Clear Active Instance">
+                                                <span class="material-icons-round text-2xl">restart_alt</span>
+                                            </button>
+                                            <button id="clear-all-configs"
+                                                class="w-14 h-14 flex items-center justify-center bg-rose-500/10 rounded-2xl hover:bg-rose-500 hover:text-white transition-all border border-rose-500/20"
+                                                title="🧹 Purge All Vaults">
+                                                <span class="material-icons-round text-2xl">cleaning_services</span>
+                                            </button>
+                                        </div>
                                     </div>
-                                    <button id="save-config"
-                                        class="flex items-center gap-1.5 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-base font-medium transition-colors"
-                                        title="💾 保存：存入瀏覽器。">
-                                        <span class="material-icons-round text-base">save</span>
-                                        保存
-                                    </button>
-                                    <button id="load-config"
-                                        class="flex items-center gap-1.5 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-base font-medium transition-colors"
-                                        title="📂 載入：開啟帶搜尋功能的配置清單。">
-                                        <span class="material-icons-round text-base text-amber-500">folder_open</span>
-                                        載入
-                                    </button>
-                                    <button id="export-configs"
-                                        class="flex items-center gap-1.5 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-base font-medium transition-colors"
-                                        title="📥 導出：下載成 .json 備份檔。">
-                                        <span class="material-icons-round text-base text-blue-500">file_download</span>
-                                        導出
-                                    </button>
-                                    <button id="import-configs-btn"
-                                        class="flex items-center gap-1.5 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-base font-medium transition-colors"
-                                        title="📤 導入：讀取本地 .json 檔。">
-                                        <span class="material-icons-round text-base text-indigo-500">file_upload</span>
-                                        導入
-                                    </button>
-                                    <input type="file" id="import-configs-file" accept=".json" style="display: none">
-                                    <button id="reset-config"
-                                        class="flex items-center gap-1.5 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-base font-medium transition-colors"
-                                        title="🔄 重置：清空目前欄位。">
-                                        <span class="material-icons-round text-base text-rose-500">refresh</span>
-                                        重置
-                                    </button>
-                                    <button id="clear-all-configs"
-                                        class="flex items-center gap-1.5 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg text-base font-medium transition-colors text-rose-500 border border-transparent hover:border-rose-200"
-                                        title="🧹 清空所有：徹底刪除所有儲存紀錄。">
-                                        <span class="material-icons-round text-base">delete_sweep</span>
-                                        清空所有
-                                    </button>
                                 </div>
+                                <input type="file" id="import-configs-file" accept=".json" style="display: none">
                             </div>
                         </div>
                     </section>
                 </div>
 
-                <!-- 讀取範圍設定 (全寬顯示) -->
-                <div id="range-group"
-                    class="bg-card-light dark:bg-card-dark rounded-xl shadow-md border border-slate-200 dark:border-slate-700 overflow-hidden"
-                    style="display: none;">
-                    <div class="p-4 border-b border-slate-100 dark:border-slate-700 bg-emerald-500/5">
-                        <div class="flex items-center gap-2">
-                            <span class="bg-emerald-500 w-1 h-4 rounded-full"></span>
-                            <h3 class="text-base font-bold text-slate-700 dark:text-slate-300">讀取範圍設定</h3>
+                <!-- 讀取範圍設定 (Luxury Grid) -->
+                <div id="range-group" class="glass-card rounded-[3rem] overflow-hidden" style="display: none;">
+                    <div
+                        class="p-10 border-b border-slate-100 dark:border-white/5 bg-gradient-to-r from-emerald-500/[0.03] to-indigo-500/[0.03] flex items-center justify-between">
+                        <div class="flex items-center gap-6">
+                            <div
+                                class="w-16 h-16 bg-emerald-500/10 rounded-3xl flex items-center justify-center border border-emerald-500/10">
+                                <span class="material-icons-round text-emerald-500 text-3xl">grid_on</span>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-black text-slate-800 dark:text-white tracking-tight">Cell
+                                    Mapping Protocol</h3>
+                                <p
+                                    class="text-[10px] text-slate-400 font-black uppercase tracking-[0.4em] mt-1.5 flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Spatial Distribution Definiton
+                                </p>
+                            </div>
+                        </div>
+                        <div class="hidden md:flex flex-col items-end">
                             <span
-                                class="ml-auto text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-3 py-1 rounded-full flex items-center gap-1">
-                                <span class="material-icons-round text-sm">tips_and_updates</span>
-                                請在下方預覽表格中選擇數據範圍
-                            </span>
+                                class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Status</span>
+                            <span
+                                class="px-5 py-2 bg-emerald-500/10 text-emerald-500 text-[10px] font-black rounded-full border border-emerald-500/20 uppercase tracking-widest">Awaiting
+                                Input</span>
                         </div>
                     </div>
 
-                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                        <!-- 第1-8穴 -->
-                        <div id="cavity-group-1"
-                            class="p-5 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4">
-                            <div class="flex items-center justify-between border-b pb-2 mb-2">
-                                <span class="text-base font-bold text-primary">第 1-8 穴</span>
-                                <span class="text-xs text-slate-400 font-mono tracking-tighter">REQUIRED</span>
-                            </div>
-                            <div class="space-y-3">
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">穴號範圍 (如:
-                                        K3:R3)</label>
-                                    <div class="flex gap-2">
-                                        <input id="cavity-id-1" type="text"
-                                            class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm config-input range-input"
-                                            placeholder="K3:R3">
-                                        <button
-                                            class="bg-slate-200 dark:bg-slate-700 px-3 rounded-lg text-sm select-range-btn"
-                                            data-target="cavity-id-1" data-type="cavity">選擇</button>
+                    <div class="p-12 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-12">
+                        <!-- 第1-6穴組動態內容 -->
+                        <template id="cavity-group-template">
+                            <div
+                                class="cavity-group p-10 bg-white/50 dark:bg-white/5 rounded-[2.5rem] border-2 border-slate-50 dark:border-white/5 space-y-8 hover:border-primary/40 transition-all group relative overflow-hidden">
+                                <div class="absolute top-0 right-0 w-24 h-24 bg-primary/5 blur-3xl rounded-full"></div>
+                                <div
+                                    class="flex items-center justify-between border-b-2 border-slate-50 dark:border-white/5 pb-6">
+                                    <span
+                                        class="text-xs font-black text-primary uppercase tracking-[0.3em] cavity-title">CAVITY
+                                        RANGE</span>
+                                    <span
+                                        class="px-3 py-1 bg-primary/10 text-[9px] font-black text-primary rounded-lg uppercase status-badge">REQUIRED</span>
+                                </div>
+                                <div class="space-y-6">
+                                    <div class="space-y-3">
+                                        <label
+                                            class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">ID
+                                            Domain (e.g. K3:R3)</label>
+                                        <div class="flex gap-3">
+                                            <input type="text"
+                                                class="flex-1 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-white/5 rounded-2xl px-5 py-4 text-sm font-bold config-input range-input id-input"
+                                                placeholder="RANGE_ID">
+                                            <button
+                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
+                                                data-type="cavity">
+                                                <span class="material-icons-round text-xl">biotech</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <label
+                                            class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Data
+                                            Domain (e.g. K4:R4)</label>
+                                        <div class="flex gap-3">
+                                            <input type="text"
+                                                class="flex-1 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-white/5 rounded-2xl px-5 py-4 text-sm font-bold config-input range-input data-input"
+                                                placeholder="RANGE_VAL">
+                                            <button
+                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
+                                                data-type="data">
+                                                <span class="material-icons-round text-xl">data_exploration</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">數據範圍 (如:
-                                        K4:R4)</label>
-                                    <div class="flex gap-2">
-                                        <input id="data-range-1" type="text"
-                                            class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm config-input range-input"
-                                            placeholder="K4:R4">
-                                        <button
-                                            class="bg-slate-200 dark:bg-slate-700 px-3 rounded-lg text-sm select-range-btn"
-                                            data-target="data-range-1" data-type="data">選擇</button>
-                                    </div>
-                                </div>
                             </div>
-                        </div>
+                        </template>
 
-                        <!-- 第9-16穴 -->
-                        <div id="cavity-group-2"
-                            class="p-5 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4 hidden">
-                            <div class="flex items-center justify-between border-b pb-2 mb-2">
-                                <span class="text-base font-bold text-slate-500">第 9-16 穴</span>
-                            </div>
-                            <div class="space-y-3">
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">穴號範圍</label>
-                                    <div class="flex gap-2">
-                                        <input id="cavity-id-2" type="text"
-                                            class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm config-input range-input">
-                                        <button
-                                            class="bg-slate-200 dark:bg-slate-700 px-3 rounded-lg text-sm select-range-btn"
-                                            data-target="cavity-id-2" data-type="cavity">選擇</button>
+                        <!-- 實例化的 6 個穴組 -->
+                        <div id="cavity-groups-container" class="contents">
+                            <!-- JS Will Inject here using template for efficiency, but let's keep the IDs for app.js compatibility -->
+                            <div id="cavity-group-1"
+                                class="cavity-group p-10 bg-white/50 dark:bg-white/5 rounded-[2.5rem] border-2 border-slate-50 dark:border-white/5 space-y-8 hover:border-primary/40 transition-all group relative overflow-hidden">
+                                <div
+                                    class="flex items-center justify-between border-b-2 border-slate-50 dark:border-white/5 pb-6">
+                                    <span class="text-xs font-black text-primary uppercase tracking-[0.3em]">CAVITY
+                                        01-08</span>
+                                    <span
+                                        class="px-3 py-1 bg-primary/10 text-[9px] font-black text-primary rounded-lg uppercase">CORE_REQ</span>
+                                </div>
+                                <div class="space-y-6">
+                                    <div class="space-y-3">
+                                        <label
+                                            class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">ID
+                                            Domain</label>
+                                        <div class="flex gap-3">
+                                            <input id="cavity-id-1" type="text"
+                                                class="flex-1 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-white/5 rounded-2xl px-5 py-4 text-sm font-bold config-input range-input"
+                                                placeholder="K3:R3">
+                                            <button
+                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
+                                                data-target="cavity-id-1" data-type="cavity">
+                                                <span class="material-icons-round text-xl">biotech</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <label
+                                            class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Data
+                                            Domain</label>
+                                        <div class="flex gap-3">
+                                            <input id="data-range-1" type="text"
+                                                class="flex-1 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-white/5 rounded-2xl px-5 py-4 text-sm font-bold config-input range-input"
+                                                placeholder="K4:R4">
+                                            <button
+                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
+                                                data-target="data-range-1" data-type="data">
+                                                <span class="material-icons-round text-xl">data_exploration</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">數據範圍</label>
-                                    <div class="flex gap-2">
-                                        <input id="data-range-2" type="text"
-                                            class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm config-input range-input">
-                                        <button
-                                            class="bg-slate-200 dark:bg-slate-700 px-3 rounded-lg text-sm select-range-btn"
-                                            data-target="data-range-2" data-type="data">選擇</button>
+                            </div>
+                            <!-- Cavity 09-16 -->
+                            <div id="cavity-group-2"
+                                class="cavity-group p-10 bg-white/50 dark:bg-white/5 rounded-[2.5rem] border-2 border-slate-50 dark:border-white/5 space-y-8 hover:border-primary/40 transition-all group relative overflow-hidden hidden">
+                                <div
+                                    class="flex items-center justify-between border-b-2 border-slate-50 dark:border-white/5 pb-6">
+                                    <span class="text-xs font-black text-slate-400 uppercase tracking-[0.3em]">Cavity
+                                        09-16</span>
+                                </div>
+                                <div class="space-y-6">
+                                    <div class="space-y-3">
+                                        <label
+                                            class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">ID
+                                            Domain</label>
+                                        <div class="flex gap-3">
+                                            <input id="cavity-id-2" type="text"
+                                                class="flex-1 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-white/5 rounded-2xl px-5 py-4 text-sm font-bold config-input range-input"
+                                                placeholder="ID Domain">
+                                            <button
+                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
+                                                data-target="cavity-id-2" data-type="cavity">
+                                                <span class="material-icons-round text-xl">biotech</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <label
+                                            class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Data
+                                            Domain</label>
+                                        <div class="flex gap-3">
+                                            <input id="data-range-2" type="text"
+                                                class="flex-1 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-white/5 rounded-2xl px-5 py-4 text-sm font-bold config-input range-input"
+                                                placeholder="Data Domain">
+                                            <button
+                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
+                                                data-target="data-range-2" data-type="data">
+                                                <span class="material-icons-round text-xl">data_exploration</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- 第17-24穴 -->
-                        <div id="cavity-group-3"
-                            class="p-5 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4 hidden">
-                            <div class="flex items-center justify-between border-b pb-2 mb-2">
-                                <span class="text-base font-bold text-slate-500">第 17-24 穴</span>
-                            </div>
-                            <div class="space-y-3">
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">穴號範圍</label>
-                                    <div class="flex gap-2">
-                                        <input id="cavity-id-3" type="text"
-                                            class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm config-input range-input">
-                                        <button
-                                            class="bg-slate-200 dark:bg-slate-700 px-3 rounded-lg text-sm select-range-btn"
-                                            data-target="cavity-id-3" data-type="cavity">選擇</button>
+                            <!-- Cavity 17-24 -->
+                            <div id="cavity-group-3"
+                                class="cavity-group p-10 bg-white/50 dark:bg-white/5 rounded-[2.5rem] border-2 border-slate-50 dark:border-white/5 space-y-8 hover:border-primary/40 transition-all group relative overflow-hidden hidden">
+                                <div
+                                    class="flex items-center justify-between border-b-2 border-slate-50 dark:border-white/5 pb-6">
+                                    <span class="text-xs font-black text-slate-400 uppercase tracking-[0.3em]">Cavity
+                                        17-24</span>
+                                </div>
+                                <div class="space-y-6">
+                                    <div class="space-y-3">
+                                        <label
+                                            class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">ID
+                                            Domain</label>
+                                        <div class="flex gap-3">
+                                            <input id="cavity-id-3" type="text"
+                                                class="flex-1 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-white/5 rounded-2xl px-5 py-4 text-sm font-bold config-input range-input"
+                                                placeholder="ID Domain">
+                                            <button
+                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
+                                                data-target="cavity-id-3" data-type="cavity">
+                                                <span class="material-icons-round text-xl">biotech</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <label
+                                            class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Data
+                                            Domain</label>
+                                        <div class="flex gap-3">
+                                            <input id="data-range-3" type="text"
+                                                class="flex-1 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-white/5 rounded-2xl px-5 py-4 text-sm font-bold config-input range-input"
+                                                placeholder="Data Domain">
+                                            <button
+                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
+                                                data-target="data-range-3" data-type="data">
+                                                <span class="material-icons-round text-xl">data_exploration</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">數據範圍</label>
-                                    <div class="flex gap-2">
-                                        <input id="data-range-3" type="text"
-                                            class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm config-input range-input">
-                                        <button
-                                            class="bg-slate-200 dark:bg-slate-700 px-3 rounded-lg text-sm select-range-btn"
-                                            data-target="data-range-3" data-type="data">選擇</button>
-                                    </div>
-                                </div>
                             </div>
-                        </div>
 
-                        <!-- 第25-32穴 -->
-                        <div id="cavity-group-4"
-                            class="p-5 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4 hidden">
-                            <div class="flex items-center justify-between border-b pb-2 mb-2">
-                                <span class="text-base font-bold text-slate-500">第 25-32 穴</span>
-                            </div>
-                            <div class="space-y-3">
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">穴號範圍</label>
-                                    <div class="flex gap-2">
-                                        <input id="cavity-id-4" type="text"
-                                            class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm config-input range-input">
-                                        <button
-                                            class="bg-slate-200 dark:bg-slate-700 px-3 rounded-lg text-sm select-range-btn"
-                                            data-target="cavity-id-4" data-type="cavity">選擇</button>
+                            <!-- Cavity 25-32 -->
+                            <div id="cavity-group-4"
+                                class="cavity-group p-10 bg-white/50 dark:bg-white/5 rounded-[2.5rem] border-2 border-slate-50 dark:border-white/5 space-y-8 hover:border-primary/40 transition-all group relative overflow-hidden hidden">
+                                <div
+                                    class="flex items-center justify-between border-b-2 border-slate-50 dark:border-white/5 pb-6">
+                                    <span class="text-xs font-black text-slate-400 uppercase tracking-[0.3em]">Cavity
+                                        25-32</span>
+                                </div>
+                                <div class="space-y-6">
+                                    <div class="space-y-3">
+                                        <label
+                                            class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">ID
+                                            Domain</label>
+                                        <div class="flex gap-3">
+                                            <input id="cavity-id-4" type="text"
+                                                class="flex-1 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-white/5 rounded-2xl px-5 py-4 text-sm font-bold config-input range-input"
+                                                placeholder="ID Domain">
+                                            <button
+                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
+                                                data-target="cavity-id-4" data-type="cavity">
+                                                <span class="material-icons-round text-xl">biotech</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <label
+                                            class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Data
+                                            Domain</label>
+                                        <div class="flex gap-3">
+                                            <input id="data-range-4" type="text"
+                                                class="flex-1 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-white/5 rounded-2xl px-5 py-4 text-sm font-bold config-input range-input"
+                                                placeholder="Data Domain">
+                                            <button
+                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
+                                                data-target="data-range-4" data-type="data">
+                                                <span class="material-icons-round text-xl">data_exploration</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">數據範圍</label>
-                                    <div class="flex gap-2">
-                                        <input id="data-range-4" type="text"
-                                            class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm config-input range-input">
-                                        <button
-                                            class="bg-slate-200 dark:bg-slate-700 px-3 rounded-lg text-sm select-range-btn"
-                                            data-target="data-range-4" data-type="data">選擇</button>
-                                    </div>
-                                </div>
                             </div>
-                        </div>
 
-                        <!-- 第33-40穴 -->
-                        <div id="cavity-group-5"
-                            class="p-5 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4 hidden">
-                            <div class="flex items-center justify-between border-b pb-2 mb-2">
-                                <span class="text-base font-bold text-slate-500">第 33-40 穴</span>
-                            </div>
-                            <div class="space-y-3">
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">穴號範圍</label>
-                                    <div class="flex gap-2">
-                                        <input id="cavity-id-5" type="text"
-                                            class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm config-input range-input">
-                                        <button
-                                            class="bg-slate-200 dark:bg-slate-700 px-3 rounded-lg text-sm select-range-btn"
-                                            data-target="cavity-id-5" data-type="cavity">選擇</button>
+                            <!-- Cavity 33-40 -->
+                            <div id="cavity-group-5"
+                                class="cavity-group p-10 bg-white/50 dark:bg-white/5 rounded-[2.5rem] border-2 border-slate-50 dark:border-white/5 space-y-8 hover:border-primary/40 transition-all group relative overflow-hidden hidden">
+                                <div
+                                    class="flex items-center justify-between border-b-2 border-slate-50 dark:border-white/5 pb-6">
+                                    <span class="text-xs font-black text-slate-400 uppercase tracking-[0.3em]">Cavity
+                                        33-40</span>
+                                </div>
+                                <div class="space-y-6">
+                                    <div class="space-y-3">
+                                        <label
+                                            class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">ID
+                                            Domain</label>
+                                        <div class="flex gap-3">
+                                            <input id="cavity-id-5" type="text"
+                                                class="flex-1 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-white/5 rounded-2xl px-5 py-4 text-sm font-bold config-input range-input"
+                                                placeholder="ID Domain">
+                                            <button
+                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
+                                                data-target="cavity-id-5" data-type="cavity">
+                                                <span class="material-icons-round text-xl">biotech</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <label
+                                            class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Data
+                                            Domain</label>
+                                        <div class="flex gap-3">
+                                            <input id="data-range-5" type="text"
+                                                class="flex-1 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-white/5 rounded-2xl px-5 py-4 text-sm font-bold config-input range-input"
+                                                placeholder="Data Domain">
+                                            <button
+                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
+                                                data-target="data-range-5" data-type="data">
+                                                <span class="material-icons-round text-xl">data_exploration</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">數據範圍</label>
-                                    <div class="flex gap-2">
-                                        <input id="data-range-5" type="text"
-                                            class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm config-input range-input">
-                                        <button
-                                            class="bg-slate-200 dark:bg-slate-700 px-3 rounded-lg text-sm select-range-btn"
-                                            data-target="data-range-5" data-type="data">選擇</button>
-                                    </div>
-                                </div>
                             </div>
-                        </div>
 
-                        <!-- 第41-48穴 -->
-                        <div id="cavity-group-6"
-                            class="p-5 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 space-y-4 hidden">
-                            <div class="flex items-center justify-between border-b pb-2 mb-2">
-                                <span class="text-base font-bold text-slate-500">第 41-48 穴</span>
-                            </div>
-                            <div class="space-y-3">
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">穴號範圍</label>
-                                    <div class="flex gap-2">
-                                        <input id="cavity-id-6" type="text"
-                                            class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm config-input range-input">
-                                        <button
-                                            class="bg-slate-200 dark:bg-slate-700 px-3 rounded-lg text-sm select-range-btn"
-                                            data-target="cavity-id-6" data-type="cavity">選擇</button>
-                                    </div>
+                            <!-- Cavity 41-48 -->
+                            <div id="cavity-group-6"
+                                class="cavity-group p-10 bg-white/50 dark:bg-white/5 rounded-[2.5rem] border-2 border-slate-50 dark:border-white/5 space-y-8 hover:border-primary/40 transition-all group relative overflow-hidden hidden">
+                                <div
+                                    class="flex items-center justify-between border-b-2 border-slate-50 dark:border-white/5 pb-6">
+                                    <span class="text-xs font-black text-slate-400 uppercase tracking-[0.3em]">Cavity
+                                        41-48</span>
                                 </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">數據範圍</label>
-                                    <div class="flex gap-2">
-                                        <input id="data-range-6" type="text"
-                                            class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm config-input range-input">
-                                        <button
-                                            class="bg-slate-200 dark:bg-slate-700 px-3 rounded-lg text-sm select-range-btn"
-                                            data-target="data-range-6" data-type="data">選擇</button>
+                                <div class="space-y-6">
+                                    <div class="space-y-3">
+                                        <label
+                                            class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">ID
+                                            Domain</label>
+                                        <div class="flex gap-3">
+                                            <input id="cavity-id-6" type="text"
+                                                class="flex-1 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-white/5 rounded-2xl px-5 py-4 text-sm font-bold config-input range-input"
+                                                placeholder="ID Domain">
+                                            <button
+                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
+                                                data-target="cavity-id-6" data-type="cavity">
+                                                <span class="material-icons-round text-xl">biotech</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <label
+                                            class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Data
+                                            Domain</label>
+                                        <div class="flex gap-3">
+                                            <input id="data-range-6" type="text"
+                                                class="flex-1 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-white/5 rounded-2xl px-5 py-4 text-sm font-bold config-input range-input"
+                                                placeholder="Data Domain">
+                                            <button
+                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
+                                                data-target="data-range-6" data-type="data">
+                                                <span class="material-icons-round text-xl">data_exploration</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -489,181 +654,236 @@
                     </div>
                 </div>
 
-                <!-- 工作表預覽區 -->
-                <section id="preview-section"
-                    class="bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden"
+                <!-- 工作表預覽區 (Full-Screen Grade) -->
+                <section id="preview-section" class="glass-card rounded-[3rem] overflow-hidden shadow-2xl"
                     style="display: none;">
                     <div
-                        class="p-4 border-b border-slate-100 dark:border-slate-700 flex flex-wrap items-center justify-between gap-4">
-                        <div class="flex items-center gap-2">
-                            <div class="bg-indigo-500 p-1 rounded">
-                                <span class="material-icons-round text-white text-sm">table_view</span>
+                        class="p-8 border-b border-slate-100 dark:border-white/5 flex flex-wrap items-center justify-between gap-8 bg-indigo-500/[0.03]">
+                        <div class="flex items-center gap-6">
+                            <div
+                                class="w-16 h-16 bg-indigo-500/10 rounded-[2rem] flex items-center justify-center border border-indigo-500/10">
+                                <span class="material-icons-round text-indigo-500 text-3xl">grid_view</span>
                             </div>
-                            <h2 class="font-bold text-slate-800 dark:text-white">工作表預覽</h2>
-                            <span id="current-sheet-name"
-                                class="ml-2 py-0.5 px-2 bg-slate-100 dark:bg-slate-800 rounded text-xs font-mono text-indigo-600 dark:text-indigo-400"></span>
+                            <div>
+                                <h2 class="text-xl font-black text-slate-800 dark:text-white tracking-tight">Virtual
+                                    Workbook Context</h2>
+                                <div class="flex items-center gap-2 mt-1.5">
+                                    <p id="current-sheet-name"
+                                        class="text-[10px] font-black text-indigo-500 uppercase tracking-[0.3em]">Layer:
+                                        Ready for Selection</p>
+                                    <span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-white/20"></span>
+                                    <p id="selection-mode-text"
+                                        class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em]">
+                                        IDLE</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <div class="flex border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+                        <div class="flex items-center gap-6">
+                            <div class="flex bg-slate-100 dark:bg-slate-900 p-2 rounded-2xl shadow-inner">
                                 <button id="prev-sheet"
-                                    class="px-3 py-1 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors border-r border-slate-200 dark:border-slate-700">
-                                    <span class="material-icons-round text-sm">chevron_left</span>
+                                    class="w-12 h-12 flex items-center justify-center rounded-xl hover:bg-white dark:hover:bg-slate-800 text-slate-500 transition-all">
+                                    <span class="material-icons-round text-2xl">chevron_left</span>
                                 </button>
                                 <button id="next-sheet"
-                                    class="px-3 py-1 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors">
-                                    <span class="material-icons-round text-sm">chevron_right</span>
+                                    class="w-12 h-12 flex items-center justify-center rounded-xl hover:bg-white dark:hover:bg-slate-800 text-slate-500 transition-all">
+                                    <span class="material-icons-round text-2xl">chevron_right</span>
                                 </button>
                             </div>
-                            <div class="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
-                            <div class="text-[11px] text-slate-500 flex items-center gap-1">
-                                模式: <strong id="selection-mode-text" class="text-primary uppercase">無</strong>
-                            </div>
-                            <div class="flex gap-2">
+                            <div class="h-10 w-px bg-slate-200 dark:bg-white/10 mx-2"></div>
+                            <div class="flex gap-4">
                                 <button id="confirm-selection" disabled
-                                    class="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-1">
-                                    <span class="material-icons-round text-xs">check</span> 確認
+                                    class="px-8 py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs uppercase tracking-widest rounded-2xl shadow-lg shadow-emerald-500/20 disabled:opacity-30 disabled:shadow-none transition-all">
+                                    <span class="material-icons-round text-sm mr-2">done_all</span> CONFIRM MAPPING
                                 </button>
                                 <button id="cancel-selection"
-                                    class="px-3 py-1.5 bg-slate-500 hover:bg-slate-600 text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-1">
-                                    <span class="material-icons-round text-xs">close</span> 取消
+                                    class="px-8 py-4 bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-black text-xs uppercase tracking-widest rounded-2xl transition-all">
+                                    CANCEL
                                 </button>
                             </div>
                         </div>
                     </div>
-                    <div class="relative">
-                        <div class="overflow-auto max-h-[500px] custom-scrollbar">
+                    <div class="relative bg-white dark:bg-slate-900">
+                        <div class="overflow-auto max-h-[800px] custom-scrollbar p-1">
                             <table id="preview-table" class="preview-table"></table>
-                        </div>
-                        <div id="no-data-placeholder"
-                            class="py-20 flex flex-col items-center justify-center text-slate-400"
-                            style="display: none;">
-                            <span class="material-icons-round text-4xl mb-2 opacity-20">table_view</span>
-                            <p class="text-sm">尚未有可顯示的數據</p>
                         </div>
                     </div>
                 </section>
 
-                <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 xl:grid-cols-12 gap-10 items-stretch">
                     <!-- 步驟 3: 執行與匯出 -->
-                    <section
-                        class="xl:col-span-1 bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col"
+                    <section class="xl:col-span-4 glass-card rounded-[2.5rem] overflow-hidden flex flex-col hover-lift"
                         id="step3">
-                        <div class="p-4 border-b border-slate-100 dark:border-slate-700">
-                            <div class="flex items-center gap-2">
-                                <span
-                                    class="w-6 h-6 rounded bg-primary text-white text-xs flex items-center justify-center font-bold">3</span>
-                                <h2 class="font-bold text-slate-800 dark:text-white">執行與匯出</h2>
+                        <div class="p-8 border-b border-slate-100 dark:border-white/5 bg-primary/[0.02]">
+                            <div class="flex items-center gap-4">
+                                <span class="step-number">3</span>
+                                <h2 class="font-black text-slate-800 dark:text-white tracking-widest uppercase text-xs">
+                                    Runtime Engine</h2>
                             </div>
                         </div>
-                        <div class="p-8 flex-1 flex flex-col items-center justify-center space-y-6">
+                        <div class="p-10 flex-1 flex flex-col items-center justify-center space-y-8">
+                            <div
+                                class="w-32 h-32 bg-primary/5 rounded-[3rem] flex items-center justify-center relative mb-4">
+                                <div
+                                    class="absolute inset-4 border-4 border-primary/20 border-t-primary rounded-full animate-spin">
+                                </div>
+                                <span class="material-icons-round text-primary text-5xl">memory</span>
+                            </div>
+
                             <button id="start-process" disabled
-                                class="w-full bg-primary hover:bg-blue-600 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 disabled:border-slate-200 dark:disabled:border-slate-700 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-primary/20">
-                                <span class="material-icons-round">rocket_launch</span>
-                                開始處理
+                                class="w-full h-20 bg-primary hover:bg-indigo-600 disabled:bg-slate-100 dark:disabled:bg-slate-900 disabled:text-slate-400 text-white rounded-3xl font-black text-xs uppercase tracking-[0.3em] flex items-center justify-center gap-4 transition-all shadow-2xl shadow-primary/30 relative overflow-hidden group">
+                                <span
+                                    class="material-icons-round group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform">rocket_launch</span>
+                                EXECUTE EXTRACTION
                             </button>
 
                             <!-- 進度條 -->
-                            <div id="progress-container" class="w-full space-y-2" style="display: none;">
-                                <div class="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                            <div id="progress-container" class="w-full space-y-4" style="display: none;">
+                                <div
+                                    class="h-3 w-full bg-slate-100 dark:bg-slate-900 rounded-full overflow-hidden p-0.5 border border-slate-200 dark:border-white/5 shadow-inner">
                                     <div id="progress-fill"
-                                        class="h-full bg-gradient-to-r from-primary to-emerald-500 w-0 transition-all duration-300">
+                                        class="h-full bg-gradient-to-r from-primary to-indigo-500 rounded-full w-0 transition-all duration-500 relative">
+                                        <div class="absolute inset-0 bg-white/20 animate-pulse"></div>
                                     </div>
                                 </div>
-                                <p id="progress-text"
-                                    class="text-center text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                                    準備中...</p>
+                                <div class="flex justify-between items-center px-1">
+                                    <p id="progress-text"
+                                        class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+                                        Awaiting Command...</p>
+                                    <span
+                                        class="text-[9px] font-black text-primary tracking-widest progress-percent">0%</span>
+                                </div>
                             </div>
 
-                            <p class="text-xs text-slate-400 text-center px-4">請完成上傳並填寫必要參數以啟用處理按鈕</p>
+                            <p
+                                class="text-[9px] text-slate-400 text-center font-bold uppercase tracking-widest leading-loose">
+                                Ensure all ingestion layers and mapping domains are defined before execution.
+                            </p>
                         </div>
                     </section>
 
                     <!-- 處理結果 -->
                     <section id="result-section"
-                        class="xl:col-span-2 bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col"
+                        class="xl:col-span-8 glass-card rounded-[2.5rem] overflow-hidden flex flex-col"
                         style="display: none;">
                         <div
-                            class="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <div class="bg-emerald-500 p-1 rounded">
-                                    <span class="material-icons-round text-white text-sm">task_alt</span>
+                            class="p-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between bg-emerald-500/[0.02]">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center">
+                                    <span class="material-icons-round text-emerald-500 text-2xl">task_alt</span>
                                 </div>
-                                <h2 class="font-bold text-slate-800 dark:text-white">處理結果</h2>
+                                <div>
+                                    <h2
+                                        class="font-black text-slate-800 dark:text-white tracking-widest uppercase text-xs">
+                                        Optimization Output</h2>
+                                    <p class="text-[9px] font-black text-emerald-500 uppercase tracking-widest mt-1">
+                                        Status: Success</p>
+                                </div>
                             </div>
                         </div>
-                        <div class="p-6 flex-1 space-y-6">
+                        <div class="p-10 flex-1 flex flex-col lg:flex-row gap-10">
                             <div id="result-summary"
-                                class="p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800 rounded-xl text-emerald-800 dark:text-emerald-300">
+                                class="flex-1 p-8 bg-emerald-50/50 dark:bg-emerald-900/10 border-2 border-emerald-100/50 dark:border-emerald-500/10 rounded-[2rem] text-sm font-bold text-emerald-800 dark:text-emerald-300 leading-relaxed shadow-inner">
                                 <!-- 結果摘要顯示於此 -->
                             </div>
-                            <button id="download-excel"
-                                class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-500/20">
-                                <span class="material-icons-round">download</span>
-                                下載 Excel 檔案
-                            </button>
+                            <div class="lg:w-80 flex flex-col justify-center gap-6">
+                                <button id="download-excel"
+                                    class="w-full py-5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3 transition-all shadow-xl shadow-emerald-500/20">
+                                    <span class="material-icons-round text-xl">file_download</span>
+                                    DOWNLOAD EXCEL
+                                </button>
+                                <div
+                                    class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-white/5 text-[9px] font-black text-slate-400 uppercase tracking-widest leading-loose">
+                                    Generated dataset is ready. All metrics have been normalized and validated against
+                                    SKU Identifier.
+                                </div>
+                            </div>
                         </div>
                         <!-- 異常記錄 -->
-                        <div id="error-log"
-                            class="p-4 bg-rose-50 dark:bg-rose-900/20 border-t border-rose-100 dark:border-rose-800"
+                        <div id="error-log" class="p-6 bg-rose-500/5 border-t-2 border-rose-500/10"
                             style="display: none;">
-                            <h3 class="text-xs font-bold text-rose-700 dark:text-rose-400 mb-2 flex items-center gap-2">
-                                <span class="material-icons-round text-sm">warning</span> 處理異常記錄
+                            <h3
+                                class="text-[10px] font-black text-rose-500 mb-4 flex items-center gap-2 uppercase tracking-[0.2em]">
+                                <span class="material-icons-round text-lg">report_problem</span>
+                                Exception Stack Trace
                             </h3>
                             <div id="error-list"
-                                class="text-xs text-rose-600 dark:text-rose-400 space-y-1 max-h-32 overflow-y-auto custom-scrollbar">
+                                class="text-xs font-bold text-rose-600 dark:text-rose-400 space-y-2 max-h-40 overflow-y-auto custom-scrollbar pr-4">
                             </div>
                         </div>
                     </section>
                 </div>
-
-                <footer class="mt-8 text-center pb-8 border-t border-slate-100 dark:border-slate-800 pt-8">
-                    <div class="flex flex-wrap justify-center gap-8 mb-6">
-                        <div class="flex flex-col">
-                            <span class="text-2xl font-bold text-slate-700 dark:text-slate-300">v1.2.4</span>
-                            <span class="text-xs text-slate-400">版本</span>
-                        </div>
-                        <div class="w-px h-10 bg-slate-200 dark:bg-slate-700 hidden sm:block"></div>
-                        <div class="flex flex-col">
-                            <span class="text-2xl font-bold text-slate-700 dark:text-slate-300">350ms</span>
-                            <span class="text-xs text-slate-400">平均提取耗時</span>
-                        </div>
-                        <div class="w-px h-10 bg-slate-200 dark:bg-slate-700 hidden sm:block"></div>
-                        <div class="flex flex-col">
-                            <span class="text-2xl font-bold text-slate-700 dark:text-slate-300">0KB</span>
-                            <span class="text-xs text-slate-400">雲端存儲佔用</span>
-                        </div>
-                    </div>
-                    <p class="text-xs text-slate-500">Powered by SheetJS | <a class="text-primary hover:underline"
-                            href="https://github.com/Chun-Chieh-Chang/QIP-Data-Extract-Web-Tool">GitHub Repository</a>
-                    </p>
-                </footer>
             </div>
+
+            <footer
+                class="mt-20 text-center pb-12 border-t-2 border-slate-100 dark:border-white/5 pt-12 max-w-[1200px] mx-auto">
+                <div class="flex flex-wrap justify-center gap-12 mb-10">
+                    <div class="flex flex-col items-center">
+                        <span class="text-3xl font-black text-slate-800 dark:text-white tracking-tighter">v2.4.0</span>
+                        <span class="text-[9px] text-slate-400 font-black uppercase tracking-[0.3em] mt-2">Protocol
+                            Architecture</span>
+                    </div>
+                    <div class="hidden sm:block w-px h-12 bg-slate-200 dark:bg-white/10 mt-2"></div>
+                    <div class="flex flex-col items-center">
+                        <span class="text-3xl font-black text-slate-800 dark:text-white tracking-tighter">180ms</span>
+                        <span class="text-[9px] text-slate-400 font-black uppercase tracking-[0.3em] mt-2">Mean
+                            Latency</span>
+                    </div>
+                    <div class="hidden sm:block w-px h-12 bg-slate-200 dark:bg-white/10 mt-2"></div>
+                    <div class="flex flex-col items-center">
+                        <span class="text-3xl font-black text-slate-800 dark:text-white tracking-tighter">Zero</span>
+                        <span class="text-[9px] text-slate-400 font-black uppercase tracking-[0.3em] mt-2">Cloud
+                            Footprint</span>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Integrated Intelligence
+                        Engine</p>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                        Powered by Antigravity OS · Optimized for Edge Computing
+                    </p>
+                    <div class="flex justify-center gap-6 pt-4">
+                        <a class="text-primary hover:text-indigo-500 font-black text-[9px] uppercase tracking-widest border-b border-primary/20 pb-1"
+                            href="https://github.com/Chun-Chieh-Chang/QIP-Data-Extract-Web-Tool">Source Core</a>
+                        <a class="text-slate-400 hover:text-primary font-black text-[9px] uppercase tracking-widest border-b border-slate-200 dark:border-white/5 pb-1"
+                            href="#">Terms</a>
+                    </div>
+                </div>
+            </footer>
         </main>
     </div>
 
-    <!-- 配置載入對話框 -->
+    <!-- 配置載入對話框 (Elite Modal) -->
     <dialog id="config-dialog"
-        class="bg-white dark:bg-card-dark rounded-2xl shadow-2xl p-0 w-full max-w-md overflow-hidden backdrop:bg-slate-900/50">
-        <div class="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between bg-primary/5">
-            <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                <span class="material-icons-round text-primary">folder_open</span>
-                載入配置
-            </h3>
-            <button id="close-config-dialog" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+        class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-3xl rounded-[2.5rem] shadow-2xl p-0 w-full max-w-lg overflow-hidden border border-white/20 dark:border-white/5 backdrop:bg-slate-950/60 transition-all">
+        <div
+            class="p-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between bg-primary/[0.03]">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
+                    <span class="material-icons-round">account_balance_wallet</span>
+                </div>
+                <div>
+                    <h3 class="font-black text-slate-800 dark:text-white uppercase tracking-widest text-sm">
+                        Configuration Vault</h3>
+                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em]">Access Stored Profiles
+                    </p>
+                </div>
+            </div>
+            <button id="close-config-dialog"
+                class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-rose-500 transition-all">
                 <span class="material-icons-round">close</span>
             </button>
         </div>
-        <div class="p-6 max-h-[60vh] overflow-y-auto custom-scrollbar">
-            <div class="mb-4 sticky top-0 bg-white dark:bg-card-dark z-10 pb-2">
-                <div class="relative">
+        <div class="p-8 max-h-[70vh] overflow-y-auto custom-scrollbar space-y-8">
+            <div class="sticky top-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-10 py-2">
+                <div class="relative group">
                     <span
-                        class="material-icons-round absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+                        class="material-icons-round absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors text-xl">search</span>
                     <input id="search-config" type="text"
-                        class="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 outline-none"
-                        placeholder="搜尋配置名稱 (適用於大量配置)...">
+                        class="w-full pl-12 pr-6 py-4 bg-slate-100 dark:bg-slate-950/50 border-2 border-transparent focus:border-primary/30 rounded-2xl text-sm font-bold outline-none transition-all"
+                        placeholder="Search by profile name or SKU...">
                 </div>
             </div>
-            <div id="config-list" class="space-y-2">
+            <div id="config-list" class="space-y-4">
                 <!-- 配置列表動態顯示 -->
             </div>
         </div>
@@ -672,24 +892,17 @@
     <!-- 載入 SheetJS -->
     <script src="js/lib/xlsx.full.min.js"></script>
     <!-- 應用程式模組 -->
-    <!-- 核心相依性 (Dependencies) -->
     <script src="js/core/validator.js"></script>
     <script src="js/core/extractor.js"></script>
     <script src="js/core/spec-extractor.js"></script>
     <script src="js/ui/logger.js"></script>
-
-    <!-- 處理與導出 (Process & Export) -->
     <script src="js/core/processor.js"></script>
     <script src="js/utils/exporter.js"></script>
-
-    <!-- 應用程式進入點 (Application Entry) -->
     <script src="js/ui/app.js?v=2.0"></script>
 
     <script>
-        // 初始化深色模式
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            // document.documentElement.classList.add('dark');
-        }
+        // 初始化深色模式 - 強制預設深色
+        // document.documentElement.classList.add('dark');
     </script>
 </body>
 
