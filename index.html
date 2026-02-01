@@ -243,19 +243,41 @@
                                             placeholder="輸入配置名稱" type="text" />
                                     </div>
                                     <button id="save-config"
-                                        class="flex items-center gap-1.5 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-base font-medium transition-colors">
+                                        class="flex items-center gap-1.5 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-base font-medium transition-colors"
+                                        title="💾 保存：存入瀏覽器。">
                                         <span class="material-icons-round text-base">save</span>
                                         保存
                                     </button>
                                     <button id="load-config"
-                                        class="flex items-center gap-1.5 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-base font-medium transition-colors">
+                                        class="flex items-center gap-1.5 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-base font-medium transition-colors"
+                                        title="📂 載入：開啟帶搜尋功能的配置清單。">
                                         <span class="material-icons-round text-base text-amber-500">folder_open</span>
                                         載入
                                     </button>
+                                    <button id="export-configs"
+                                        class="flex items-center gap-1.5 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-base font-medium transition-colors"
+                                        title="📥 導出：下載成 .json 備份檔。">
+                                        <span class="material-icons-round text-base text-blue-500">file_download</span>
+                                        導出
+                                    </button>
+                                    <button id="import-configs-btn"
+                                        class="flex items-center gap-1.5 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-base font-medium transition-colors"
+                                        title="📤 導入：讀取本地 .json 檔。">
+                                        <span class="material-icons-round text-base text-indigo-500">file_upload</span>
+                                        導入
+                                    </button>
+                                    <input type="file" id="import-configs-file" accept=".json" hidden>
                                     <button id="reset-config"
-                                        class="flex items-center gap-1.5 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-base font-medium transition-colors">
+                                        class="flex items-center gap-1.5 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-base font-medium transition-colors"
+                                        title="🔄 重置：清空目前欄位。">
                                         <span class="material-icons-round text-base text-rose-500">refresh</span>
                                         重置
+                                    </button>
+                                    <button id="clear-all-configs"
+                                        class="flex items-center gap-1.5 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg text-base font-medium transition-colors text-rose-500 border border-transparent hover:border-rose-200"
+                                        title="🧹 清空所有：徹底刪除所有儲存紀錄。">
+                                        <span class="material-icons-round text-base">delete_sweep</span>
+                                        清空所有
                                     </button>
                                 </div>
                             </div>
@@ -632,7 +654,16 @@
             </button>
         </div>
         <div class="p-6 max-h-[60vh] overflow-y-auto custom-scrollbar">
-            <div id="config-list" class="space-y-3">
+            <div class="mb-4 sticky top-0 bg-white dark:bg-card-dark z-10 pb-2">
+                <div class="relative">
+                    <span
+                        class="material-icons-round absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+                    <input id="search-config" type="text"
+                        class="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 outline-none"
+                        placeholder="搜尋配置名稱 (適用於大量配置)...">
+                </div>
+            </div>
+            <div id="config-list" class="space-y-2">
                 <!-- 配置列表動態顯示 -->
             </div>
         </div>

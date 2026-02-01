@@ -69,6 +69,11 @@ function cacheElements() {
     elements.saveConfig = document.getElementById('save-config');
     elements.loadConfig = document.getElementById('load-config');
     elements.resetConfig = document.getElementById('reset-config');
+    elements.exportConfigs = document.getElementById('export-configs');
+    elements.importConfigsBtn = document.getElementById('import-configs-btn');
+    elements.importConfigsFile = document.getElementById('import-configs-file');
+    elements.clearAllConfigs = document.getElementById('clear-all-configs');
+    elements.searchConfig = document.getElementById('search-config');
 
     elements.startProcess = document.getElementById('start-process');
     elements.progressContainer = document.getElementById('progress-container');
@@ -158,9 +163,21 @@ function bindEvents() {
 
     // 配置管理
     elements.saveConfig.addEventListener('click', saveConfiguration);
-    elements.loadConfig.addEventListener('click', showConfigDialog);
+    elements.loadConfig.addEventListener('click', () => showConfigDialog());
     elements.resetConfig.addEventListener('click', resetConfiguration);
+    elements.exportConfigs.addEventListener('click', exportConfigurations);
+    elements.importConfigsBtn.addEventListener('click', () => elements.importConfigsFile.click());
+    elements.importConfigsFile.addEventListener('change', importConfigurations);
+    elements.clearAllConfigs.addEventListener('click', clearAllConfigurations);
     elements.closeConfigDialog.addEventListener('click', () => elements.configDialog.close());
+
+    // 搜尋功能
+    if (elements.searchConfig) {
+        elements.searchConfig.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase().trim();
+            renderConfigList(term);
+        });
+    }
 
     // 處理和下載
     elements.startProcess.addEventListener('click', startProcessing);
@@ -660,34 +677,176 @@ function gatherConfiguration() {
  * 顯示配置對話框
  */
 function showConfigDialog() {
+    // 重置搜尋框
+    if (elements.searchConfig) elements.searchConfig.value = '';
+
+    renderConfigList();
+    elements.configDialog.showModal();
+}
+
+/**
+ * 渲染配置列表
+ * @param {string} searchTerm 搜尋關鍵字
+ */
+function renderConfigList(searchTerm = '') {
     const configs = JSON.parse(localStorage.getItem('qip_configs') || '[]');
 
     if (configs.length === 0) {
-        alert('尚未保存任何配置');
+        elements.configList.innerHTML = `
+            <div class="py-10 text-center text-slate-400">
+                <span class="material-icons-round text-3xl mb-2 opacity-20">inventory_2</span>
+                <p class="text-xs">尚無保存的配置</p>
+            </div>
+        `;
         return;
     }
 
-    let html = '<ul class="space-y-3">';
-    for (let i = 0; i < configs.length; i++) {
-        const c = configs[i];
-        const savedAt = new Date(c.savedAt).toLocaleString();
+    const filteredConfigs = searchTerm
+        ? configs.filter(c => c.name.toLowerCase().includes(searchTerm))
+        : configs;
+
+    // 按時間降序排列 (最新的在前)
+    filteredConfigs.sort((a, b) => new Date(b.savedAt) - new Date(a.savedAt));
+
+    if (filteredConfigs.length === 0) {
+        elements.configList.innerHTML = `
+            <div class="py-10 text-center text-slate-400">
+                <p class="text-xs">找不到符合 "${searchTerm}" 的配置</p>
+            </div>
+        `;
+        return;
+    }
+
+    // 取得原始索引以確保操作正確
+    let html = '';
+    for (const c of filteredConfigs) {
+        const originalIndex = configs.findIndex(orig => orig.name === c.name && orig.savedAt === c.savedAt);
+        const savedAt = new Date(c.savedAt).toLocaleString('zh-TW', { hour12: false, month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+
         html += `
-            <li class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 hover:border-primary/50 transition-colors">
-                <div class="flex flex-col">
-                    <strong class="text-sm text-slate-700 dark:text-slate-200">${c.name}</strong>
-                    <span class="text-[10px] text-slate-400 font-medium">${c.cavityCount || 0} 穴 | ${savedAt}</span>
+            <li class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 hover:border-primary/40 transition-all group">
+                <div class="flex flex-col min-w-0 flex-1 mr-3">
+                    <strong class="text-sm text-slate-700 dark:text-slate-200 truncate" title="${c.name}">${c.name}</strong>
+                    <div class="flex items-center gap-2 mt-0.5">
+                        <span class="px-1.5 py-0.5 bg-slate-200 dark:bg-slate-700 text-[9px] font-bold text-slate-500 rounded lowercase">${c.cavityCount || 0} CAVITY</span>
+                        <span class="text-[10px] text-slate-400 font-medium">${savedAt}</span>
+                    </div>
                 </div>
-                <div class="flex gap-2">
-                    <button class="px-3 py-1 bg-primary text-white text-[11px] font-bold rounded-lg" onclick="loadConfiguration(${i})">載入</button>
-                    <button class="px-3 py-1 bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[11px] font-bold rounded-lg" onclick="deleteConfiguration(${i})">刪除</button>
+                <div class="flex gap-1.5 flex-shrink-0">
+                    <button class="px-3 py-1.5 bg-primary/10 hover:bg-primary text-primary hover:text-white text-[11px] font-bold rounded-lg transition-colors" onclick="loadConfiguration(${originalIndex})">載入</button>
+                    <button class="p-1.5 text-slate-400 hover:text-rose-500 transition-colors" onclick="deleteConfiguration(${originalIndex})">
+                        <span class="material-icons-round text-base">delete</span>
+                    </button>
                 </div>
             </li>
         `;
     }
-    html += '</ul>';
 
-    elements.configList.innerHTML = html;
-    elements.configDialog.showModal();
+    // 如果數量很大，顯示計數
+    if (configs.length > 5) {
+        const infoHtml = `<p class="text-[10px] text-slate-400 mb-2 px-1">顯示 ${filteredConfigs.length} / ${configs.length} 筆配置</p>`;
+        elements.configList.innerHTML = infoHtml + `<ul class="space-y-2">${html}</ul>`;
+    } else {
+        elements.configList.innerHTML = `<ul class="space-y-2">${html}</ul>`;
+    }
+}
+
+/**
+ * 導出所有配置
+ */
+function exportConfigurations() {
+    const configs = localStorage.getItem('qip_configs');
+    if (!configs || configs === '[]') {
+        alert('目前沒有任何配置可以導出');
+        return;
+    }
+
+    try {
+        const blob = new Blob([configs], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+
+        a.href = url;
+        a.download = `QIP_Configurations_Backup_${date}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        console.log('配置已導出至本地硬碟');
+    } catch (error) {
+        console.error('導出失敗:', error);
+        alert('導出失敗: ' + error.message);
+    }
+}
+
+/**
+ * 導入配置
+ */
+function importConfigurations(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (event) {
+        try {
+            const importedConfigs = JSON.parse(event.target.result);
+            if (!Array.isArray(importedConfigs)) {
+                throw new Error('不正確的配置格式');
+            }
+
+            if (confirm(`確定要導入 ${importedConfigs.length} 筆配置嗎？這將會與現有配置合併。`)) {
+                const currentConfigs = JSON.parse(localStorage.getItem('qip_configs') || '[]');
+
+                // 合併並去重 (以名稱和時間戳記為準)
+                const merged = [...currentConfigs];
+                let addedCount = 0;
+
+                for (const imp of importedConfigs) {
+                    const exists = merged.find(c => c.name === imp.name && c.savedAt === imp.savedAt);
+                    if (!exists) {
+                        merged.push(imp);
+                        addedCount++;
+                    }
+                }
+
+                localStorage.setItem('qip_configs', JSON.stringify(merged));
+                alert(`導入成功！新增了 ${addedCount} 筆配置，總計 ${merged.length} 筆。`);
+
+                // 更新列表（如果對話框開著）
+                if (elements.configDialog.open) {
+                    renderConfigList();
+                }
+            }
+        } catch (error) {
+            console.error('導入失敗:', error);
+            alert('導入失敗: ' + error.message);
+        } finally {
+            elements.importConfigsFile.value = ''; // 重置 input
+        }
+    };
+    reader.readAsText(file);
+}
+
+/**
+ * 清空所有配置 (重置時清除檔案)
+ */
+function clearAllConfigurations() {
+    const count = JSON.parse(localStorage.getItem('qip_configs') || '[]').length;
+    if (count === 0) {
+        alert('目前沒有任何配置。');
+        return;
+    }
+
+    if (confirm(`危險：確定要刪除所有 ${count} 筆已保存的配置嗎？此操作無法恢復！\n\n建議先執行「導出」備份。`)) {
+        localStorage.removeItem('qip_configs');
+        alert('所有配置已清空。');
+
+        if (elements.configDialog.open) {
+            renderConfigList();
+        }
+    }
 }
 
 /**
