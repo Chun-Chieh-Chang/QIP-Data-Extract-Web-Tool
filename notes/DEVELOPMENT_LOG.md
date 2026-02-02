@@ -36,6 +36,10 @@ This update focuses on refining the Excel output format to align with the latest
 - **Logic**: Refactored the loop to handle row-specific logic (Row 2 for specs, Rows 5-6 for metadata) while simultaneously iterating through batch data starting from Column D.
 
 ## 4. Verification & QA
+- **Development Failure Record**:
+  - **Issue**: Attempted to perform automated environment testing using a browser sub-agent to verify Excel layout.
+  - **Cause**: Browser initialization failed due to missing `$HOME` environment variable in the execution container, preventing Playwright from launching.
+  - **Corrective Measure**: Switched to manual rigorous logic verification by tracing the data array construction in `exporter.js` across different batch count scenarios (0, 3, 10 batches).
 - **Mock Testing**: Verified logic coverage for <= 5 batches and > 5 batches.
 - **Excel Styles**: Adjusted numeric formatting (`0.0000`) for the new spec columns (A2:C2).
 - **MECE Check**: Cleaned up the `addInspectionSheet` method by removing redundant metadata appending logic and integrating it into the primary data construction loop.
