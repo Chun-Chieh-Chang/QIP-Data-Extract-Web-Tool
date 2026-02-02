@@ -56,36 +56,56 @@ class ExcelExporter {
         // 構建數據陣列
         const data = [];
 
-        // 第1行：標題行
-        const headerRow = ['生產批號', 'Target', 'USL', 'LSL'];
+        // 1. 欄位佈置 (Column Layout)
+        // A: Target, B: USL, C: LSL, D: 生產批號, E+: 穴號
+        const headerRow = ['Target', 'USL', 'LSL', '生產批號'];
         for (const cavityNum of cavities) {
             headerRow.push(`${cavityNum}號穴`);
         }
         data.push(headerRow);
 
-        // 第2行：規格數據
-        const specRow = [''];
-        if (itemData.specification && itemData.specification.isValid) {
-            specRow.push(itemData.specification.target);
-            specRow.push(itemData.specification.usl);
-            specRow.push(itemData.specification.lsl);
-        } else {
-            specRow.push('未設定', '未設定', '未設定');
-        }
-        // 規格行的穴號欄位留空
-        for (let i = 0; i < cavities.length; i++) {
-            specRow.push('');
-        }
-        data.push(specRow);
+        // 2. 資料排列規則 (Data Arrangement) & 3. 產品資訊 (Fixed Metadata Position)
+        // 確保至少展開至第 6 行以顯示完整的產品資訊標籤 (Row 1 Header + min 5 data/label rows)
+        const rowCount = Math.max(batches.length + 1, 6);
 
-        // 數據行（從第3行開始）
-        for (const batchName of batches) {
-            const batchData = itemData.batches[batchName];
-            const row = [batchName, '', '', '']; // 批號 + 3個空欄（規格欄）
+        for (let i = 0; i < rowCount - 1; i++) {
+            const rowIdx = i + 2; // 1-indexed Excel row number
+            const batchIdx = i;   // 0-indexed batch array index
+            const row = new Array(4 + cavities.length).fill(''); // A, B, C, D, E...
 
-            for (const cavityNum of cavities) {
-                const value = batchData[String(cavityNum)];
-                row.push(value !== undefined ? value : '');
+            // Specs 僅在第 2 行 (Row 2) 出現
+            if (rowIdx === 2) {
+                if (itemData.specification && itemData.specification.isValid) {
+                    row[0] = itemData.specification.target;
+                    row[1] = itemData.specification.usl;
+                    row[2] = itemData.specification.lsl;
+                } else {
+                    row[0] = '未設定';
+                    row[1] = '未設定';
+                    row[2] = '未設定';
+                }
+            }
+
+            // 產品資訊固定在 Row 5 & Row 6 的 A, B 欄
+            if (rowIdx === 5) {
+                row[0] = 'ProductName';
+                row[1] = productInfo ? (productInfo.productName || '') : '';
+            } else if (rowIdx === 6) {
+                row[0] = 'MeasurementUnit';
+                row[1] = productInfo ? (productInfo.measurementUnit || '') : '';
+            }
+
+            // 批次數據從 Col D (index 3) 開始填充
+            if (batchIdx < batches.length) {
+                const batchName = batches[batchIdx];
+                row[3] = batchName;
+
+                const batchData = itemData.batches[batchName];
+                for (let j = 0; j < cavities.length; j++) {
+                    const cavityNum = cavities[j];
+                    const value = batchData[String(cavityNum)];
+                    row[4 + j] = value !== undefined ? value : '';
+                }
             }
 
             data.push(row);
@@ -94,38 +114,24 @@ class ExcelExporter {
         // 創建工作表
         const worksheet = XLSX.utils.aoa_to_sheet(data);
 
-        // 設置列寬
+        // 設置列寬 (A:12, B:12, C:12, D:15, E+:10)
         const colWidths = [
-            { wch: 15 },  // 生產批號
             { wch: 12 },  // Target
             { wch: 12 },  // USL
-            { wch: 12 }   // LSL
+            { wch: 12 },  // LSL
+            { wch: 15 }   // 生產批號
         ];
         for (let i = 0; i < cavities.length; i++) {
             colWidths.push({ wch: 10 });
         }
         worksheet['!cols'] = colWidths;
 
-        // 設置儲存格樣式（SheetJS 基礎版不支援完整樣式，但我們記錄意圖）
-        // 標題行樣式
+        // 設置儲存格樣式
         this.setHeaderStyles(worksheet, headerRow.length);
-
-        // 規格行樣式
         this.setSpecificationStyles(worksheet, itemData.specification);
 
         // 添加到工作簿
         XLSX.utils.book_append_sheet(this.workbook, worksheet, cleanName);
-
-        // 寫入產品資訊 (比照 VBA: B5/C5 標題, B6/C6 內容)
-        if (productInfo) {
-            // 修正：從 B 欄開始寫入，避免覆蓋 A 欄的生產批號
-            const infoHeader = [['ProductName', 'MeasurementUnit']]; // Row 5 (index 4), starting at Col B
-            const infoData = [[productInfo.productName || '', productInfo.measurementUnit || '']]; // Row 6 (index 5), starting at Col B
-
-            // 使用 sheet_add_aoa 寫入 (origin: B5 means start at Row 5, Col B)
-            XLSX.utils.sheet_add_aoa(worksheet, infoHeader, { origin: 'B5' });
-            XLSX.utils.sheet_add_aoa(worksheet, infoData, { origin: 'B6' });
-        }
 
         console.log(`創建工作表: ${cleanName}, 批次數: ${batches.length}, 穴數: ${cavities.length}`);
     }
@@ -157,8 +163,8 @@ class ExcelExporter {
      * @param {Object} specification 
      */
     setSpecificationStyles(worksheet, specification) {
-        // 設置規格數字格式
-        for (let c = 1; c <= 3; c++) {
+        // 設置規格數字格式 (A2, B2, C2)
+        for (let c = 0; c <= 2; c++) {
             const cellAddr = XLSX.utils.encode_cell({ r: 1, c: c });
             if (worksheet[cellAddr] && typeof worksheet[cellAddr].v === 'number') {
                 worksheet[cellAddr].z = '0.0000';
