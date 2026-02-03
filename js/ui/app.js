@@ -571,6 +571,18 @@ function startRangeSelection(btn) {
         return;
     }
 
+    // 如果已經在選擇模式中，重新點擊則重置
+    if (selectionMode === btn.dataset.type && selectionTarget === btn.dataset.target) {
+        // 重置選擇狀態
+        selectionStart = null;
+        selectionEnd = null;
+        elements.previewTable.querySelectorAll('.selected, .selection-start').forEach(el => {
+            el.classList.remove('selected', 'selection-start');
+        });
+        elements.confirmSelection.disabled = true;
+        return;
+    }
+
     selectionMode = btn.dataset.type;
     selectionTarget = btn.dataset.target;
     selectionStart = null;
@@ -614,6 +626,11 @@ function handleCellClick(e) {
         // 高亮選擇範圍
         highlightSelection(selectionStart, selectionEnd);
         elements.confirmSelection.disabled = false;
+
+        // 自動確認選擇 (完成第2點後即確認)
+        setTimeout(() => {
+            confirmSelection();
+        }, 300);
     }
 }
 
@@ -692,6 +709,11 @@ function cancelSelection() {
     elements.previewTable.querySelectorAll('.selected, .selection-start').forEach(el => {
         el.classList.remove('selected', 'selection-start');
     });
+
+    // 自動隱藏預覽區 (完成選擇後自動收起)
+    setTimeout(() => {
+        elements.previewSection.style.display = 'none';
+    }, 500);
 }
 
 /**

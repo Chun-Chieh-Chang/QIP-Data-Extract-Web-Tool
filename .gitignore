@@ -5,3 +5,7 @@ node_modules/
 *.tmp
 *.bak
 Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
