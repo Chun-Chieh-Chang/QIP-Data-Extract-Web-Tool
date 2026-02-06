@@ -70,15 +70,15 @@
     }
 
     .preview-table tr:hover td {
-        @apply bg-primary/5 dark:bg-primary/10;
+        @apply bg-primary/10 dark:bg-primary/20;
     }
 
     .preview-table td.selected {
-        @apply bg-primary/20 dark:bg-primary/30 ring-inset ring-2 ring-primary/40;
+        @apply bg-primary/35 dark:bg-primary/45 ring-inset ring-2 ring-primary/50;
     }
 
     .preview-table td.selection-start {
-        @apply bg-primary text-white font-bold ring-4 ring-primary/20;
+        @apply bg-primary text-white font-bold ring-4 ring-primary/30;
     }
 
     /* Custom Input States */
