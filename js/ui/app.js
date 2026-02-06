@@ -1251,6 +1251,7 @@ async function startProcessing() {
         elements.startProcess.disabled = false;
         // 停止動畫
         if (elements.runtimeSpinner) {
+            elements.runtimeSpinner.classList.remove('animate-spin');
         }
 
         // 狀態更新將在 showResults 中處理成功，或者在這裡處理完成態
