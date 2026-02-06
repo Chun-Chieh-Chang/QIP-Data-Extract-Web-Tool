@@ -43,6 +43,9 @@ class QIPProcessor {
             const fileName = workbook.fileName || `File ${fileIndex + 1}`;
             const sheetCount = workbook.SheetNames.length;
 
+            // 為每個 workbook 分配唯一 ID
+            const workbookId = `WB_${fileIndex}_${Date.now()}`;
+
             // 計算最大頁面偏移量，決定步長
             let maxOffset = 0;
             if (this.config.cavityGroups) {
@@ -69,7 +72,8 @@ class QIPProcessor {
                     });
 
                     // 提取並彙整數據 (會自動加入 this.results.inspectionItems)
-                    await this.processWorksheet(workbook, worksheet, sheetName, i);
+                    // 傳遞 workbookId 以區分不同檔案
+                    await this.processWorksheet(workbook, worksheet, sheetName, i, workbookId, fileName);
                     this.results.processedSheets++;
 
                 } catch (error) {
@@ -100,8 +104,10 @@ class QIPProcessor {
      * @param {Object} worksheet 
      * @param {string} sheetName 
      * @param {number} sheetIndex 
+     * @param {string} workbookId - 工作簿唯一識別碼
+     * @param {string} fileName - 檔案名稱
      */
-    async processWorksheet(workbook, worksheet, sheetName, sheetIndex) {
+    async processWorksheet(workbook, worksheet, sheetName, sheetIndex, workbookId, fileName) {
         // 獲取批號（使用工作表名稱作為批號）
         const batchName = sheetName;
 
@@ -126,7 +132,8 @@ class QIPProcessor {
             const items = DataExtractor.extractInspectionItemsFromGroup(targetWs, groupConfig);
 
             for (const item of items) {
-                this.addToResults(item.inspectionItem, batchName, item.data);
+                // 傳遞 workbookId 和 fileName 以區分不同檔案的批次
+                this.addToResults(item.inspectionItem, batchName, item.data, workbookId, fileName);
             }
         }
     }
@@ -138,8 +145,10 @@ class QIPProcessor {
      * @param {string} inspectionItem 
      * @param {string} batchName 
      * @param {Object} data 
+     * @param {string} workbookId - 工作簿唯一識別碼
+     * @param {string} fileName - 檔案名稱（用於顯示）
      */
-    addToResults(inspectionItem, batchName, data) {
+    addToResults(inspectionItem, batchName, data, workbookId, fileName) {
         if (!inspectionItem || Object.keys(data).length === 0) return;
 
         if (!this.results.inspectionItems[inspectionItem]) {
@@ -152,11 +161,21 @@ class QIPProcessor {
 
         const item = this.results.inspectionItems[inspectionItem];
 
-        // 如果批次已存在，合併數據
-        if (item.batches[batchName]) {
-            Object.assign(item.batches[batchName], data);
+        // 使用複合鍵：workbookId + batchName
+        // 這確保了：同檔案 + 基準名稱相同 = 合併；不同檔案 = 獨立保存
+        const batchKey = `${workbookId}::${batchName}`;
+
+        // 如果批次已存在（同一檔案內的相同批號），合併數據
+        if (item.batches[batchKey]) {
+            Object.assign(item.batches[batchKey].data, data);
         } else {
-            item.batches[batchName] = { ...data };
+            // 新批次：儲存數據及元資訊
+            item.batches[batchKey] = {
+                data: { ...data },
+                batchName: batchName,  // 原始批號名稱
+                workbookId: workbookId, // 所屬檔案 ID
+                fileName: fileName      // 檔案名稱（用於顯示）
+            };
             this.results.totalBatches++;
         }
 

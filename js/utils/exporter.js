@@ -50,8 +50,14 @@ class ExcelExporter {
             .map(Number)
             .sort((a, b) => a - b);
 
-        // 獲取批號列表
-        const batches = Object.keys(itemData.batches);
+        // 獲取批號列表（現在是複合鍵）
+        const batchKeys = Object.keys(itemData.batches);
+
+        // 提取批次資訊（包含原始批號名稱和檔案資訊）
+        const batchEntries = batchKeys.map(key => ({
+            key: key,
+            ...itemData.batches[key]
+        }));
 
         // 構建數據陣列
         const data = [];
@@ -66,7 +72,7 @@ class ExcelExporter {
 
         // 2. 資料排列規則 (Data Arrangement) & 3. 產品資訊 (Fixed Metadata Position)
         // 確保至少展開至第 6 行以顯示完整的產品資訊標籤 (Row 1 Header + min 5 data/label rows)
-        const rowCount = Math.max(batches.length + 1, 6);
+        const rowCount = Math.max(batchEntries.length + 1, 6);
 
         for (let i = 0; i < rowCount - 1; i++) {
             const rowIdx = i + 2; // 1-indexed Excel row number
@@ -96,11 +102,14 @@ class ExcelExporter {
             }
 
             // 批次數據從 Col D (index 3) 開始填充
-            if (batchIdx < batches.length) {
-                const batchName = batches[batchIdx];
-                row[3] = batchName;
+            if (batchIdx < batchEntries.length) {
+                const batchEntry = batchEntries[batchIdx];
+                // 使用原始批號名稱作為顯示（如果有多個同名批次，可選擇性添加檔案名稱）
+                const displayName = batchEntry.batchName;
+                row[3] = displayName;
 
-                const batchData = itemData.batches[batchName];
+                // 從 batch.data 中提取穴號數據
+                const batchData = batchEntry.data;
                 for (let j = 0; j < cavities.length; j++) {
                     const cavityNum = cavities[j];
                     const value = batchData[String(cavityNum)];
@@ -133,7 +142,7 @@ class ExcelExporter {
         // 添加到工作簿
         XLSX.utils.book_append_sheet(this.workbook, worksheet, cleanName);
 
-        console.log(`創建工作表: ${cleanName}, 批次數: ${batches.length}, 穴數: ${cavities.length}`);
+        console.log(`創建工作表: ${cleanName}, 批次數: ${batchEntries.length}, 穴數: ${cavities.length}`);
     }
 
     /**
