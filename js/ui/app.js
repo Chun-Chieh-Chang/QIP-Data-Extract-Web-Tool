@@ -100,6 +100,7 @@ function cacheElements() {
     elements.closeHelpDialog = document.getElementById('close-help-dialog');
 
     elements.runtimeSpinner = document.getElementById('runtime-spinner');
+    elements.globalResetBtn = document.getElementById('global-reset-btn');
 }
 
 /**
@@ -118,6 +119,11 @@ function bindEvents() {
                 location.reload();
             }
         });
+    }
+
+    // 全域一鍵重置按鈕
+    if (elements.globalResetBtn) {
+        elements.globalResetBtn.addEventListener('click', performGlobalReset);
     }
 
     // 拖放上傳
@@ -1026,6 +1032,135 @@ function resetConfiguration() {
 
     handleCavityCountChange();
     updateStartButton();
+}
+
+/**
+ * 執行全域一鍵重置
+ * 清空所有欄位、釋放記憶體、重置應用狀態
+ */
+function performGlobalReset() {
+    // 確認對話框
+    if (!confirm('確定要執行一鍵重置嗎？\n\n這將會：\n✓ 清空所有輸入欄位\n✓ 移除已上傳的檔案\n✓ 釋放記憶體空間\n✓ 重置所有設定\n\n此操作無法復原。')) {
+        return;
+    }
+
+    console.log('開始執行全域重置...');
+
+    // 顯示狀態更新
+    if (typeof updateStatus === 'function') {
+        updateStatus('processing', '正在重置系統...');
+    }
+
+    try {
+        // 1. 清空全域變數，釋放記憶體
+        currentWorkbook = null;
+        currentFileName = '';
+        selectedFiles = [];
+        processingResults = null;
+        selectionMode = null;
+        selectionTarget = null;
+        selectionStart = null;
+        selectionEnd = null;
+        groupSheetIndices = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
+
+        // 2. 清空檔案輸入
+        if (elements.fileInput) {
+            elements.fileInput.value = '';
+        }
+
+        // 3. 重置所有配置輸入欄位
+        if (elements.productCode) elements.productCode.value = '';
+        if (elements.cavityCount) elements.cavityCount.value = '';
+        if (elements.configName) elements.configName.value = '';
+
+        // 4. 清空所有穴組範圍輸入
+        for (let i = 1; i <= 6; i++) {
+            const cavityIdInput = document.getElementById(`cavity-id-${i}`);
+            const dataRangeInput = document.getElementById(`data-range-${i}`);
+            const offsetInput = document.getElementById(`offset-${i}`);
+
+            if (cavityIdInput) cavityIdInput.value = '';
+            if (dataRangeInput) dataRangeInput.value = '';
+            if (offsetInput) offsetInput.value = '1';
+        }
+
+        // 5. 移除所有 has-value 類別
+        document.querySelectorAll('.config-input').forEach(input => {
+            input.classList.remove('has-value');
+        });
+
+        // 6. 隱藏所有穴組（除了第一組）
+        for (let i = 2; i <= 6; i++) {
+            const group = document.getElementById(`cavity-group-${i}`);
+            if (group) {
+                group.classList.add('hidden');
+            }
+        }
+
+        // 7. 重置 UI 顯示狀態
+        if (elements.fileInfo) elements.fileInfo.style.display = 'none';
+        if (elements.uploadArea) elements.uploadArea.style.display = 'block';
+        if (elements.worksheetGroup) elements.worksheetGroup.style.display = 'none';
+        if (elements.rangeGroup) elements.rangeGroup.style.display = 'none';
+        if (elements.previewSection) elements.previewSection.style.display = 'none';
+        if (elements.resultSection) elements.resultSection.style.display = 'none';
+        if (elements.progressContainer) elements.progressContainer.style.display = 'none';
+
+        // 8. 清空預覽表格
+        if (elements.previewTable) {
+            elements.previewTable.innerHTML = '';
+        }
+
+        // 9. 清空結果區域
+        if (elements.resultSummary) {
+            elements.resultSummary.innerHTML = '';
+        }
+        if (elements.errorList) {
+            elements.errorList.innerHTML = '';
+        }
+        if (elements.errorLog) {
+            elements.errorLog.style.display = 'none';
+        }
+
+        // 10. 重置工作表選擇器
+        if (elements.worksheetSelect) {
+            elements.worksheetSelect.innerHTML = '<option value="">-- 請選擇工作表 --</option>';
+        }
+
+        // 11. 重置進度條
+        if (elements.progressFill) {
+            elements.progressFill.style.width = '0%';
+        }
+        if (elements.progressText) {
+            elements.progressText.textContent = '等待指令中...';
+        }
+
+        // 12. 更新按鈕狀態
+        updateStartButton();
+
+        // 13. 強制垃圾回收提示（瀏覽器會自動處理）
+        console.log('記憶體釋放完成');
+
+        // 14. 顯示成功訊息
+        if (typeof updateStatus === 'function') {
+            updateStatus('success', '系統已完全重置');
+            setTimeout(() => {
+                updateStatus('ready', '系統就緒');
+            }, 2000);
+        }
+
+        console.log('全域重置完成');
+
+        // 15. 可選：滾動到頁面頂部
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    } catch (error) {
+        console.error('重置過程發生錯誤:', error);
+        if (typeof updateStatus === 'function') {
+            updateStatus('error', '重置失敗');
+        }
+        alert('重置過程發生錯誤: ' + error.message);
+    }
 }
 
 /**
