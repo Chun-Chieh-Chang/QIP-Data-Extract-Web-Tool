@@ -257,6 +257,47 @@ class ExcelExporter {
     }
 
     /**
+     * 使用 File System Access API 另存新檔（詢問路徑）
+     * @param {string} filename 
+     * @returns {Promise<boolean>} 是否成功儲存
+     */
+    async saveAs(filename = 'QIP_數據提取結果') {
+        const blob = this.getBlob();
+
+        // 檢查瀏覽器是否支援 showSaveFilePicker
+        if ('showSaveFilePicker' in window) {
+            try {
+                const handle = await window.showSaveFilePicker({
+                    suggestedName: `${filename}.xlsx`,
+                    types: [{
+                        description: 'Excel 活頁簿',
+                        accept: {
+                            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx']
+                        }
+                    }]
+                });
+
+                const writable = await handle.createWritable();
+                await writable.write(blob);
+                await writable.close();
+                console.log(`檔案已成功儲存至指定路徑: ${handle.name}`);
+                return true;
+            } catch (error) {
+                // 如果使用者取消選擇，不視為錯誤
+                if (error.name === 'AbortError') {
+                    console.log('使用者取消了存檔');
+                    return false;
+                }
+                console.error('另存新檔失敗，將改用一般下載模式:', error);
+            }
+        }
+
+        // 不支援 API 或發生錯誤時的回退方案：直接下載
+        this.download(filename);
+        return true;
+    }
+
+    /**
      * 獲取工作表數量
      * @returns {number}
      */

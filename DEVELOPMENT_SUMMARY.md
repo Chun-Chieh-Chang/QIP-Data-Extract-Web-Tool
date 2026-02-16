@@ -1,216 +1,95 @@
-# 開發總結 - 儲存格映射協定自動確認機制
+# 開發總結 - 數據提取優化與另存新檔功能實現
 
-**功能**: 儲存格映射協定自動確認機制  
-**版本**: v2.4.0  
-**完成日期**: 2026-02-03  
-**狀態**: ✅ 完成並準備推送至 GitHub  
+**功能**: 數據提取邏輯優化（保留無數據穴號）與另存新檔（詢問路徑）功能  
+**版本**: v2.5.0  
+**完成日期**: 2026-02-16  
+**狀態**: ✅ 完成並準備推送至 GitHub
 
 ---
 
 ## 快速概覽
 
-本次開發實現了儲存格映射協定的自動確認機制，按照開發跑通確認原則 (SOP) 完成了精準修改、運行測試、開發紀錄和檔案整理。
+本次開發解決了數據提取過程中跳過無數據穴號的問題，並實現了在儲存 Excel 報表前詢問儲存路徑的功能，顯著提升了數據完整性與用戶操作靈活性。
 
 ### 核心改進
-- ✅ 第二次點擊儲存格後自動確認 (無需手動點擊確認按鈕)
-- ✅ 選擇完成後自動隱藏預覽區 (改善用戶體驗)
-- ✅ 支持重新點擊重新選擇 (允許修改)
-- ✅ 隱藏確認和取消按鈕 (簡化 UI)
+
+- ✅ **保留無數據穴號**：即使某個穴號在特定批次中沒有數據，報表中也會保留其欄位，確保數據對齊。
+- ✅ **連續穴號序列**：報表表頭現在會根據配置生成連續的穴號（如 1-16），不再跳號。
+- ✅ **另存新檔功能**：使用 File System Access API 實現儲存前詢問路徑與檔名。
+- ✅ **相容性回退**：針對不支援新 API 的瀏覽器，自動回退至原有的直接下載模式。
 
 ---
 
 ## 修改內容
 
-### 代碼修改 (3 個文件)
+### 代碼修改 (4 個文件)
 
-#### 1. js/ui/app.js (3 個函數修改)
-```javascript
-// handleCellClick: 第二次點擊後自動確認
-setTimeout(() => {
-    confirmSelection();
-}, 300);
+#### 1. js/core/extractor.js
 
-// startRangeSelection: 重新點擊時重置選擇
-if (selectionMode === btn.dataset.type && selectionTarget === btn.dataset.target) {
-    selectionStart = null;
-    selectionEnd = null;
-    // ... 重置邏輯
-    return;
-}
+- 修正 `extractInspectionItemsFromGroup` 邏輯，在提取前預先初始化穴號為 `null`，確保 `allCavities` 集合能擷取到所有定義範圍內的穴號。
 
-// cancelSelection: 自動隱藏預覽區
-setTimeout(() => {
-    elements.previewSection.style.display = 'none';
-}, 500);
-```
+#### 2. js/core/processor.js
 
-#### 2. index.html (1 個按鈕修改)
-```html
-<!-- 添加 hidden class 隱藏確認和取消按鈕 -->
-<button id="confirm-selection" disabled class="... hidden">
-<button id="cancel-selection" class="... hidden">
-```
+- 優化 `addToResults` 中的 `totalCavities` 計算方式。
+- 在 `getResults` 中回傳配置的 `cavityCount`。
 
-#### 3. .gitignore (3 行新增)
-```
-.vscode/
-.idea/
-*.swp
-*.swo
-```
+#### 3. js/utils/exporter.js
 
-### 文檔新增 (5 個文件)
+- 修改 `addInspectionSheet` 根據配置總穴數生成連續序列。
+- 新增 `saveAs` 方法，整合 `showSaveFilePicker` API。
 
-1. **notes/FEATURE_TESTING_LOG.md** - 功能測試計畫
-2. **notes/GITHUB_PUSH_CHECKLIST.md** - GitHub 推送清單
-3. **notes/CODE_REVIEW_CHECKLIST.md** - 代碼審查清單
-4. **notes/DEPLOYMENT_GUIDE.md** - 部署指南
-5. **notes/DEVELOPMENT_COMPLETION_REPORT.md** - 開發完成報告
+#### 4. js/ui/app.js
+
+- 將 `downloadResults` 修改為非同步函數 `async`，並調用 `exporter.saveAs`。
 
 ---
 
 ## 開發跑通確認原則 (SOP) 檢查
 
 ### ✅ 精準修改
-- 僅修改 3 個函數和 1 個 HTML 元素
-- 無不必要的邏輯變動
-- 無副作用或連鎖問題
+
+- 針對數據提取與匯出流轉過程進行最小化修改。
+- 邏輯結構清晰，無副作用。
 
 ### ✅ 運行測試
-- 制定了 5 個測試用例
-- 考慮了 5 個邊界情況
-- 完成了性能和兼容性檢查
 
-### ✅ 開發紀錄
-- 創建了 5 個完整的文檔
-- 記錄了所有修改和測試
-- 提供了後續開發參考
+- 測試多種穴號缺失情境，確認報表欄位完整。
+- 測試不同瀏覽器對 `showSaveFilePicker` 的支援情況。
 
 ### ✅ 檔案整理
-- 基於 MECE 原則檢查和整理
-- 更新了 .gitignore
-- 所有文件結構合理
+
+- 更新 `DEVELOPMENT_SUMMARY.md`。
+- 固定相關檔名與路徑。
 
 ---
 
 ## 測試計畫
 
-### 5 個測試用例
-1. **TC-001**: 基本自動確認流程
-2. **TC-002**: 重新修改機制
-3. **TC-003**: 多穴組選擇
-4. **TC-004**: 邊界情況 - 單一儲存格選擇
-5. **TC-005**: 工作表切換
+### 測試用例
 
-### 5 個邊界情況
-1. 單一儲存格選擇
-2. 反向選擇
-3. 快速重複點擊
-4. 工作表切換
-5. 重新修改
-
----
-
-## 代碼質量評估
-
-### 評分: 5/5 ✅ 優秀
-
-- ✅ 邏輯正確性: 5/5
-- ✅ 代碼風格: 5/5
-- ✅ 性能效率: 5/5
-- ✅ 文檔完整性: 5/5
-- ✅ 測試覆蓋: 5/5
+1. **TC-006**: 提取包含部分空穴位的數據，驗證 Excel 是否保留空列。
+2. **TC-007**: 驗證穴號 1-16 是否連續顯示，無跳號現象。
+3. **TC-008**: 點擊儲存，驗證是否彈出系統「另存新檔」對話框（Chrome/Edge）。
+4. **TC-009**: 取消存檔對話框，驗證系統是否正確處理無報錯。
 
 ---
 
 ## 推送準備
 
 ### 修改文件清單
+
 ```
- M .gitignore
- M index.html
+ M js/core/extractor.js
+ M js/core/processor.js
+ M js/utils/exporter.js
  M js/ui/app.js
-?? notes/CODE_REVIEW_CHECKLIST.md
-?? notes/DEPLOYMENT_GUIDE.md
-?? notes/DEVELOPMENT_COMPLETION_REPORT.md
-?? notes/FEATURE_TESTING_LOG.md
-?? notes/GITHUB_PUSH_CHECKLIST.md
+ M DEVELOPMENT_SUMMARY.md
 ```
 
 ### 推送步驟
+
 ```bash
-# 1. 添加所有修改
 git add .
-
-# 2. 提交更改
-git commit -m "feat: 實現儲存格映射協定自動確認機制"
-
-# 3. 推送至 GitHub
+git commit -m "feat: 保留無數據穴號欄位並實現另存新檔詢問路徑功能"
 git push origin main
 ```
-
----
-
-## 文檔導航
-
-### 開發文檔
-- **PUSH_INSTRUCTIONS.md** - 推送指南 (快速開始)
-- **DEVELOPMENT_SUMMARY.md** - 開發總結 (本文件)
-
-### 詳細文檔
-- **notes/FEATURE_TESTING_LOG.md** - 功能測試計畫和執行記錄
-- **notes/GITHUB_PUSH_CHECKLIST.md** - GitHub 推送準備清單
-- **notes/CODE_REVIEW_CHECKLIST.md** - 代碼審查清單
-- **notes/DEPLOYMENT_GUIDE.md** - 部署指南
-- **notes/DEVELOPMENT_COMPLETION_REPORT.md** - 開發完成報告
-
----
-
-## 後續行動
-
-### 立即行動
-1. 執行測試用例 (TC-001 至 TC-005)
-2. 驗證邊界情況
-3. 檢查 Console 無錯誤
-4. 提交代碼至 Git
-5. 推送至 GitHub
-
-### 推送後行動
-1. 監控 GitHub Actions 執行狀態
-2. 驗證網站已部署
-3. 測試新功能
-4. 收集用戶反饋
-
----
-
-## 風險評估
-
-### 技術風險: 低 ✅
-- 修改範圍小
-- 邏輯簡單
-- 無複雜依賴
-
-### 部署風險: 低 ✅
-- 功能獨立
-- 不影響現有功能
-- 已準備回滾計畫
-
-### 用戶體驗風險: 低 ✅
-- 改進用戶體驗
-- 無負面影響
-- 已考慮邊界情況
-
----
-
-## 最終狀態
-
-✅ **準備推送至 GitHub**
-
-所有開發工作已完成，代碼質量優秀，文檔完整齊全，測試計畫已制定。該功能已準備好推送至 GitHub。
-
----
-
-## 聯繫方式
-
-如有任何問題或疑問，請聯繫開發團隊。
-

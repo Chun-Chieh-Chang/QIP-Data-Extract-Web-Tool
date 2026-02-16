@@ -1451,7 +1451,7 @@ function showResults(results) {
 /**
  * 下載結果
  */
-function downloadResults() {
+async function downloadResults() {
   if (!processingResults) {
     alert("沒有處理結果可供下載");
     return;
@@ -1464,7 +1464,7 @@ function downloadResults() {
     exporter.createFromResults(processingResults, productCode);
 
     const filename = `${productCode}_數據提取結果_${formatDate(new Date())}`;
-    exporter.download(filename);
+    await exporter.saveAs(filename);
   } catch (error) {
     console.error("導出失敗:", error);
     alert("導出失敗: " + error.message);
