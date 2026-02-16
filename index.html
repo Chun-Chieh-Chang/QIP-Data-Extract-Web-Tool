@@ -388,8 +388,16 @@
                                     class="flex items-center justify-between border-b-2 border-slate-50 dark:border-white/5 pb-6">
                                     <span
                                         class="text-sm font-black text-primary uppercase tracking-widest cavity-title">模穴範圍</span>
-                                    <span
-                                        class="px-3 py-1 bg-primary/10 text-[10px] font-black text-primary rounded-lg uppercase status-badge">必填項目</span>
+                                    <div class="flex items-center gap-3">
+                                        <button
+                                            class="flex items-center gap-2 px-3 py-1.5 bg-primary/10 hover:bg-primary hover:text-white text-primary rounded-xl transition-all select-range-btn"
+                                            data-type="cavity">
+                                            <span class="material-icons-round text-sm">biotech</span>
+                                            <span class="text-[10px] font-black uppercase tracking-widest">智慧選取</span>
+                                        </button>
+                                        <span
+                                            class="px-3 py-1 bg-primary/10 text-[10px] font-black text-primary rounded-lg uppercase status-badge">必填項目</span>
+                                    </div>
                                 </div>
                                 <div class="space-y-6">
                                     <div class="space-y-3">
@@ -400,11 +408,6 @@
                                             <input type="text"
                                                 class="flex-1 min-w-0 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 text-base font-bold config-input range-input id-input"
                                                 placeholder="RANGE_ID">
-                                            <button
-                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
-                                                data-type="cavity">
-                                                <span class="material-icons-round text-xl">biotech</span>
-                                            </button>
                                         </div>
                                     </div>
                                     <div class="space-y-3">
@@ -415,11 +418,6 @@
                                             <input type="text"
                                                 class="flex-1 min-w-0 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 text-base font-bold config-input range-input data-input"
                                                 placeholder="RANGE_VAL">
-                                            <button
-                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
-                                                data-type="data">
-                                                <span class="material-icons-round text-xl">data_exploration</span>
-                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -435,8 +433,16 @@
                                     class="flex items-center justify-between border-b-2 border-slate-200 dark:border-white/10 pb-6">
                                     <span class="text-sm font-black text-primary uppercase tracking-widest">模穴
                                         01-08</span>
-                                    <span
-                                        class="px-3 py-1 bg-primary/10 text-[10px] font-black text-primary rounded-lg uppercase">核心必填</span>
+                                    <div class="flex items-center gap-3">
+                                        <button
+                                            class="flex items-center gap-2 px-3 py-1.5 bg-primary/10 hover:bg-primary hover:text-white text-primary rounded-xl transition-all select-range-btn"
+                                            data-target="cavity-id-1" data-type="cavity">
+                                            <span class="material-icons-round text-sm">biotech</span>
+                                            <span class="text-[10px] font-black uppercase tracking-widest">智慧選取</span>
+                                        </button>
+                                        <span
+                                            class="px-3 py-1 bg-primary/10 text-[10px] font-black text-primary rounded-lg uppercase">核心必填</span>
+                                    </div>
                                 </div>
                                 <div class="space-y-6">
                                     <div class="space-y-3">
@@ -447,11 +453,6 @@
                                             <input id="cavity-id-1" type="text"
                                                 class="flex-1 min-w-0 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 text-base font-bold config-input range-input"
                                                 placeholder="K3:R3">
-                                            <button
-                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
-                                                data-target="cavity-id-1" data-type="cavity">
-                                                <span class="material-icons-round text-xl">biotech</span>
-                                            </button>
                                         </div>
                                     </div>
                                     <div class="space-y-3">
@@ -461,11 +462,6 @@
                                             <input id="data-range-1" type="text"
                                                 class="flex-1 min-w-0 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 text-base font-bold config-input range-input"
                                                 placeholder="K4:R4">
-                                            <button
-                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
-                                                data-target="data-range-1" data-type="data">
-                                                <span class="material-icons-round text-xl">data_exploration</span>
-                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -478,6 +474,12 @@
                                     <span
                                         class="text-sm font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">模穴
                                         09-16</span>
+                                    <button
+                                        class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-white/5 hover:bg-primary hover:text-white text-slate-500 dark:text-slate-400 rounded-xl transition-all select-range-btn"
+                                        data-target="cavity-id-2" data-type="cavity">
+                                        <span class="material-icons-round text-sm">biotech</span>
+                                        <span class="text-[10px] font-black uppercase tracking-widest">智慧選取</span>
+                                    </button>
                                 </div>
                                 <div class="space-y-6">
                                     <div class="space-y-3">
@@ -488,11 +490,6 @@
                                             <input id="cavity-id-2" type="text"
                                                 class="flex-1 min-w-0 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 text-base font-bold config-input range-input"
                                                 placeholder="輸入 ID 區域">
-                                            <button
-                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
-                                                data-target="cavity-id-2" data-type="cavity">
-                                                <span class="material-icons-round text-xl">biotech</span>
-                                            </button>
                                         </div>
                                     </div>
                                     <div class="space-y-3">
@@ -502,11 +499,6 @@
                                             <input id="data-range-2" type="text"
                                                 class="flex-1 min-w-0 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 text-base font-bold config-input range-input"
                                                 placeholder="輸入數據區域">
-                                            <button
-                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
-                                                data-target="data-range-2" data-type="data">
-                                                <span class="material-icons-round text-xl">data_exploration</span>
-                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -520,6 +512,12 @@
                                     <span
                                         class="text-sm font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">模穴
                                         17-24</span>
+                                    <button
+                                        class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-white/5 hover:bg-primary hover:text-white text-slate-500 dark:text-slate-400 rounded-xl transition-all select-range-btn"
+                                        data-target="cavity-id-3" data-type="cavity">
+                                        <span class="material-icons-round text-sm">biotech</span>
+                                        <span class="text-[10px] font-black uppercase tracking-widest">智慧選取</span>
+                                    </button>
                                 </div>
                                 <div class="space-y-6">
                                     <div class="space-y-3">
@@ -530,11 +528,6 @@
                                             <input id="cavity-id-3" type="text"
                                                 class="flex-1 min-w-0 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 text-base font-bold config-input range-input"
                                                 placeholder="輸入 ID 區域">
-                                            <button
-                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
-                                                data-target="cavity-id-3" data-type="cavity">
-                                                <span class="material-icons-round text-xl">biotech</span>
-                                            </button>
                                         </div>
                                     </div>
                                     <div class="space-y-3">
@@ -544,11 +537,6 @@
                                             <input id="data-range-3" type="text"
                                                 class="flex-1 min-w-0 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 text-base font-bold config-input range-input"
                                                 placeholder="輸入數據區域">
-                                            <button
-                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
-                                                data-target="data-range-3" data-type="data">
-                                                <span class="material-icons-round text-xl">data_exploration</span>
-                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -562,6 +550,12 @@
                                     <span
                                         class="text-sm font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">模穴
                                         25-32</span>
+                                    <button
+                                        class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-white/5 hover:bg-primary hover:text-white text-slate-500 dark:text-slate-400 rounded-xl transition-all select-range-btn"
+                                        data-target="cavity-id-4" data-type="cavity">
+                                        <span class="material-icons-round text-sm">biotech</span>
+                                        <span class="text-[10px] font-black uppercase tracking-widest">智慧選取</span>
+                                    </button>
                                 </div>
                                 <div class="space-y-6">
                                     <div class="space-y-3">
@@ -572,11 +566,6 @@
                                             <input id="cavity-id-4" type="text"
                                                 class="flex-1 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 text-base font-bold config-input range-input"
                                                 placeholder="輸入 ID 區域">
-                                            <button
-                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
-                                                data-target="cavity-id-4" data-type="cavity">
-                                                <span class="material-icons-round text-xl">biotech</span>
-                                            </button>
                                         </div>
                                     </div>
                                     <div class="space-y-3">
@@ -586,11 +575,6 @@
                                             <input id="data-range-4" type="text"
                                                 class="flex-1 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 text-base font-bold config-input range-input"
                                                 placeholder="輸入數據區域">
-                                            <button
-                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
-                                                data-target="data-range-4" data-type="data">
-                                                <span class="material-icons-round text-xl">data_exploration</span>
-                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -604,6 +588,12 @@
                                     <span
                                         class="text-sm font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">模穴
                                         33-40</span>
+                                    <button
+                                        class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-white/5 hover:bg-primary hover:text-white text-slate-500 dark:text-slate-400 rounded-xl transition-all select-range-btn"
+                                        data-target="cavity-id-5" data-type="cavity">
+                                        <span class="material-icons-round text-sm">biotech</span>
+                                        <span class="text-[10px] font-black uppercase tracking-widest">智慧選取</span>
+                                    </button>
                                 </div>
                                 <div class="space-y-6">
                                     <div class="space-y-3">
@@ -614,11 +604,6 @@
                                             <input id="cavity-id-5" type="text"
                                                 class="flex-1 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 text-base font-bold config-input range-input"
                                                 placeholder="輸入 ID 區域">
-                                            <button
-                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
-                                                data-target="cavity-id-5" data-type="cavity">
-                                                <span class="material-icons-round text-xl">biotech</span>
-                                            </button>
                                         </div>
                                     </div>
                                     <div class="space-y-3">
@@ -628,11 +613,6 @@
                                             <input id="data-range-5" type="text"
                                                 class="flex-1 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 text-base font-bold config-input range-input"
                                                 placeholder="輸入數據區域">
-                                            <button
-                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
-                                                data-target="data-range-5" data-type="data">
-                                                <span class="material-icons-round text-xl">data_exploration</span>
-                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -646,6 +626,12 @@
                                     <span
                                         class="text-sm font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">模穴
                                         41-48</span>
+                                    <button
+                                        class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-white/5 hover:bg-primary hover:text-white text-slate-500 dark:text-slate-400 rounded-xl transition-all select-range-btn"
+                                        data-target="cavity-id-6" data-type="cavity">
+                                        <span class="material-icons-round text-sm">biotech</span>
+                                        <span class="text-[10px] font-black uppercase tracking-widest">智慧選取</span>
+                                    </button>
                                 </div>
                                 <div class="space-y-6">
                                     <div class="space-y-3">
@@ -656,11 +642,6 @@
                                             <input id="cavity-id-6" type="text"
                                                 class="flex-1 min-w-0 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 text-base font-bold config-input range-input"
                                                 placeholder="輸入 ID 區域">
-                                            <button
-                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
-                                                data-target="cavity-id-6" data-type="cavity">
-                                                <span class="material-icons-round text-xl">biotech</span>
-                                            </button>
                                         </div>
                                     </div>
                                     <div class="space-y-3">
@@ -670,11 +651,6 @@
                                             <input id="data-range-6" type="text"
                                                 class="flex-1 min-w-0 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 text-base font-bold config-input range-input"
                                                 placeholder="輸入數據區域">
-                                            <button
-                                                class="w-14 h-14 flex items-center justify-center glass-card rounded-2xl hover:text-primary transition-all shadow-lg shadow-black/5 select-range-btn"
-                                                data-target="data-range-6" data-type="data">
-                                                <span class="material-icons-round text-xl">data_exploration</span>
-                                            </button>
                                         </div>
                                     </div>
                                 </div>

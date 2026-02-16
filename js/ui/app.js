@@ -161,18 +161,18 @@ function bindEvents() {
 
   // 輸入框聚焦時自動啟動選擇模式
   document.querySelectorAll(".range-input").forEach((input) => {
-    input.addEventListener("focus", (e) => {
-      // 確保預覽已開啟
-      if (elements.previewSection.style.display === "none") {
-        previewWorksheet();
-      }
+    input.addEventListener('focus', (e) => {
+            // 如果已經在選擇模式且目標相同，不重複觸發
+            if (selectionMode && selectionTarget === e.target.id) return;
 
-      // 設定選擇模式
-      const btn = e.target.nextElementSibling; // 假設按鈕在輸入框後面
-      if (btn && btn.classList.contains("select-range-btn")) {
-        startRangeSelection(btn);
-      }
-    });
+            // 設定選擇模式 (從最近的模穴組容器中尋找按鈕)
+            const groupContainer = e.target.closest('.cavity-group');
+            const btn = groupContainer ? groupContainer.querySelector('.select-range-btn') : null;
+            
+            if (btn && btn.classList.contains('select-range-btn')) {
+                startRangeSelection(btn);
+            }
+        });
   });
 
   // 預覽表格選擇
