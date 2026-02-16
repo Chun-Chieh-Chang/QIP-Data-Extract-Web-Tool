@@ -184,9 +184,19 @@ class QIPProcessor {
             item.allCavities.add(cavityId);
         }
 
+        // 計算最大穴號
+        const currentMaxCavity = Array.from(item.allCavities)
+            .map(Number)
+            .filter(n => !isNaN(n))
+            .reduce((max, val) => Math.max(max, val), 0);
+
+        // 如果配置中有模穴數，優先使用配置中的模穴數，否則使用發現的最大穴號
+        const configCavityCount = parseInt(this.config.cavityCount) || 0;
+        
         this.results.totalCavities = Math.max(
             this.results.totalCavities,
-            item.allCavities.size
+            currentMaxCavity,
+            configCavityCount
         );
     }
 
@@ -220,6 +230,7 @@ class QIPProcessor {
             inspectionItems: this.results.inspectionItems,
             totalBatches: this.results.totalBatches,
             totalCavities: this.results.totalCavities,
+            cavityCount: parseInt(this.config.cavityCount) || 0,
             processedSheets: this.results.processedSheets,
             productInfo: this.results.productInfo,
             itemCount: Object.keys(this.results.inspectionItems).length,

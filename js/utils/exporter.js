@@ -22,7 +22,7 @@ class ExcelExporter {
         console.log('開始創建 Excel...', results);
 
         for (const [itemName, itemData] of Object.entries(results.inspectionItems)) {
-            this.addInspectionSheet(itemName, itemData, productCode, results.productInfo);
+            this.addInspectionSheet(itemName, itemData, productCode, results.productInfo, results.cavityCount || results.totalCavities);
         }
 
         return this;
@@ -40,15 +40,26 @@ class ExcelExporter {
      * @param {Object} itemData - 項目數據 { batches, allCavities, specification }
      * @param {string} productCode - 產品品號
      * @param {Object} productInfo - 產品資訊 { productName, measurementUnit }
+     * @param {number} cavityCount - 總穴數
      */
-    addInspectionSheet(sheetName, itemData, productCode = '', productInfo = null) {
+    addInspectionSheet(sheetName, itemData, productCode = '', productInfo = null, cavityCount = 0) {
         // 清理工作表名稱
         const cleanName = this.cleanSheetName(sheetName);
 
-        // 獲取並排序所有穴號
-        const cavities = Array.from(itemData.allCavities)
-            .map(Number)
-            .sort((a, b) => a - b);
+        // 生成連續的穴號序列 (1 到 cavityCount)
+        // 如果 cavityCount 為 0，則根據 allCavities 中的最大值生成
+        let maxCavity = cavityCount;
+        if (!maxCavity || maxCavity === 0) {
+            maxCavity = Array.from(itemData.allCavities)
+                .map(Number)
+                .filter(n => !isNaN(n))
+                .reduce((max, val) => Math.max(max, val), 0);
+        }
+
+        const cavities = [];
+        for (let i = 1; i <= maxCavity; i++) {
+            cavities.push(i);
+        }
 
         // 獲取批號列表（現在是複合鍵）
         const batchKeys = Object.keys(itemData.batches);
